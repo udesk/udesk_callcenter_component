@@ -1,0 +1,126 @@
+@mixin circle($r) {
+    -webkit-border-radius: $r;
+    -moz-border-radius: $r;
+    border-radius: $r;
+}
+
+#udesk-callcenter-component-alert {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 20px 30px;
+    color: #fff;
+}
+
+.udesk-callcenter-component {
+    background-color: #fff;
+    width: 270px;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    .content-wrapper {
+        display: none;
+        padding: 20px;
+        border: 1px solid #e4e4e4;
+        border-top-width: 0;
+        color: #666;
+        font-size: 14px;
+    }
+    .ucm-dropdown ul {
+        border: 1px solid #ccc;
+        padding: 3px;
+        position: absolute;
+        left: 0;
+        top: 100%;
+        margin: 0;
+        display: none;
+        width: 100%;
+        background-color: #fff;
+        z-index: 9999999;
+        list-style: none;
+        li {
+            padding: 3px 0;
+            cursor: pointer;
+            &:hover {
+                background-color: #c3c3c3;
+            }
+        }
+    }
+    .work-state-idle, .work-state-busy, .work-state-resting, .work-state-offline, .work-state-ringing, .work-state-talking {
+        i {
+            display: inline-block;
+            vertical-align: middle;
+            width: 10px;
+            height: 10px;
+            margin-right: 3px;
+            @include circle(10px);
+        }
+    }
+    .work-state-idle {
+        i {
+            background-color: #49b34f;
+        }
+    }
+    .work-state-busy {
+        i {
+            background-color: #d75452;
+        }
+    }
+    .work-state-resting {
+        i {
+            background-color: #d75452;
+        }
+    }
+    .work-state-offline {
+        i {
+            background-color: #d75452;
+        }
+    }
+    .work-state-talking {
+        i {
+            background-color: #d75452;
+        }
+    }
+    .work-state-ringing {
+        i {
+            background-color: #d75452;
+        }
+    }
+    .agent-select {
+        position: relative;
+        .dropdown {
+            height: 240px;
+            overflow: auto;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 100%;
+            border: 1px solid #c3c3c3;
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+            li {
+                list-style-type: none;
+                text-align: left;
+                padding: 5px;
+                cursor: pointer;
+                &:hover {
+                    background-color: #e0e0e0;
+                }
+            }
+        }
+        .display-frame {
+            border: 1px solid #c3c3c3;
+            padding: 5px;
+            font-size: 12px;
+            text-align: left;
+            height: 12px;
+            cursor: pointer;
+            img {
+                float: right;
+                margin-top: 3px;
+            }
+        }
+    }
+}
