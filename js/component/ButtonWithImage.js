@@ -1,42 +1,37 @@
-var doc = document;
-var ImageTextButton = function(imageURL, text) {
-    this.text = text;
-    this.image = doc.createElement('img');
-    this.image.src = imageURL;
-    this.image.style.width = this.image.style.height = '20px';
-    this.image.style.verticalAlign = 'middle';
+import React from 'react';
+import tools from './Tools';
 
-    this.element = doc.createElement('button');
-    this.element.appendChild(this.image);
-    this.textEle = doc.createElement('span');
-    this.textEle.innerText = text;
-    this.element.appendChild(this.textEle);
-    this.element.style.border = '1px solid #ccc';
-    this.element.style.backgroundColor = '#fff';
-    this.element.style.padding = '5px';
-    this.element.style.borderRightWidth = '0';
-    this.element.style.outline = 'none';
+export default class ButtonWithImageComponent extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            state: 'normal'
+        };
+    }
 
-    this.state = 'normal';
+    render() {
+        let className = 'image-button common-btn ' + (this.props.className || '');
+        return <button className={className} onClick={this.onClick.bind(this)}>
+            <img src={this.props.image}/>
+            {(() => {
+                if (this.props.state === 'normal') {
+                    return <span>{this.props.content}</span>
+                } else if (this.props.state === 'cancel') {
+                    return <span>{this.props.cancelText || '取消'}</span>
+                }
+            }).call(this)}
+        </button>
+    }
 
-    var self = this;
-    this.element.onclick = function() {
-        if (self.state === 'normal') {
-            self.normalHandler && self.normalHandler(self);
+    onClick() {
+        if (this.props.state === 'normal') {
+            if (this.props.normalHandler && tools.isFunction(this.props.normalHandler)) {
+                this.props.normalHandler();
+            }
         } else {
-            self.cancelHandler && self.cancelHandler(self);
+            if (this.props.cancelHandler && tools.isFunction(this.props.cancelHandler)) {
+                this.props.cancelHandler();
+            }
         }
-    };
-};
-
-ImageTextButton.prototype.toCancelState = function() {
-    this.textEle.innerText = '取消';
-    this.state = 'cancel';
-};
-
-ImageTextButton.prototype.toNormalState = function() {
-    this.textEle.innerText = this.text;
-    this.state = 'normal';
-};
-
-module.exports = ImageTextButton;
+    }
+}

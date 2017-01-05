@@ -16,5 +16,14 @@ module.exports = {
         scons = scons < 10 ? ('0' + scons) : scons;
 
         return hours + ':' + minutes + ':' + scons;
+    },
+    find(ary, callback){
+        for (var i = 0, len = ary.length; i < len; i++) {
+            var item = ary[i];
+            var isOk = callback(item);
+            if (isOk) {
+                return item;
+            }
+        }
     }
 };

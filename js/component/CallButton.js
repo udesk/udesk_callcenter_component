@@ -1,20 +1,20 @@
-var images = require('./images');
+import images from  './images';
+import React from 'react';
 
-var doc = document;
-var CallBtn = function(type) {
-    this.element = doc.createElement('button');
-    this.element.style.width = '100%';
-    this.element.style.backgroundColor = '#49b34f';
-    this.element.style.border = '0';
-    this.element.style.height = '47px';
-
-    this.img = doc.createElement('img');
-    this.img.src = images.call_out;
-    if (type === 'hangup') {
-        this.img.src = images.hangup;
+const style = {
+    width: '100%',
+    backgroundColor: '#49b34f',
+    border: '0',
+    height: '47px'
+};
+export default class CallButtonComponent extends React.Component {
+    constructor() {
+        super();
     }
 
-    this.element.appendChild(this.img);
+    render() {
+        return <button onClick={this.props.onClick} style={style}>
+            <img src={this.props.type === 'hangup' ? images.hangup : images.call_out}/>
+        </button>
+    }
 };
-
-module.exports = CallBtn;

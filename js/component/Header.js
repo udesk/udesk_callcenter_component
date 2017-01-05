@@ -1,36 +1,68 @@
-var doc = document;
-var images = require('./images');
+import React, { Component, PropTypes } from 'react';
+import images from './images';
 
-var Header = function() {
-    this.open = false;
+class Header extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            expand: false
+        };
+        this.keyDown = false;
+    }
 
-    this.element = doc.createElement('div');
-    var eleStyle = this.element.style;
-    eleStyle.height = eleStyle.lineHeight = '34px';
-    eleStyle.paddingLeft = '11px';
-    eleStyle.paddingRight = '11px';
+    render() {
+        let resizeBtn;
+        if (this.state.expand) {
+            resizeBtn = <div className="resize-btn" onClick={this.minimize.bind(this)}>
+                <img src={images.minimize}/>
+            </div>
+        } else {
+            resizeBtn = <div className="resize-btn" onClick={this.maximize.bind(this)}>
+                <img src={images.maximize}/>
+            </div>
+        }
+        return (
+            <div className="top-bar" onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)}
+                 onMouseMove={this.onMouseMove.bind(this)}>
+                {resizeBtn}
+                <div className="title">电话</div>
+            </div>
+        )
+    }
 
-    this.title = doc.createElement('div');
-    var titleStyle = this.title.style;
-    this.title.innerText = '电话';
-    titleStyle.color = '#fff';
-    titleStyle.width = '50%';
-    titleStyle.height = '100%';
+    minimize() {
+        this.setState({ expand: false });
+        if (this.props.onMinimize) {
+            this.props.onMinimize();
+        }
+    }
 
-    this.toggleBtn = doc.createElement('div');
-    var toggleBtnStyle = this.toggleBtn.style;
-    toggleBtnStyle.height = '12px';
-    toggleBtnStyle.float = 'right';
-    toggleBtnStyle.height = '100%';
+    maximize() {
+        this.setState({ expand: true });
+        if (this.props.onMaximize) {
+            this.props.onMaximize();
+        }
+    }
 
-    this.toggleBtnImg = doc.createElement('img');
-    this.toggleBtnImg.src = images.minimize;
-    this.toggleBtn.appendChild(this.toggleBtnImg);
+    onMouseDown(e) {
+        this.keyDown = true;
+        this.screenX = e.screenX;
+        this.screenY = e.screenY;
+    }
 
-    this.element.appendChild(this.toggleBtn);
-    this.element.appendChild(this.title);
+    onMouseUp() {
+        this.keyDown = false;
+    }
 
-    this.element.style.backgroundColor = "#333";
-};
+    onMouseMove(e) {
+        if (this.keyDown === true) {
+            let offsetX = e.screenX - this.screenX;
+            let offsetY = e.screenY - this.screenY;
+            this.screenX = e.screenX;
+            this.screenY = e.screenY;
+            this.props.onDrag(offsetX, offsetY);
+        }
+    }
+}
 
-module.exports = Header;
+export default Header;

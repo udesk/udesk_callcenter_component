@@ -1,206 +1,137 @@
-var doc = document;
-
 import '!style-loader!css-loader?minimize!sass-loader!../css/style.scss';
 import 'font-awesome-webpack';
 import './component/ie8-child-elements';
 import AgentStatePanel from './component/AgentStatePanel.js';
 import Header from './component/Header.js';
-import HangupPanel from './component/HangupPanel';
-import RingingPanel from './component/RingingPanel';
-import TalkingPanel from './component/TalkingPanel';
-import Const from './component/Const';
-import images from './component/images';
 import Socket from './component/socket';
 import callQueue from './component/CallQueue';
 import CallLog from './component/CallLog';
 import AjaxUtils from './component/AjaxUtils';
 import Alert from './component/Alert';
 import CallInfo from './component/CallInfo';
-import Utils from './component/Tools';
-import AgentSelect from './component/AgentSelect';
+import CallConfig from './component/CallConfig';
+import MainContent from './component/MainContent';
+import React from 'react';
+import { render } from 'react-dom';
 
-var UdeskCallcenterComponent = function(options) {
-    var token = options.token; //用于验证
-    AjaxUtils.token = token;
-    AjaxUtils.host = 'http://' + options.subDomain + '.udeskcat.com';
+class UdeskCallCenterComponent extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            expand: false
+        };
 
-    var container = options.container;
-    var allAgents = this.allAgents = [];
-    var subDomain = this.subDomain = options.subDomain;
-    var body = doc.body;
-    var self = this;
+        let self = this;
+        AjaxUtils.get('/agent_api/v1/callcenter/init_data', null, function(res) {
+            CallConfig.set('agent_work_state', res.agent_work_state);
+            CallConfig.set('agent_work_way', res.agent_work_way);
 
-    var headerNode = new Header();
-    var agentStatePanel = this.agentStatePanel = new AgentStatePanel();
-    var hangupPanel = this.hangupPanel = new HangupPanel();
-    var talkingPanel = this.talkingPanel = new TalkingPanel();
-    var ringingPanel = this.ringingPanel = new RingingPanel();
+            self.seatToken = res.seatToken;
+            self.tower_url = res.tower_host;
+            self.user_id = res.user_id;
+            self.connectWebSocket();
+        }, function() {
+            Alert.error('获取初始化数据失败!');
+        });
+    }
 
-    var element = this.element = doc.createElement('div');
-    var contentEle = this.contentEle = doc.createElement('div');
+    render() {
+        return <div ref={(ele) => ele && (this.container = ele.parentElement)}>
+            <Header onMinimize={this.collapse.bind(this)} onMaximize={this.expand.bind(this)}
+                    onDrag={this.drag.bind(this)}/>
+            <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}/>
+            <MainContent className={this.state.expand ? '' : 'hide'}/>
+        </div>
+    }
 
-    element.className = 'udesk-callcenter-component';
-    contentEle.className = 'content-wrapper';
-
-    //窗口收起与展开
-    headerNode.toggleBtn.addEventListener('click', function() {
-        if (headerNode.open) {
-            contentEle.style.display = 'none';
-            headerNode.open = false;
-            headerNode.toggleBtnImg.src = images.minimize;
-            agentStatePanel.setDropMenuDirection('up');
-        } else {
-            contentEle.style.display = 'block';
-            headerNode.open = true;
-            headerNode.toggleBtnImg.src = images.maximize;
-            agentStatePanel.setDropMenuDirection('down');
-        }
-    });
-
-    hangupPanel.onMakeCallFailure = function(error) {
-        Alert.error(error.message || '外呼失败');
-        self.switchHangupState();
-        Utils.isFunction(self.stopCallOutTimeout) && self.stopCallOutTimeout();
-    };
-
-    hangupPanel.onMakeCallSuccess = function() {
-    };
-
-    //外呼请求发出，进入等待页面，等待websocket消息，10秒后没收到外呼请求，则为外呼失败
-    hangupPanel.onBeforeCalling = function() {
-        self.switchLoading('正在外呼...');
-        var timeoutId = setTimeout(function() {
-            Alert.error('外呼失败');
-            self.switchHangupState();
-        }, 10000);
-        self.stopCallOutTimeout = function() {
-            clearTimeout(timeoutId);
-        }
-    };
-
-    this.switchLoading();
-
-    AjaxUtils.get('/agent_api/v1/init_data', null, function(res) {
-        agentStatePanel.setAgentWorkState(res.agent_work_state);
-        agentStatePanel.setAgentWorkWay(res.agent_work_way);
-        self.seatToken = res.seatToken;
-        self.tower_url = res.tower_host;
-        self.user_id = res.user_id;
-        self.connectWebSocket();
-        self.switchHangupState();
-        //self.switchTalkingState();
-    }, function() {
-        console.log('wolegequ', arguments);
-    });
-
-    element.appendChild(headerNode.element);
-    element.appendChild(agentStatePanel.element);
-    element.appendChild(contentEle);
-    container.appendChild(element);
-
-    var setTimeoutId;
-    callQueue.on('change', function(calllog) {
-        clearTimeout(setTimeoutId);
-        self.switchLoading();
-
-        CallInfo.conversation_id = calllog.conversation_id;
-        CallInfo.agent_work_way = calllog.agent_work_way;
-        CallInfo.call_id = calllog.call_id;
-        CallInfo.can_consult = calllog.can_consult;
-        CallInfo.can_three_party = calllog.can_three_party;
-        CallInfo.can_transfer = calllog.can_transfer;
-        CallInfo.conversation_id = calllog.conversation_id;
-        CallInfo.direction = calllog.direction;
-        CallInfo.is_consult = calllog.is_consult;
-        CallInfo.state = calllog.state;
-
-        setTimeoutId = setTimeout(function() {
-            if (calllog.state === Const.RINGING) {
-                self.switchRingingState();
-            } else if (calllog.state === Const.TALKING) {
-                self.switchTalkingState();
-            } else if (calllog.state === Const.HANGUP) {
-                self.switchHangupState();
+    componentDidMount() {
+        let self = this;
+        clearInterval(this.intervaleId);
+        this.intervaleId = setInterval(function() {
+            let { top, height } = self.container.getBoundingClientRect();
+            if (top < 0) {
+                self.container.style.bottom = (window.innerHeight - height) + 'px';
             }
-        }, 3000);
-    });
-};
+        }, 1000);
+    }
 
-//切换到拨号界面
-UdeskCallcenterComponent.prototype.switchHangupState = function() {
-    this.contentEle.innerHTML = '';
-    this.contentEle.appendChild(this.hangupPanel.element);
-    this.ringingPanel.clearAndStopTiming();
-    this.talkingPanel.clearAndStopTiming();
-    this.agentStatePanel.setCallState(Const.HANGUP);
+    collapse() {
+        this.setState({ expand: false });
+    }
 
-    //var agentSelect = new AgentSelect();
-    //this.contentEle.appendChild(agentSelect.element);
-    //agentSelect.fetchData();
-};
+    expand() {
+        this.setState({ expand: true });
+    }
 
-//切换到振铃页面
-UdeskCallcenterComponent.prototype.switchRingingState = function() {
-    this.contentEle.innerHTML = '';
-    this.ringingPanel.startTiming();
-    this.contentEle.appendChild(this.ringingPanel.element);
-    this.agentStatePanel.setCallState(Const.RINGING);
-    AjaxUtils.get("/agent_api/v1/desktop/conversation", { conversation_id: CallInfo.conversation_id }, function(res) {
-        CallInfo.set('call_type', res.call_type);
-        CallInfo.set('queue_desc', res.queue_desc);
+    drag(offsetX, offsetY) {
+        let { right:containerRight, bottom:containerBottom } = this.container.getBoundingClientRect();
+        this.container.style.right = (window.innerWidth - containerRight - offsetX) + 'px';
+        this.container.style.bottom = (window.innerHeight - containerBottom - offsetY) + 'px';
+    }
 
-        console.log('conversation', res);
-    });
-    Utils.isFunction(this.stopCallOutTimeout) && this.stopCallOutTimeout();
-};
+    connectWebSocket() {
+        var self = this;
+        this.socket = new Socket(this.tower_url, this.user_id, this.seatToken);
 
-//切换到通话页面
-UdeskCallcenterComponent.prototype.switchTalkingState = function() {
-    this.contentEle.innerHTML = '';
-    this.talkingPanel.startTiming();
-    this.contentEle.appendChild(this.talkingPanel.element);
-    this.agentStatePanel.setCallState(Const.TALKING);
-    Utils.isFunction(this.stopCallOutTimeout) && this.stopCallOutTimeout();
-};
+        //websocket
+        this.socket.onNotice(function(msg) {
+            switch (msg.type) {
+                case 'call_log':
+                    callQueue.put(new CallLog(msg));
+                    break;
+                case 'seat_status':
+                    let workWay = msg.agent_work_way;
+                    let workState = msg.agent_work_state;
+                    CallConfig.set('agent_work_way', workWay);
+                    CallConfig.set('agent_work_state', workState);
+                    break;
+                case 'consult_result':
+                    CallInfo.set('can_consult', msg.can_consult === 'true');
+                    CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
+                    CallInfo.set('can_three_party', msg.can_three_party === 'true');
+                    CallInfo.set('can_transfer', msg.can_transfer === 'true');
 
-// Loading界面
-UdeskCallcenterComponent.prototype.switchLoading = function(loadingText) {
-    this.contentEle.innerHTML = '';
-    var p = doc.createElement('p');
-    p.style.textAlign = 'center';
-    p.innerText = loadingText || '正在加载...';
-    this.contentEle.appendChild(p);
-    p.style.margin = '30px 0';
-};
+                    if (msg.code === '6005') {
+                        Alert.success('咨询成功');
+                    }
+                    break;
+                case 'three_party':
+                    CallInfo.set('can_consult', msg.can_consult === 'true');
+                    CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
+                    CallInfo.set('can_three_party', msg.can_three_party === 'true');
+                    CallInfo.set('can_transfer', msg.can_transfer === 'true');
 
-UdeskCallcenterComponent.prototype.connectWebSocket = function() {
-    var self = this;
-    this.socket = new Socket(this.tower_url, this.user_id, this.seatToken);
+                    if (msg.code === '1000') {
+                        Alert.success('三方成功');
+                    }
+                    break;
+            }
+        });
 
-    //websocket
-    this.socket.onNotice(function(msg) {
-        switch (msg.type) {
-            case 'call_log':
-                callQueue.put(new CallLog(msg));
-                break;
-            case 'seat_status':
-                var workWay = msg.agent_work_way;
-                var workState = msg.agent_work_state;
-                self.agentStatePanel.setAgentWorkState(workState);
-                self.agentStatePanel.setAgentWorkWay(workWay);
-                break;
-        }
-    });
+        this.socket.onException(function(msg) {
+            switch (msg.error) {
+                case 'connected_at_other_place':
+                    Alert.error(msg.message);
+            }
+        });
+    }
+}
 
-    this.socket.onException(function(msg) {
-        switch (msg.error) {
-            case 'connected_at_other_place':
-                Alert.error(msg.message);
-        }
-    });
-};
+class CallcenterComponent {
+    constructor({ container, subDomain, token }) {
+        AjaxUtils.token = token;
+        AjaxUtils.host = 'http://' + subDomain + '.udesk.cn';
 
-window.UdeskCallcenterComponent = UdeskCallcenterComponent;
+        let wrapper = document.createElement('div');
+        wrapper.className = 'udesk-callcenter-component';
+        container.appendChild(wrapper);
+        render(<UdeskCallCenterComponent
+            callConfig={CallConfig}
+        />, wrapper);
+    }
+}
+
+window.UdeskCallcenterComponent = CallcenterComponent;
 //{
 //    token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImYzN2ZhbmppYXdlaUBob3RtYWlsLmNvbSI.2miteFpPNfmKYGeQzvwuhA4LPOYGAAvhMwrI40GWISc',
 //        uid: '10109',

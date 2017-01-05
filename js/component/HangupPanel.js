@@ -1,47 +1,61 @@
 import utils from './Tools';
 import AjaxUtils from './AjaxUtils';
 import Alert from './Alert';
+import CallConfig from './CallConfig';
+import Const from './Const';
+import React from 'react';
+import NumberInput from './NumberInput';
+import Keyboard from './Keyboard';
+import CallButton from './CallButton';
 
-//挂断状态的界面
-var NumberInput = require('./NumberInput');
-var Keyboard = require('./Keyboard');
-var CallBtn = require('./CallButton');
-var eventTool = require('./event-tool');
 
-var doc = document;
+export default class HangupPanel extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            inputNumber: '',
+            displayKeyboard: false
+        }
+    }
 
-/**
- * @event onBeforeCalling 外呼之前触发
- * @event onMakeCallSuccess 外呼请求成功
- * @event onMakeCallFailure 外呼请求失败
- */
-module.exports = function() {
-    var self = this;
-    var contentEle = this.element = doc.createElement('div');
-    this.numberInput = new NumberInput();
-    this.keyboard = new Keyboard(this.numberInput);
-    this.callBtn = new CallBtn();
-    this.numberInput.onKeyBtnClick = function() {
-        self.keyboard.toggleVisible();
-    };
-    this.keyboard.element.style.marginBottom = '20px';
-    this.numberInput.element.style.marginBottom = '20px';
-    this.callBtn.element.style.height = '47px';
+    render() {
+        return <div>
+            <NumberInput onChange={this.getInputNumber.bind(this)} value={this.state.inputNumber}
+                         onKeyboardBtnClick={this.toggleKeyboard.bind(this)}/>
+            <Keyboard className={this.state.displayKeyboard ? '' : 'hide'} onClick={(number) => {
+                this.setState({ inputNumber: this.state.inputNumber + number })
+            }}/>
+            <CallButton onClick={this.callout.bind(this)}/>
+        </div>
+    }
 
-    contentEle.innerHTML = '';
-    contentEle.append(this.numberInput.element);
-    contentEle.append(this.keyboard.element);
-    contentEle.append(this.callBtn.element);
+    getInputNumber(e) {
+        this.setState({
+            inputNumber: e.target.value
+        });
+    }
 
-    var self = this;
-    this.callBtn.element.onclick = function(e) {
-        utils.isFunction(self.onBeforeCalling) && self.onBeforeCalling();
-        makeCall(self.numberInput.getValue(), self.onMakeCallSuccess, self.onMakeCallFailure);
+    callout() {
+        let number = this.state.inputNumber;
+        if (CallConfig.agent_work_state !== Const.IDLE) {
+            Alert.error('非空闲状态，无法外呼！');
+            return;
+        }
+
+        makeCall(number, function() {
+        }, function(error) {
+            Alert.error(error.message);
+        });
+    }
+
+    toggleKeyboard() {
+        this.setState({
+            displayKeyboard: !this.state.displayKeyboard
+        });
     }
 };
 
 function makeCall(callNumber, successCallback, failureCallback) {
-    console.log('拨打电话');
     if (/^[\d*#+]{4,}$/.test(callNumber)) {
         utils.isFunction(successCallback) && successCallback();
     } else {
@@ -49,7 +63,7 @@ function makeCall(callNumber, successCallback, failureCallback) {
         return;
     }
 
-    AjaxUtils.post('/agent_api/v1/desktop/make_call', { number: callNumber }, function(res) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/make_call', { number: callNumber }, function(res) {
         switch (res.code) {
             case 1000:
                 Alert.success('已发起外呼请求');

@@ -1,19 +1,32 @@
-var doc = document;
-var KeyBtn = function(number, numberInput) {
-    this.element = doc.createElement('button');
-    this.element.innerText = number;
-    this.element.style.outline = 'none';
-    this.element.style.width = '94%';
-    this.element.style.height = '47px';
-    this.element.style.border = '1px solid #e4e4e4';
-    this.element.style.background = '#eee';
-    this.element.style.marginBottom = '7px';
-    this.element.style.fontSize = '16px';
-    this.element.style.color = '#666';
-    this.element.style.cursor = 'pointer';
-    this.element.onclick = function() {
-        numberInput.setValue(numberInput.getValue() + number);
-    }
+import React, { Component, PropTypes } from 'react';
+
+let style = {
+    outline: 'none',
+    width: '94%',
+    height: '47px',
+    border: '1px solid #e4e4e4',
+    backgroundColor: '#eee',
+    marginBottom: '7px',
+    fontSize: '16px',
+    color: '#666',
+    cursor: 'pointer'
 };
 
-module.exports = KeyBtn;
+class KeyButtonComponent extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+    }
+
+    render() {
+        return (
+            <button style={style} onClick={this.onClick.bind(this)}>{this.props.number}</button>
+        )
+    }
+
+    onClick() {
+        this.props.onClick(this.props.number);
+    }
+}
+
+export default KeyButtonComponent;

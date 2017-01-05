@@ -3,6 +3,7 @@ module.exports = {
     BUSY: 'busy',
     OFFLINE: 'offline',
     RESTING: 'resting',
+    NEATEN: 'neaten',
 
     TALKING: 'talking',
     RINGING: 'ringing',

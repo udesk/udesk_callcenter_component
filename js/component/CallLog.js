@@ -1,10 +1,13 @@
-var CallLog = function(opt) {
+let CallLog = function(opt) {
     this.state = opt.state;
     this.call_id = opt.call_id;
     this.conversation_id = opt.conversation_id;
     this.agent_work_way = opt.agent_work_way;
     this.direction = opt.direction;
-    this.can_transfer = opt.can_transfer;
+    this.can_transfer = opt.can_transfer === 'true';
+    this.can_consult = opt.can_consult === 'true';
+    this.can_three_party = opt.can_three_party === 'true';
+    this.is_consult = opt.is_consult === 'true';
 };
 
 CallLog.prototype.update = function(callLog) {
@@ -16,6 +19,9 @@ CallLog.prototype.update = function(callLog) {
     this.agent_work_way = callLog.agent_work_way;
     this.direction = callLog.direction;
     this.can_transfer = callLog.can_transfer;
+    this.can_consult = callLog.can_consult;
+    this.can_three_party = callLog.can_three_party;
+    this.is_consult = callLog.is_consult;
     return this;
 };
 
