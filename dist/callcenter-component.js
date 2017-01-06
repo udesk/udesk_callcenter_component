@@ -146,7 +146,9 @@
 	                        return ele && (_this2.container = ele.parentElement);
 	                    } },
 	                _react2.default.createElement(_Header2.default, { onMinimize: this.collapse.bind(this), onMaximize: this.expand.bind(this),
-	                    onDrag: this.drag.bind(this) }),
+	                    onDrag: this.drag.bind(this), ref: function ref(ele) {
+	                        return ele && (_this2.headerComponent = ele);
+	                    } }),
 	                _react2.default.createElement(_AgentStatePanel2.default, { dropdownDirection: this.state.expand ? 'down' : 'up' }),
 	                _react2.default.createElement(_MainContent2.default, { className: this.state.expand ? '' : 'hide' })
 	            );
@@ -163,6 +165,7 @@
 
 	                if (top < 0) {
 	                    self.container.style.bottom = window.innerHeight - height + 'px';
+	                    self.headerComponent.mouseDown = false;
 	                }
 	            }, 1000);
 	        }
@@ -321,7 +324,7 @@
 
 
 	// module
-	exports.push([module.id, "#udesk-callcenter-component-alert{position:fixed;top:100px;left:50%;transform:translateX(-50%);padding:20px 30px;color:#fff}.udesk-callcenter-component{background-color:#fff;width:270px;position:fixed;right:0;bottom:0}.udesk-callcenter-component .top-bar{height:34px;line-height:34px;padding-left:11px;padding-right:11px;background-color:#333;cursor:move}.udesk-callcenter-component .top-bar .title{color:#fff;width:50%;height:100%}.udesk-callcenter-component .top-bar .resize-btn{height:12px;float:right;cursor:pointer}.udesk-callcenter-component .content-wrapper{padding:20px;border:1px solid #e4e4e4;border-top-width:0;color:#666;font-size:14px}.udesk-callcenter-component .agent-state-panel{background-color:#f2f2f2;padding:15px}.udesk-callcenter-component .agent-state-panel .way-select{width:50px}.udesk-callcenter-component .agent-state-panel .state-select{width:65px;float:right}.udesk-callcenter-component .agent-state-panel .working{font-size:14px}.udesk-callcenter-component .ucm-dropdown{position:relative;font-size:14px}.udesk-callcenter-component .ucm-dropdown>img,.udesk-callcenter-component .ucm-dropdown div{cursor:pointer}.udesk-callcenter-component .ucm-dropdown>img{float:right;margin-top:4px}.udesk-callcenter-component .ucm-dropdown ul{border:1px solid #ccc;padding:3px;position:absolute;left:0;top:100%;margin:0;width:100%;background-color:#fff;z-index:9999999;list-style:none}.udesk-callcenter-component .ucm-dropdown ul li{padding:3px 0;cursor:pointer}.udesk-callcenter-component .ucm-dropdown ul li:hover{background-color:#c3c3c3}.udesk-callcenter-component .ucm-dropdown ul.up{bottom:100%;top:auto}.udesk-callcenter-component .work-state-busy i,.udesk-callcenter-component .work-state-idle i,.udesk-callcenter-component .work-state-neaten i,.udesk-callcenter-component .work-state-offline i,.udesk-callcenter-component .work-state-resting i,.udesk-callcenter-component .work-state-ringing i,.udesk-callcenter-component .work-state-talking i{display:inline-block;vertical-align:middle;width:10px;height:10px;margin-right:3px;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px}.udesk-callcenter-component .work-state-idle i{background-color:#49b34f}.udesk-callcenter-component .work-state-busy i,.udesk-callcenter-component .work-state-offline i,.udesk-callcenter-component .work-state-resting i{background-color:#d75452}.udesk-callcenter-component .work-state-neaten i{background-color:#b5c342}.udesk-callcenter-component .work-state-ringing i,.udesk-callcenter-component .work-state-talking i{background-color:#d75452}.udesk-callcenter-component .agent-select{position:relative}.udesk-callcenter-component .agent-select .dropdown{height:240px;overflow:auto;position:absolute;left:0;right:0;bottom:100%;border:1px solid #c3c3c3;background-color:#fff;margin:0;padding:0}.udesk-callcenter-component .agent-select .dropdown li{list-style-type:none;text-align:left;padding:5px;cursor:pointer}.udesk-callcenter-component .agent-select .dropdown li:hover{background-color:#e0e0e0}.udesk-callcenter-component .agent-select .dropdown li.text-center{text-align:center}.udesk-callcenter-component .agent-select .display-frame{border:1px solid #c3c3c3;padding:5px;font-size:12px;text-align:left;height:12px;cursor:pointer}.udesk-callcenter-component .agent-select .display-frame img{float:right;margin-top:3px}.udesk-callcenter-component .cursor-pointer{cursor:pointer}.udesk-callcenter-component .hide{display:none}.udesk-callcenter-component .common-btn{border:1px solid #ccc;text-align:center;font-size:12px;padding:5px;background-color:#fff;cursor:pointer}.udesk-callcenter-component .common-btn img{height:20px;width:20px;vertical-align:middle}.udesk-callcenter-component button.common-btn{outline:none}.udesk-callcenter-component .btn-group{display:inline-block;border-right:1px solid #ccc}.udesk-callcenter-component .btn-group>.common-btn{border-right:0}.udesk-callcenter-component .inline-block{display:inline-block}.udesk-callcenter-component .number-input{height:36px;border:1px solid #e4e4e4;margin-bottom:20px}.udesk-callcenter-component .number-input>img{float:right;margin-top:6px;margin-right:5px;cursor:pointer}.udesk-callcenter-component .number-input>div{margin-right:30px;height:100%}.udesk-callcenter-component .number-input>div>input{border:0;width:100%;height:100%;outline:none;font-size:16px;padding:0 0 0 5px;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box}.udesk-callcenter-component .keyboard .center,.udesk-callcenter-component .keyboard .left,.udesk-callcenter-component .keyboard .right{float:left;width:33.333333333%}.udesk-callcenter-component .keyboard .left{text-align:left}.udesk-callcenter-component .keyboard .center{text-align:center}.udesk-callcenter-component .keyboard .right{text-align:right}.udesk-callcenter-component .clearfix{clear:both}.udesk-callcenter-component .customer-info{padding-top:10px}.udesk-callcenter-component .customer-info .number-content{margin-right:15px}.udesk-callcenter-component hr{border:0;height:1px;background-color:#ccc;margin-bottom:18px}.udesk-callcenter-component .desc-info{margin-bottom:50px}.udesk-callcenter-component .time-info{margin-bottom:70px}.udesk-callcenter-component .text-center{text-align:center}.udesk-callcenter-component .talking-panel .agent-select-wrapper{padding:0 30px;margin-bottom:24px}.udesk-callcenter-component .talking-panel .time-info{margin-bottom:25px}.udesk-callcenter-component .talking-panel .bottom-btns{margin-bottom:12px}.udesk-callcenter-component .pull-right{float:right}.udesk-callcenter-component .image-button{vertical-align:middle}.udesk-callcenter-component .image-button img{width:20px;height:20px}", ""]);
+	exports.push([module.id, "#udesk-callcenter-component-alert{position:fixed;top:100px;left:50%;transform:translateX(-50%);padding:20px 30px;color:#fff}.udesk-callcenter-component{background-color:#fff;width:270px;position:fixed;right:0;bottom:0}.udesk-callcenter-component .top-bar{height:34px;line-height:34px;padding-left:11px;padding-right:11px;background-color:#333;cursor:move;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;-o-user-select:none}.udesk-callcenter-component .top-bar .title{color:#fff;width:50%;height:100%}.udesk-callcenter-component .top-bar .resize-btn{height:12px;float:right;cursor:pointer}.udesk-callcenter-component .content-wrapper{padding:20px;border:1px solid #e4e4e4;border-top-width:0;color:#666;font-size:14px}.udesk-callcenter-component .agent-state-panel{background-color:#f2f2f2;padding:15px}.udesk-callcenter-component .agent-state-panel .way-select{width:50px}.udesk-callcenter-component .agent-state-panel .state-select{width:65px;float:right}.udesk-callcenter-component .agent-state-panel .working{font-size:14px}.udesk-callcenter-component .ucm-dropdown{position:relative;font-size:14px}.udesk-callcenter-component .ucm-dropdown>img,.udesk-callcenter-component .ucm-dropdown div{cursor:pointer}.udesk-callcenter-component .ucm-dropdown>img{float:right;margin-top:4px}.udesk-callcenter-component .ucm-dropdown ul{border:1px solid #ccc;padding:3px;position:absolute;left:0;top:100%;margin:0;width:100%;background-color:#fff;z-index:9999999;list-style:none}.udesk-callcenter-component .ucm-dropdown ul li{padding:3px 0;cursor:pointer}.udesk-callcenter-component .ucm-dropdown ul li:hover{background-color:#c3c3c3}.udesk-callcenter-component .ucm-dropdown ul.up{bottom:100%;top:auto}.udesk-callcenter-component .work-state-busy i,.udesk-callcenter-component .work-state-idle i,.udesk-callcenter-component .work-state-neaten i,.udesk-callcenter-component .work-state-offline i,.udesk-callcenter-component .work-state-resting i,.udesk-callcenter-component .work-state-ringing i,.udesk-callcenter-component .work-state-talking i{display:inline-block;vertical-align:middle;width:10px;height:10px;margin-right:3px;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px}.udesk-callcenter-component .work-state-idle i{background-color:#49b34f}.udesk-callcenter-component .work-state-busy i,.udesk-callcenter-component .work-state-offline i,.udesk-callcenter-component .work-state-resting i{background-color:#d75452}.udesk-callcenter-component .work-state-neaten i{background-color:#b5c342}.udesk-callcenter-component .work-state-ringing i,.udesk-callcenter-component .work-state-talking i{background-color:#d75452}.udesk-callcenter-component .agent-select{position:relative}.udesk-callcenter-component .agent-select .dropdown{height:240px;overflow:auto;position:absolute;left:0;right:0;bottom:100%;border:1px solid #c3c3c3;background-color:#fff;margin:0;padding:0}.udesk-callcenter-component .agent-select .dropdown li{list-style-type:none;text-align:left;padding:5px;cursor:pointer}.udesk-callcenter-component .agent-select .dropdown li:hover{background-color:#e0e0e0}.udesk-callcenter-component .agent-select .dropdown li.text-center{text-align:center}.udesk-callcenter-component .agent-select .display-frame{border:1px solid #c3c3c3;padding:5px;font-size:12px;text-align:left;height:12px;cursor:pointer}.udesk-callcenter-component .agent-select .display-frame img{float:right;margin-top:3px}.udesk-callcenter-component .cursor-pointer{cursor:pointer}.udesk-callcenter-component .hide{display:none}.udesk-callcenter-component .common-btn{border:1px solid #ccc;text-align:center;font-size:12px;padding:5px;background-color:#fff;cursor:pointer}.udesk-callcenter-component .common-btn img{height:20px;width:20px;vertical-align:middle}.udesk-callcenter-component button.common-btn{outline:none}.udesk-callcenter-component .btn-group{display:inline-block;border-right:1px solid #ccc}.udesk-callcenter-component .btn-group>.common-btn{border-right:0}.udesk-callcenter-component .inline-block{display:inline-block}.udesk-callcenter-component .number-input{height:36px;border:1px solid #e4e4e4;margin-bottom:20px}.udesk-callcenter-component .number-input>img{float:right;margin-top:6px;margin-right:5px;cursor:pointer}.udesk-callcenter-component .number-input>div{margin-right:30px;height:100%}.udesk-callcenter-component .number-input>div>input{border:0;width:100%;height:100%;outline:none;font-size:16px;padding:0 0 0 5px;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box}.udesk-callcenter-component .keyboard .center,.udesk-callcenter-component .keyboard .left,.udesk-callcenter-component .keyboard .right{float:left;width:33.333333333%}.udesk-callcenter-component .keyboard .left{text-align:left}.udesk-callcenter-component .keyboard .center{text-align:center}.udesk-callcenter-component .keyboard .right{text-align:right}.udesk-callcenter-component .clearfix{clear:both}.udesk-callcenter-component .customer-info{padding-top:10px}.udesk-callcenter-component .customer-info .number-content{margin-right:15px}.udesk-callcenter-component hr{border:0;height:1px;background-color:#ccc;margin-bottom:18px}.udesk-callcenter-component .desc-info{margin-bottom:50px}.udesk-callcenter-component .time-info{margin-bottom:70px}.udesk-callcenter-component .text-center{text-align:center}.udesk-callcenter-component .talking-panel .agent-select-wrapper{padding:0 30px;margin-bottom:24px}.udesk-callcenter-component .talking-panel .time-info{margin-bottom:25px}.udesk-callcenter-component .talking-panel .bottom-btns{margin-bottom:12px}.udesk-callcenter-component .pull-right{float:right}.udesk-callcenter-component .image-button{vertical-align:middle}.udesk-callcenter-component .image-button img{width:20px;height:20px}", ""]);
 
 	// exports
 
@@ -23237,7 +23240,7 @@
 	        _this.state = {
 	            expand: false
 	        };
-	        _this.keyDown = false;
+	        _this.MouseDown = false;
 	        return _this;
 	    }
 
@@ -23260,8 +23263,13 @@
 	            }
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'top-bar', onMouseDown: this.onMouseDown.bind(this), onMouseUp: this.onMouseUp.bind(this),
-	                    onMouseMove: this.onMouseMove.bind(this) },
+	                { className: 'top-bar', onDragStart: function onDragStart() {
+	                        return false;
+	                    }, onDrop: function onDrop() {
+	                        return false;
+	                    },
+	                    unselectable: 'on',
+	                    onMouseDown: this.onMouseDown.bind(this), onMouseUp: this.onMouseUp.bind(this) },
 	                resizeBtn,
 	                _react2.default.createElement(
 	                    'div',
@@ -23269,6 +23277,23 @@
 	                    '\u7535\u8BDD'
 	                )
 	            );
+	        }
+	    }, {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var self = this;
+	            document.onmousemove = function (e) {
+	                if (self.MouseDown === true) {
+	                    var offsetX = e.screenX - self.screenX;
+	                    var offsetY = e.screenY - self.screenY;
+	                    self.screenX = e.screenX;
+	                    self.screenY = e.screenY;
+	                    self.props.onDrag(offsetX, offsetY);
+	                }
+	            };
+	            document.onmouseup = function (e) {
+	                self.MouseDown = false;
+	            };
 	        }
 	    }, {
 	        key: 'minimize',
@@ -23289,26 +23314,18 @@
 	    }, {
 	        key: 'onMouseDown',
 	        value: function onMouseDown(e) {
-	            this.keyDown = true;
+	            this.MouseDown = true;
 	            this.screenX = e.screenX;
 	            this.screenY = e.screenY;
 	        }
 	    }, {
 	        key: 'onMouseUp',
 	        value: function onMouseUp() {
-	            this.keyDown = false;
+	            this.MouseDown = false;
 	        }
 	    }, {
 	        key: 'onMouseMove',
-	        value: function onMouseMove(e) {
-	            if (this.keyDown === true) {
-	                var offsetX = e.screenX - this.screenX;
-	                var offsetY = e.screenY - this.screenY;
-	                this.screenX = e.screenX;
-	                this.screenY = e.screenY;
-	                this.props.onDrag(offsetX, offsetY);
-	            }
-	        }
+	        value: function onMouseMove(e) {}
 	    }]);
 
 	    return Header;

@@ -38,7 +38,7 @@ class UdeskCallCenterComponent extends React.Component {
     render() {
         return <div ref={(ele) => ele && (this.container = ele.parentElement)}>
             <Header onMinimize={this.collapse.bind(this)} onMaximize={this.expand.bind(this)}
-                    onDrag={this.drag.bind(this)}/>
+                    onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}/>
             <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}/>
             <MainContent className={this.state.expand ? '' : 'hide'}/>
         </div>
@@ -51,6 +51,7 @@ class UdeskCallCenterComponent extends React.Component {
             let { top, height } = self.container.getBoundingClientRect();
             if (top < 0) {
                 self.container.style.bottom = (window.innerHeight - height) + 'px';
+                self.headerComponent.mouseDown = false;
             }
         }, 1000);
     }

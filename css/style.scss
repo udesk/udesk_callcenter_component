@@ -26,6 +26,11 @@
         padding-right: 11px;
         background-color: #333;
         cursor: move;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -o-user-select: none;
         .title {
             color: #fff;
             width: 50%;

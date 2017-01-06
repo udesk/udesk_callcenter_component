@@ -7,7 +7,7 @@ class Header extends Component {
         this.state = {
             expand: false
         };
-        this.keyDown = false;
+        this.MouseDown = false;
     }
 
     render() {
@@ -22,12 +22,29 @@ class Header extends Component {
             </div>
         }
         return (
-            <div className="top-bar" onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)}
-                 onMouseMove={this.onMouseMove.bind(this)}>
+            <div className="top-bar" onDragStart={() => false} onDrop={() => false}
+                 unselectable="on"
+                 onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)}>
                 {resizeBtn}
                 <div className="title">电话</div>
             </div>
         )
+    }
+
+    componentDidMount() {
+        let self = this;
+        document.onmousemove = function(e) {
+            if (self.MouseDown === true) {
+                let offsetX = e.screenX - self.screenX;
+                let offsetY = e.screenY - self.screenY;
+                self.screenX = e.screenX;
+                self.screenY = e.screenY;
+                self.props.onDrag(offsetX, offsetY);
+            }
+        };
+        document.onmouseup = function(e) {
+            self.MouseDown = false;
+        }
     }
 
     minimize() {
@@ -45,23 +62,17 @@ class Header extends Component {
     }
 
     onMouseDown(e) {
-        this.keyDown = true;
+        this.MouseDown = true;
         this.screenX = e.screenX;
         this.screenY = e.screenY;
     }
 
     onMouseUp() {
-        this.keyDown = false;
+        this.MouseDown = false;
     }
 
     onMouseMove(e) {
-        if (this.keyDown === true) {
-            let offsetX = e.screenX - this.screenX;
-            let offsetY = e.screenY - this.screenY;
-            this.screenX = e.screenX;
-            this.screenY = e.screenY;
-            this.props.onDrag(offsetX, offsetY);
-        }
+
     }
 }
 
