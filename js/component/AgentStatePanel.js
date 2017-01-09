@@ -84,6 +84,7 @@ export default class AgentStatePanelComponent extends React.Component {
             <Dropdown direction={this.props.dropdownDirection} content={this.agentWayMap}
                       value={this.state.agent_work_way} className="way-select"
                       onChange={this.updateAgentWorkWay.bind(this)}
+                      disabled={this.state.callState !== Const.HANGUP}
             />
         </div>
     }

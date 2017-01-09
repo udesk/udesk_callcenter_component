@@ -121,7 +121,7 @@ class UdeskCallCenterComponent extends React.Component {
 class CallcenterComponent {
     constructor({ container, subDomain, token }) {
         AjaxUtils.token = token;
-        AjaxUtils.host = 'http://' + subDomain + '.udesk.cn';
+        AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
 
         let wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';

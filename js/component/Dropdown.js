@@ -13,7 +13,7 @@ export default class DropdownComponent extends React.Component {
     render() {
         let { content, value } = this.props;
         let selected = _.find(content, { id: value });
-        let dropdownClass = this.state.expand ? '' : 'hide';
+        let dropdownClass = (this.state.expand && !this.props.disabled) ? '' : 'hide';
         dropdownClass += ' ' + this.props.direction;
 
         return <div className={(this.props.className || '') + " ucm-dropdown"}>
@@ -27,7 +27,7 @@ export default class DropdownComponent extends React.Component {
                             this.props.onChange(item);
                         }
                     };
-                    if(!item.hide) {
+                    if (!item.hide) {
                         return <li key={item.id} onClick={onChangeCb}>{item.value}</li>
                     }
                 })}
@@ -36,6 +36,10 @@ export default class DropdownComponent extends React.Component {
     }
 
     toggleExpand() {
+        if (this.props.disabled) {
+            this.setState({ expand: false });
+            return;
+        }
         this.setState({
             expand: !this.state.expand
         });

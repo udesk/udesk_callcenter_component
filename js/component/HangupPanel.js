@@ -37,8 +37,8 @@ export default class HangupPanel extends React.Component {
 
     callout() {
         let number = this.state.inputNumber;
-        if (CallConfig.agent_work_state !== Const.IDLE) {
-            Alert.error('非空闲状态，无法外呼！');
+        if (CallConfig.agent_work_state === Const.OFFLINE) {
+            Alert.error('离线状态无法外呼！');
             return;
         }
 

@@ -250,7 +250,7 @@
 	    _classCallCheck(this, CallcenterComponent);
 
 	    _AjaxUtils2.default.token = token;
-	    _AjaxUtils2.default.host = 'http://' + subDomain + '.udesk.cn';
+	    _AjaxUtils2.default.host = 'http://' + subDomain + '.udesktiger.com';
 
 	    var wrapper = document.createElement('div');
 	    wrapper.className = 'udesk-callcenter-component';
@@ -1225,7 +1225,8 @@
 	                }.call(this),
 	                _react2.default.createElement(_Dropdown4.default, { direction: this.props.dropdownDirection, content: this.agentWayMap,
 	                    value: this.state.agent_work_way, className: 'way-select',
-	                    onChange: this.updateAgentWorkWay.bind(this)
+	                    onChange: this.updateAgentWorkWay.bind(this),
+	                    disabled: this.state.callState !== _Const2.default.HANGUP
 	                })
 	            );
 	        }
@@ -1335,7 +1336,7 @@
 	                value = _props.value;
 
 	            var selected = _lodash2.default.find(content, { id: value });
-	            var dropdownClass = this.state.expand ? '' : 'hide';
+	            var dropdownClass = this.state.expand && !this.props.disabled ? '' : 'hide';
 	            dropdownClass += ' ' + this.props.direction;
 
 	            return _react2.default.createElement(
@@ -1371,6 +1372,10 @@
 	    }, {
 	        key: 'toggleExpand',
 	        value: function toggleExpand() {
+	            if (this.props.disabled) {
+	                this.setState({ expand: false });
+	                return;
+	            }
 	            this.setState({
 	                expand: !this.state.expand
 	            });
@@ -31718,8 +31723,8 @@
 	        key: 'callout',
 	        value: function callout() {
 	            var number = this.state.inputNumber;
-	            if (_CallConfig2.default.agent_work_state !== _Const2.default.IDLE) {
-	                _Alert2.default.error('非空闲状态，无法外呼！');
+	            if (_CallConfig2.default.agent_work_state === _Const2.default.OFFLINE) {
+	                _Alert2.default.error('离线状态无法外呼！');
 	                return;
 	            }
 
