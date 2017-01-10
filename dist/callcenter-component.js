@@ -148,7 +148,8 @@
 	                _react2.default.createElement(_Header2.default, { onMinimize: this.collapse.bind(this), onMaximize: this.expand.bind(this),
 	                    onDrag: this.drag.bind(this), ref: function ref(ele) {
 	                        return ele && (_this2.headerComponent = ele);
-	                    } }),
+	                    },
+	                    onDrop: this.drop.bind(this) }),
 	                _react2.default.createElement(_AgentStatePanel2.default, { dropdownDirection: this.state.expand ? 'down' : 'up' }),
 	                _react2.default.createElement(_MainContent2.default, { className: this.state.expand ? '' : 'hide' })
 	            );
@@ -159,13 +160,30 @@
 	            var self = this;
 	            clearInterval(this.intervaleId);
 	            this.intervaleId = setInterval(function () {
+	                if (self.dragging) {
+	                    return;
+	                }
+
 	                var _self$container$getBo = self.container.getBoundingClientRect(),
 	                    top = _self$container$getBo.top,
-	                    height = _self$container$getBo.height;
+	                    bottom = _self$container$getBo.bottom,
+	                    left = _self$container$getBo.left,
+	                    right = _self$container$getBo.right,
+	                    height = _self$container$getBo.height,
+	                    width = _self$container$getBo.width;
 
 	                if (top < 0) {
 	                    self.container.style.bottom = window.innerHeight - height + 'px';
 	                    self.headerComponent.mouseDown = false;
+	                }
+	                if (bottom > window.innerHeight) {
+	                    self.container.style.bottom = '0';
+	                }
+	                if (left < 0) {
+	                    self.container.style.right = window.innerWidth - width + 'px';
+	                }
+	                if (right > window.innerWidth) {
+	                    self.container.style.right = '0';
 	                }
 	            }, 1000);
 	        }
@@ -182,12 +200,19 @@
 	    }, {
 	        key: 'drag',
 	        value: function drag(offsetX, offsetY) {
+	            this.dragging = true;
+
 	            var _container$getBoundin = this.container.getBoundingClientRect(),
 	                containerRight = _container$getBoundin.right,
 	                containerBottom = _container$getBoundin.bottom;
 
 	            this.container.style.right = window.innerWidth - containerRight - offsetX + 'px';
 	            this.container.style.bottom = window.innerHeight - containerBottom - offsetY + 'px';
+	        }
+	    }, {
+	        key: 'drop',
+	        value: function drop() {
+	            this.dragging = false;
 	        }
 	    }, {
 	        key: 'connectWebSocket',
@@ -23298,6 +23323,7 @@
 	            };
 	            document.onmouseup = function (e) {
 	                self.MouseDown = false;
+	                self.props.onDrop();
 	            };
 	        }
 	    }, {

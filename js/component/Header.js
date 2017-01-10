@@ -44,6 +44,7 @@ class Header extends Component {
         };
         document.onmouseup = function(e) {
             self.MouseDown = false;
+            self.props.onDrop();
         }
     }
 
