@@ -139,7 +139,6 @@ export default class TalkingPanelComponent extends React.Component {
     hideAgentSelect() {
         this.setState({ agentSelectType: null, showAgentSelect: false });
     }
-
     componentWillUnmount() {
         CallInfo.off('change', this.onCallInfoChange);
     }
