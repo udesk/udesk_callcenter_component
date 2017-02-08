@@ -27,7 +27,8 @@
     "node-sass": "^3.13.0",
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
-    "url-loader": "^0.5.7"
+    "url-loader": "^0.5.7",
+    "webpack": "1.12.14"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
