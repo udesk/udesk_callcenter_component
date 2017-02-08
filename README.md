@@ -1,7 +1,7 @@
 使用方法
 -----
 
-#### 1、html中引用callcenter-component.js
+#### 1、html中引入dist目录下的callcenter-component.js
 
 ```html
 <script src='./dist/callcenter-component.js'></script>
@@ -12,7 +12,7 @@
 ```javascript
 new UdeskCallcenterComponent({
     container: document.body,    //组件的容器
-    token: 'xx*xxxxx',  //通过登录接口获取的客服token
+    token: 'xxxxxxxx',  //通过登录接口获取的客服token，接口文档在doc/登录.md
     subDomain: 'udesk'  //在udesk注册的二级域名
 });
 ```
