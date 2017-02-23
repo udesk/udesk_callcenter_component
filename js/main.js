@@ -1,5 +1,5 @@
-import '!style-loader!css-loader?minimize!sass-loader!../css/style.scss';
-import 'font-awesome-webpack';
+import '../css/style.scss';
+import 'font-awesome/scss/font-awesome.scss';
 import './component/ie8-child-elements';
 import AgentStatePanel from './component/AgentStatePanel.js';
 import Header from './component/Header.js';
