@@ -45,29 +45,29 @@ class UdeskCallCenterComponent extends React.Component {
         </div>
     }
 
-    componentDidMount() {
-        let self = this;
-        clearInterval(this.intervaleId);
-        this.intervaleId = setInterval(function() {
-            if (self.dragging) {
-                return;
-            }
-            let { top, bottom, left, right, height, width } = self.container.getBoundingClientRect();
-            if (top < 0) {
-                self.container.style.bottom = (window.innerHeight - height) + 'px';
-                self.headerComponent.mouseDown = false;
-            }
-            if (bottom > window.innerHeight) {
-                self.container.style.bottom = '0';
-            }
-            if (left < 0) {
-                self.container.style.right = (window.innerWidth - width) + 'px';
-            }
-            if (right > window.innerWidth) {
-                self.container.style.right = '0';
-            }
-        }, 1000);
-    }
+    //componentDidMount() {
+    //    let self = this;
+    //    clearInterval(this.intervaleId);
+    //    this.intervaleId = setInterval(function() {
+    //        if (self.dragging) {
+    //            return;
+    //        }
+    //        let { top, bottom, left, right, height, width } = self.container.getBoundingClientRect();
+    //        if (top < 0) {
+    //            self.container.style.bottom = (window.innerHeight - height) + 'px';
+    //            self.headerComponent.mouseDown = false;
+    //        }
+    //        if (bottom > window.innerHeight) {
+    //            self.container.style.bottom = '0';
+    //        }
+    //        if (left < 0) {
+    //            self.container.style.right = (window.innerWidth - width) + 'px';
+    //        }
+    //        if (right > window.innerWidth) {
+    //            self.container.style.right = '0';
+    //        }
+    //    }, 1000);
+    //}
 
     collapse() {
         this.setState({ expand: false });
@@ -78,10 +78,10 @@ class UdeskCallCenterComponent extends React.Component {
     }
 
     drag(offsetX, offsetY) {
-        this.dragging = true;
-        let { right:containerRight, bottom:containerBottom } = this.container.getBoundingClientRect();
-        this.container.style.right = (window.innerWidth - containerRight - offsetX) + 'px';
-        this.container.style.bottom = (window.innerHeight - containerBottom - offsetY) + 'px';
+        //this.dragging = true;
+        //let { right:containerRight, bottom:containerBottom } = this.container.getBoundingClientRect();
+        //this.container.style.right = (window.innerWidth - containerRight - offsetX) + 'px';
+        //this.container.style.bottom = (window.innerHeight - containerBottom - offsetY) + 'px';
     }
 
     drop() {
