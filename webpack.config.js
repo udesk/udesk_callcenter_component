@@ -36,8 +36,8 @@ module.exports = [{
                 NODE_ENV: JSON.stringify('production')
             }
         }),
-        new ExtractTextPlugin("css/style.css"),
-        new UglifyJSPlugin()
+        new ExtractTextPlugin("css/callcenter-component.css"),
+        //new UglifyJSPlugin()
     ]
 }
 ];

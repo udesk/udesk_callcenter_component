@@ -6,16 +6,75 @@
     <title></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <link rel="stylesheet" type="text/css" href="./css/callcenter-component.css">
+    <style type="text/css">
+        table {
+            border: 1px;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        table th {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+        }
+
+        table tbody td {
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+<table>
+    <caption>
+        历史弹屏
+    </caption>
+    <thead>
+    <th>客户号码</th>
+    <th>通话类型</th>
+    <th>客服姓名</th>
+    <th>客服ID</th>
+    <th>来源队列</th>
+    <th>通话记录ID</th>
+    <th>归属地</th>
+    <th>振铃时间</th>
+    </thead>
+    <tbody id="screen-pop-history">
+
+    </tbody>
+</table>
 <script src="./callcenter-component.js"></script>
 <script>
-    new UdeskCallcenterComponent({
+    var tbody = document.getElementById('screen-pop-history');
+    var callComp = new UdeskCallcenterComponent({
         container: document.body,
-        token: 'xxxxxx',  // 客服token
-        subDomain: 'xxxxxx' // 您在udesk注册的二级域名
+        token: 'd62eea707ed22f5773cf5cc6627f598b7a408c46bd6887453908e9402ca8628c67f72f2ac87a30c5aa324f7493bd49bbe9a59d918d999716509f4610080d006058be4d8d',  // 客服token
+        subDomain: 'ucpapp', // 您在udesk注册的二级域名
+        onScreenPop: function(conversation) {
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td><a href="javascript:;" onclick="makeCall(\'' + conversation.customer_phone_number + '\')">' +
+                conversation.customer_phone_number + '</a></td>' +   //客户电话
+                '<td>' + conversation.call_type + '</td>' + //呼入、呼出
+                '<td>' + conversation.agent_name + '</td>' +  //客服姓名
+                '<td>' + conversation.agent_id + '</td>' +  //客服ID
+                '<td>' + (conversation.queue_name || '') + '</td>' +  //队列，仅呼入有值，呼出值为null
+                '<td>' + conversation.conversation_id + '</td>' +  //conversation_id
+                '<td>' + conversation.customer_phone_location + '</td>' + //客户手机号归属地
+                '<td>' + conversation.ring_time + '</td>'; //振铃时间
+            tbody.prepend(tr);
+        }
     });
+
+    function makeCall(phone_number) {
+        callComp.makeCall(phone_number, function() {
+            console.log('外呼成功');
+        }, function() {
+            console.log('外呼失败');
+        })
+    }
 </script>
 </body>
 </html>

@@ -1,5 +1,5 @@
-import CallInfo from './CallInfo';
-import utils from './Tools';
+import CallInfo from '../CallInfo';
+import utils from '../Tools';
 import CustomerInfo from './CustomerInfo';
 import React from 'react';
 import images from './images';
