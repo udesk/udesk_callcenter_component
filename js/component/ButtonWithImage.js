@@ -1,5 +1,5 @@
 import React from 'react';
-import tools from './Tools';
+import tools from '../Tools';
 
 export default class ButtonWithImageComponent extends React.Component {
     constructor() {

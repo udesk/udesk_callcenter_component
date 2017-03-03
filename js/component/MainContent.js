@@ -1,5 +1,5 @@
 import React from 'react';
-import CallInfo from './CallInfo';
+import CallInfo from '../CallInfo';
 import HangupPanel from './HangupPanel';
 import TalkingPanel from './TalkingPanel';
 import RingingPanel from './RingingPanel';

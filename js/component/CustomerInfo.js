@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import CallInfo from './CallInfo';
+import CallInfo from '../CallInfo';
 
 class CustomerInfoComponent extends Component {
     constructor(props) {

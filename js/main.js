@@ -1,18 +1,20 @@
-import '../css/style.scss';
+import '../css/callcenter-component.scss';
 import 'font-awesome/scss/font-awesome.scss';
 import './component/ie8-child-elements';
 import AgentStatePanel from './component/AgentStatePanel.js';
 import Header from './component/Header.js';
 import Socket from './component/socket';
-import callQueue from './component/CallQueue';
-import CallLog from './component/CallLog';
-import AjaxUtils from './component/AjaxUtils';
+import CallQueue from './CallQueue';
+import CallLog from './CallLog';
+import AjaxUtils from './AjaxUtils';
 import Alert from './component/Alert';
-import CallInfo from './component/CallInfo';
-import CallConfig from './component/CallConfig';
+import CallInfo from './CallInfo';
+import CallConfig from './CallConfig';
 import MainContent from './component/MainContent';
 import React from 'react';
 import { render } from 'react-dom';
+import Agent from './Agent';
+import { makeCall } from './CallUtil';
 
 class UdeskCallCenterComponent extends React.Component {
     constructor() {
@@ -26,9 +28,12 @@ class UdeskCallCenterComponent extends React.Component {
             CallConfig.set('agent_work_state', res.agent_work_state);
             CallConfig.set('agent_work_way', res.agent_work_way);
 
-            self.seatToken = res.seatToken;
             self.tower_url = res.tower_host;
             self.user_id = res.user_id;
+
+            Agent.id = res.user_id;
+            Agent.name = res.user_name;
+
             self.connectWebSocket();
         }, function() {
             Alert.error('获取初始化数据失败!');
@@ -90,13 +95,13 @@ class UdeskCallCenterComponent extends React.Component {
 
     connectWebSocket() {
         var self = this;
-        this.socket = new Socket(this.tower_url, this.user_id, this.seatToken);
+        this.socket = new Socket(this.tower_url, this.user_id);
 
         //websocket
         this.socket.onNotice(function(msg) {
             switch (msg.type) {
                 case 'call_log':
-                    callQueue.put(new CallLog(msg));
+                    CallQueue.put(new CallLog(msg));
                     break;
                 case 'seat_status':
                     let workWay = msg.agent_work_way;
@@ -137,9 +142,10 @@ class UdeskCallCenterComponent extends React.Component {
 }
 
 class CallcenterComponent {
-    constructor({ container, subDomain, token }) {
+    constructor({ container, subDomain, token, onScreenPop }) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
+        //AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
 
         let wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
@@ -147,7 +153,27 @@ class CallcenterComponent {
         render(<UdeskCallCenterComponent
             callConfig={CallConfig}
         />, wrapper);
+
+        if (onScreenPop) {
+            CallInfo.onScreenPop = function(callLog) {
+                onScreenPop({
+                    conversation_id: callLog.conversation_id,  //通话记录ID
+                    call_type: callLog.call_type,  //呼入呼出
+                    customer_phone_number: callLog.customer_phone, //客户号码
+                    queue_name: callLog.queue_desc,  //来源队列
+                    customer_phone_location: callLog.phone_location,  //归属地
+                    agent_id: Agent.id,
+                    agent_name: Agent.name,
+                    ring_time: callLog.ring_at
+                });
+            };
+        }
     }
+
+    makeCall(number, onSuccess, onFailure) {
+        makeCall(number, onSuccess, onFailure);
+    }
+
 }
 
 window.UdeskCallcenterComponent = CallcenterComponent;

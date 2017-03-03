@@ -1,5 +1,5 @@
 import images from './images';
-import AjaxUtils from './AjaxUtils';
+import AjaxUtils from '../AjaxUtils';
 import Alert from './Alert';
 import React from 'react';
 import _ from 'lodash';

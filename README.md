@@ -17,11 +17,38 @@ dist目录下是已经编译压缩以后的代码，可以直接放到你的项�
 
 ```html
 <script>
-new UdeskCallcenterComponent({
+var callComponent = new UdeskCallcenterComponent({
     container: document.body,    //组件的容器
     token: 'xxxxxxxx',           //通过登录接口获取的客服token，接口文档在doc/登录.md
-    subDomain: 'udesk'           //在udesk注册的二级域名
+    subDomain: 'udesk',           //在udesk注册的二级域名
+    onScreenPop: function(callLog){}  //弹屏事件触发的方法
 });
+</script>
+```
+
+###### 弹屏事件(onScreenPop)
+
+创建UdeskCallcenterComponent的时候传入onScreenPop。
+onScreenPop是一个方法，参数是Object conversation，
+当有新的通话时，会触发这个方法，conversation拥有以下属性
+
+属性名称|描述
+----|----
+conversation_id|通话记录ID
+call_type|通话类型,只能是下列几个值之一，呼入、呼出、呼入（转接）、呼入（三方），呼入（咨询），呼入（强插），呼入（监听），呼入（强拆）
+customer_phone_number|客户号码
+queue_name|来源队列
+customer_phone_location|归属地
+agent_id|客服ID
+agent_name|客服姓名
+ring_time|振铃开始时间，例子：2017-03-09T14:34:24+08:00
+
+#### 3、如何调用通话组件的外呼方法
+
+```html
+<script>
+var phoneNumber = '18888888888';
+callComponent.makeCall(phoneNumber);
 </script>
 ```
 

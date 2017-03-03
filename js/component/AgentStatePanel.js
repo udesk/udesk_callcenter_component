@@ -1,11 +1,11 @@
-import Const from './Const';
+import Const from '../Const';
 import DropdownBtn from './Dropdown.js';
-import AjaxUtils from './AjaxUtils';
+import AjaxUtils from '../AjaxUtils';
 import Alert from './Alert';
-import CallConfig from './CallConfig';
+import CallConfig from '../CallConfig';
 import React from 'react';
 import Dropdown from './Dropdown';
-import CallInfo from './CallInfo';
+import CallInfo from '../CallInfo';
 
 var doc = document;
 var agentStateMap = {};
