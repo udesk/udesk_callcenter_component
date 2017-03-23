@@ -142,7 +142,7 @@ class UdeskCallCenterComponent extends React.Component {
 }
 
 class CallcenterComponent {
-    constructor({ container, subDomain, token, onScreenPop }) {
+    constructor({ container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup }) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
         //AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
@@ -154,19 +154,38 @@ class CallcenterComponent {
             callConfig={CallConfig}
         />, wrapper);
 
+        let converter = (callLog) => {
+            return {
+                conversation_id: callLog.conversation_id,  //通话记录ID
+                call_type: callLog.call_type,  //呼入呼出
+                customer_phone_number: callLog.customer_phone, //客户号码
+                queue_name: callLog.queue_desc,  //来源队列
+                customer_phone_location: callLog.phone_location,  //归属地
+                agent_id: Agent.id,
+                agent_name: Agent.name,
+                ring_time: callLog.ring_at
+            }
+        };
+
         if (onScreenPop) {
-            CallInfo.onScreenPop = function(callLog) {
-                onScreenPop({
-                    conversation_id: callLog.conversation_id,  //通话记录ID
-                    call_type: callLog.call_type,  //呼入呼出
-                    customer_phone_number: callLog.customer_phone, //客户号码
-                    queue_name: callLog.queue_desc,  //来源队列
-                    customer_phone_location: callLog.phone_location,  //归属地
-                    agent_id: Agent.id,
-                    agent_name: Agent.name,
-                    ring_time: callLog.ring_at
-                });
-            };
+            CallInfo.on('screenPop', function(callLog) {
+                onScreenPop(converter(callLog));
+            });
+        }
+        if (onRinging) {
+            CallInfo.on('ringing', function(callLog) {
+                onRinging(converter(callLog));
+            });
+        }
+        if (onTalking) {
+            CallInfo.on('talking', function(callLog) {
+                onTalking(converter(callLog));
+            });
+        }
+        if (onHangup) {
+            CallInfo.on('hangup', function(callLog) {
+                onHangup(converter((callLog)));
+            });
         }
     }
 

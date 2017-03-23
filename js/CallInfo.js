@@ -17,6 +17,13 @@ class CallInfo extends Eventable {
         this.queue_desc = '';
         this.state = 'hangup';
         this.cache = [];  //如果正在通话，缓存新的未挂断的通话。
+        this.eventMap = {
+            change: [],
+            ringing: [],
+            talking: [],
+            hangup: [],
+            screenPop: []
+        };
 
         let self = this;
         this.on('change', function(k, v, callInfo) {
@@ -26,13 +33,16 @@ class CallInfo extends Eventable {
                     self.set('ringingTime', 0);
                     self.startRingingTiming();
                     clearInterval(self.talkingTimingIntervalId);
+                    self.fire('ringing', self);
                 } else if (v === 'talking') {
                     self.set('talkingTime', 0);
                     self.startTalkingTiming();
                     clearInterval(self.ringingTimingIntervalId);
+                    self.fire('talking', self);
                 } else if (v === 'hangup') {
                     clearInterval(self.talkingTimingIntervalId);
                     clearInterval(self.ringingTimingIntervalId);
+                    self.fire('hangup', self);
                 }
             }
             //if (k === 'conversation_id') {
@@ -44,7 +54,7 @@ class CallInfo extends Eventable {
         });
 
         CallQueue.on('change', function(v) {
-            //当挂断消息到来并且与当前弹屏的conversation_id一致，跳过cache，直接更新callInfo
+            //当新消息到来并且与当前弹屏的conversation_id一致，跳过cache，直接更新callInfo
             if (v.conversation_id === self.conversation_id) {
                 self.updateFromCallLog(v);
             } else {
@@ -121,9 +131,7 @@ class CallInfo extends Eventable {
         if (this.state === Const.HANGUP) {
             this.readCache();
         }
-        if (this.onScreenPop) {
-            this.onScreenPop(this);
-        }
+        this.fire('screenPop', this);
     }
 
     //fetchConversation() {

@@ -50,8 +50,8 @@
     var tbody = document.getElementById('screen-pop-history');
     var callComp = new UdeskCallcenterComponent({
         container: document.body,
-        token: 'd62eea707ed22f5773cf5cc6627f598b7a408c46bd6887453908e9402ca8628c67f72f2ac87a30c5aa324f7493bd49bbe9a59d918d999716509f4610080d006058be4d8d',  // 客服token
-        subDomain: 'ucpapp', // 您在udesk注册的二级域名
+        token: 'XXXXXXXXX',  // 客服token
+        subDomain: 'subdomain', // 您在udesk注册的二级域名
         onScreenPop: function(conversation) {
             var tr = document.createElement('tr');
             tr.innerHTML =
@@ -65,6 +65,15 @@
                 '<td>' + conversation.customer_phone_location + '</td>' + //客户手机号归属地
                 '<td>' + conversation.ring_time + '</td>'; //振铃时间
             tbody.prepend(tr);
+        },
+        onRinging: function(conversation) {
+            console.log('振铃', conversation);
+        },
+        onTalking: function(conversation) {
+            console.log('通话', conversation);
+        },
+        onHangup: function(conversation) {
+            console.log('挂断', conversation);
         }
     });
 

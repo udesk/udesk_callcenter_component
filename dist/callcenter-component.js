@@ -1854,6 +1854,13 @@ var CallInfo = function (_Eventable) {
         _this.queue_desc = '';
         _this.state = 'hangup';
         _this.cache = []; //如果正在通话，缓存新的未挂断的通话。
+        _this.eventMap = {
+            change: [],
+            ringing: [],
+            talking: [],
+            hangup: [],
+            screenPop: []
+        };
 
         var self = _this;
         _this.on('change', function (k, v, callInfo) {
@@ -1863,13 +1870,16 @@ var CallInfo = function (_Eventable) {
                     self.set('ringingTime', 0);
                     self.startRingingTiming();
                     clearInterval(self.talkingTimingIntervalId);
+                    self.fire('ringing', self);
                 } else if (v === 'talking') {
                     self.set('talkingTime', 0);
                     self.startTalkingTiming();
                     clearInterval(self.ringingTimingIntervalId);
+                    self.fire('talking', self);
                 } else if (v === 'hangup') {
                     clearInterval(self.talkingTimingIntervalId);
                     clearInterval(self.ringingTimingIntervalId);
+                    self.fire('hangup', self);
                 }
             }
             //if (k === 'conversation_id') {
@@ -1881,7 +1891,7 @@ var CallInfo = function (_Eventable) {
         });
 
         _CallQueue2.default.on('change', function (v) {
-            //当挂断消息到来并且与当前弹屏的conversation_id一致，跳过cache，直接更新callInfo
+            //当新消息到来并且与当前弹屏的conversation_id一致，跳过cache，直接更新callInfo
             if (v.conversation_id === self.conversation_id) {
                 self.updateFromCallLog(v);
             } else {
@@ -1976,9 +1986,7 @@ var CallInfo = function (_Eventable) {
             if (this.state === _Const2.default.HANGUP) {
                 this.readCache();
             }
-            if (this.onScreenPop) {
-                this.onScreenPop(this);
-            }
+            this.fire('screenPop', this);
         }
 
         //fetchConversation() {
@@ -48484,7 +48492,10 @@ var CallcenterComponent = function () {
         var container = _ref.container,
             subDomain = _ref.subDomain,
             token = _ref.token,
-            onScreenPop = _ref.onScreenPop;
+            onScreenPop = _ref.onScreenPop,
+            onRinging = _ref.onRinging,
+            onTalking = _ref.onTalking,
+            onHangup = _ref.onHangup;
 
         _classCallCheck(this, CallcenterComponent);
 
@@ -48499,19 +48510,38 @@ var CallcenterComponent = function () {
             callConfig: _CallConfig2.default
         }), wrapper);
 
-        if (onScreenPop) {
-            _CallInfo2.default.onScreenPop = function (callLog) {
-                onScreenPop({
-                    conversation_id: callLog.conversation_id, //通话记录ID
-                    call_type: callLog.call_type, //呼入呼出
-                    customer_phone_number: callLog.customer_phone, //客户号码
-                    queue_name: callLog.queue_desc, //来源队列
-                    customer_phone_location: callLog.phone_location, //归属地
-                    agent_id: _Agent2.default.id,
-                    agent_name: _Agent2.default.name,
-                    ring_time: callLog.ring_at
-                });
+        var converter = function converter(callLog) {
+            return {
+                conversation_id: callLog.conversation_id, //通话记录ID
+                call_type: callLog.call_type, //呼入呼出
+                customer_phone_number: callLog.customer_phone, //客户号码
+                queue_name: callLog.queue_desc, //来源队列
+                customer_phone_location: callLog.phone_location, //归属地
+                agent_id: _Agent2.default.id,
+                agent_name: _Agent2.default.name,
+                ring_time: callLog.ring_at
             };
+        };
+
+        if (onScreenPop) {
+            _CallInfo2.default.on('screenPop', function (callLog) {
+                onScreenPop(converter(callLog));
+            });
+        }
+        if (onRinging) {
+            _CallInfo2.default.on('ringing', function (callLog) {
+                onRinging(converter(callLog));
+            });
+        }
+        if (onTalking) {
+            _CallInfo2.default.on('talking', function (callLog) {
+                onTalking(converter(callLog));
+            });
+        }
+        if (onHangup) {
+            _CallInfo2.default.on('hangup', function (callLog) {
+                onHangup(converter(callLog));
+            });
         }
     }
 
