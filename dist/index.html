@@ -66,12 +66,6 @@
                 '<td>' + conversation.ring_time + '</td>'; //振铃时间
             tbody.prepend(tr);
         },
-        onRinging: function(conversation) {
-            console.log('振铃', conversation);
-        },
-        onTalking: function(conversation) {
-            console.log('通话', conversation);
-        },
         onHangup: function(conversation) {
             console.log('挂断', conversation);
         }

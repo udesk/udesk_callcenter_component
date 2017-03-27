@@ -3,7 +3,7 @@
 
 请求地址
 -----------------
-+ URL '/open_api_v1/get_agent_token'
++ URL 'https://{您在udesk注册的二级域名}/open_api_v1/get_agent_token'
 + VERB POST
 
 请求头
@@ -23,7 +23,7 @@ content_type: application/json
   "email": "admin@demo.com",  // 管理员邮箱
   "agent_email": "agent@demo.com", //客服邮箱
   "timestamp": "1490410834", //当前时间的Unix timestamps
-  "sign": sha1(adminEmail+"&"+openApiToken+"&"+timestamp) //签名，email(管理员邮箱),agent_email(客服邮箱),openApiToken的值用&拼接，然后用sha1加密后的结果
+  "sign": sha1(adminEmail+"&"+openApiToken+"&"+timestamp) //签名，adminEmail(管理员邮箱),openApiToken,当前的时间戳用&拼接，然后用sha1加密后的结果
 }
 ```
 
