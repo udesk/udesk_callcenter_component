@@ -145,7 +145,7 @@ class CallcenterComponent {
     constructor({ container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup }) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
-        //AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
+        //AjaxUtils.host = 'http://' + subDomain + '.udeskt1.com';
 
         let wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';

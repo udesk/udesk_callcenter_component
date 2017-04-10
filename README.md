@@ -19,7 +19,7 @@ dist目录下是已经编译压缩以后的代码，可以直接放到你的项�
 <script>
 var callComponent = new UdeskCallcenterComponent({
     container: document.body,    //组件的容器
-    token: 'xxxxxxxx',           //通过登录接口获取的客服token，接口文档在doc/登录.md
+    token: 'xxxxxxxx',           //通过登录接口获取的客服token，接口文档在doc/获取agent_api_token.md
     subDomain: 'udesk',           //在udesk注册的二级域名
     onScreenPop: function(callLog){}  //弹屏事件触发的方法
 });
