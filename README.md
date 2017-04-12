@@ -21,16 +21,21 @@ var callComponent = new UdeskCallcenterComponent({
     container: document.body,    //组件的容器
     token: 'xxxxxxxx',           //通过登录接口获取的客服token，接口文档在doc/获取agent_api_token.md
     subDomain: 'udesk',           //在udesk注册的二级域名
-    onScreenPop: function(callLog){}  //弹屏事件触发的方法
+    onScreenPop: function(conversation){},  //弹屏事件触发的方法
+    onHangup: function(conversation){}
 });
 </script>
 ```
 
-###### 弹屏事件(onScreenPop)
+##### 弹屏事件(onScreenPop)
 
-创建UdeskCallcenterComponent的时候传入onScreenPop。
-onScreenPop是一个方法，参数是Object conversation，
-当有新的通话时，会触发这个方法，conversation拥有以下属性
+> 创建UdeskCallcenterComponent的时候传入onScreenPop。onScreenPop是一个方法，参数是[Object conversation](#conversation对象)
+
+##### 挂断事件
+
+> 创建UdeskCallcenterComponent的时候传入onHangup。onHangup是一个方法，参数是[Object conversation](#conversation对象)
+
+##### conversation对象
 
 属性名称|描述
 ----|----
@@ -42,6 +47,8 @@ customer_phone_location|归属地
 agent_id|客服ID
 agent_name|客服姓名
 ring_time|振铃开始时间，例子：2017-03-09T14:34:24+08:00
+
+
 
 #### 3、如何调用通话组件的外呼方法
 

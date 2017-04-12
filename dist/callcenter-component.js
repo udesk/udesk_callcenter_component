@@ -48552,7 +48552,10 @@ var CallcenterComponent = function () {
         }
         if (onHangup) {
             _CallInfo2.default.on('hangup', function (callLog) {
-                onHangup(converter(callLog));
+                var result = converter(callLog);
+                result.hangup_time = new Date().toISOString();
+                delete result.ring_time;
+                onHangup(result);
             });
         }
     }

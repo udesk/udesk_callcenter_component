@@ -184,7 +184,10 @@ class CallcenterComponent {
         }
         if (onHangup) {
             CallInfo.on('hangup', function(callLog) {
-                onHangup(converter((callLog)));
+                let result = converter(callLog);
+                result.hangup_time = new Date().toISOString();
+                delete result.ring_time;
+                onHangup(result);
             });
         }
     }
