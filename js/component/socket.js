@@ -4,7 +4,7 @@ var fun = function(url, userId, seatToken) {
     this.callbackList = [];
     this.exceptionCallBacks = [];
     var self = this;
-    var socket = io(url);
+    var socket = io(url, {transports: ['websocket'], upgrade: false});
 
     var config = {
         token: seatToken,

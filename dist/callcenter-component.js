@@ -31270,7 +31270,7 @@ var fun = function fun(url, userId, seatToken) {
     this.callbackList = [];
     this.exceptionCallBacks = [];
     var self = this;
-    var socket = io(url);
+    var socket = io(url, { transports: ['websocket'], upgrade: false });
 
     var config = {
         token: seatToken,
@@ -48512,8 +48512,8 @@ var CallcenterComponent = function () {
         _classCallCheck(this, CallcenterComponent);
 
         _AjaxUtils2.default.token = token;
-        //AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
-        _AjaxUtils2.default.host = 'http://' + subDomain + '.udeskt1.com';
+        _AjaxUtils2.default.host = 'https://' + subDomain + '.udesk.cn';
+        //AjaxUtils.host = 'http://' + subDomain + '.udeskt1.com';
 
         var wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
