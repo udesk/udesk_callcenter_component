@@ -59,6 +59,13 @@ callComponent.makeCall(phoneNumber);
 </script>
 ```
 
+浏览器适用情况
+----
+IE|firefox|chrome|safari|opera
+---|------|------|------|-----
+10|11|16|6|12.10
+
+
 如何编译
 ----
 
