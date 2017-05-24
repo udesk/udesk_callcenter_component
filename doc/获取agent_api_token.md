@@ -12,7 +12,7 @@
 open_api_token: xxxxxx
 content_type: application/json
 ```
-[open_api_token获取方法](http://www.udesk.cn/website/doc/api/%E7%99%BB%E5%BD%95%E6%8E%A5%E5%8F%A3/)
+[open_api_token获取方法](http://www.udesk.cn/website/doc/apiv2/intro/#token)
 
 
 请求参数
