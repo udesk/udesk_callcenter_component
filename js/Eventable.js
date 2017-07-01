@@ -5,7 +5,7 @@ export default class Eventable {
     constructor() {
         this.eventMap = {
             'change': []
-        }
+        };
     }
 
     set(k, v) {
@@ -14,7 +14,18 @@ export default class Eventable {
         }
         this[k] = v;
         this.fire('change', k, v, this);
-    };
+    }
+
+    setProperties(obj) {
+        let changedFields = [];
+        _.forIn(obj, (v, k) => {
+            if (this[k] !== v) {
+                this[k] = v;
+                changedFields.push(k);
+            }
+        });
+        _.forEach(changedFields, (i) => this.fire('change', i, this[i]));
+    }
 
     fire() {
         let eventName = arguments[0];

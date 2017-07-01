@@ -1,9 +1,7 @@
 import Eventable from './Eventable';
 import CallQueue from './CallQueue';
 import _ from 'lodash';
-import AjaxUtils from './AjaxUtils';
 import Const from './Const';
-import Agent from './Agent';
 
 class CallInfo extends Eventable {
     constructor() {
@@ -118,19 +116,14 @@ class CallInfo extends Eventable {
      * @param callLog
      */
     updateFromCallLog(callLog) {
-        let self = this;
-        _.forIn(callLog, function(v, k) {
-            self.set(k, v);
-        });
+        this.setProperties(callLog);
     }
 
     /**
      * 弹屏
      */
     screenPop() {
-        if (this.state === Const.HANGUP) {
-            this.readCache();
-        }
+        this.readCache();
         this.fire('screenPop', this);
     }
 

@@ -16,21 +16,21 @@ class CallQueue extends Eventable {
     }
 
     put(callLog) {
-        let existsCallLog = _.find(this.queue, ['conversation_id', callLog.conversation_id]);
+        let existingCallLog = _.find(this.queue, ['conversation_id', callLog.conversation_id]);
         let self = this;
 
-        if (existsCallLog) {
+        if (existingCallLog) {
             //如果通话已经挂断了，忽略所有的callLog
-            if (existsCallLog.state === Const.HANGUP) {
+            if (existingCallLog.state === Const.HANGUP) {
                 return;
             }
             //如果通话是talking，忽略ringing或者talking的callLog
-            if (_.some([Const.RINGING, Const.TALKING], callLog.state) && existsCallLog.state === Const.TALKING) {
+            if (_.some([Const.RINGING, Const.TALKING], callLog.state) && existingCallLog.state === Const.TALKING) {
                 return;
             }
 
-            existsCallLog.update(callLog);
-            this.fire('change', existsCallLog);
+            existingCallLog.update(callLog);
+            this.fire('change', existingCallLog);
             return;
         }
 
