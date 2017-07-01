@@ -19,6 +19,7 @@
     position: fixed;
     right: 0;
     bottom: 0;
+    border-bottom: 1px solid #e4e4e4;
     .top-bar {
         height: 34px;
         line-height: 34px;
@@ -33,19 +34,24 @@
         -o-user-select: none;
         .title {
             color: #fff;
-            width: 50%;
             height: 100%;
+            float: left;
         }
-        .resize-btn {
-            height: 12px;
+        .buttons {
             float: right;
-            cursor: pointer;
+            > * {
+                cursor: pointer;
+                display: inline-block;
+                color: #fff;
+                margin-left: 5px;
+            }
         }
     }
     .content-wrapper {
         padding: 20px;
-        border: 1px solid #e4e4e4;
-        border-top-width: 0;
+        border: 0 solid #e4e4e4;
+        border-right-width: 1px;
+        border-left-width: 1px;
         color: #666;
         font-size: 14px;
     }
@@ -308,5 +314,10 @@
             height: 20px;
         }
         vertical-align: middle;
+    }
+    .bottom-extension {
+        border: 0 solid #e4e4e4;
+        border-left-width: 1px;
+        border-right-width: 1px;
     }
 }

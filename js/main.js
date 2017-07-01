@@ -1,6 +1,7 @@
 import '../css/callcenter-component.scss';
 import 'font-awesome/scss/font-awesome.scss';
 import './component/ie8-child-elements';
+require.context('../images', true, /\.(png|jpg|gif)$/);
 import AgentStatePanel from './component/AgentStatePanel.js';
 import Header from './component/Header.js';
 import Socket from './component/socket';
@@ -44,10 +45,11 @@ class UdeskCallCenterComponent extends React.Component {
         return <div ref={(ele) => ele && (this.container = ele.parentElement)}>
             <Header onMinimize={this.collapse.bind(this)} onMaximize={this.expand.bind(this)}
                     onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}
-                    onDrop={this.drop.bind(this)}/>
+                    onDrop={this.drop.bind(this)}
+                    headerButtons={this.props.headerButtons}/>
             <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}/>
             <MainContent className={this.state.expand ? '' : 'hide'}/>
-        </div>
+        </div>;
     }
 
     //componentDidMount() {
@@ -75,11 +77,11 @@ class UdeskCallCenterComponent extends React.Component {
     //}
 
     collapse() {
-        this.setState({ expand: false });
+        this.setState({expand: false});
     }
 
     expand() {
-        this.setState({ expand: true });
+        this.setState({expand: true});
     }
 
     drag(offsetX, offsetY) {
@@ -142,17 +144,29 @@ class UdeskCallCenterComponent extends React.Component {
 }
 
 class CallcenterComponent {
-    constructor({ container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup }) {
+    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, bottomExtension, headerButtons}) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
         //AjaxUtils.host = 'http://' + subDomain + '.udeskt1.com';
 
-        let wrapper = document.createElement('div');
+        let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
         container.appendChild(wrapper);
-        render(<UdeskCallCenterComponent
-            callConfig={CallConfig}
-        />, wrapper);
+        render(<UdeskCallCenterComponent callConfig={CallConfig} headerButtons={headerButtons}/>, wrapper);
+
+        this.bottomExtensionElement = document.createElement('div');
+        this.bottomExtensionElement.className = 'bottom-extension';
+        switch (typeof bottomExtension) {
+            case 'string':
+                this.bottomExtensionElement.innerHTML = bottomExtension;
+                break;
+            case 'element':
+                if (bottomExtension instanceof Document) {
+                    this.bottomExtensionElement.appendChild(bottomExtension);
+                }
+                break;
+        }
+        wrapper.appendChild(this.bottomExtensionElement);
 
         let converter = (callLog) => {
             return {
@@ -164,7 +178,7 @@ class CallcenterComponent {
                 agent_id: Agent.id,
                 agent_name: Agent.name,
                 ring_time: callLog.ring_at
-            }
+            };
         };
 
         if (onScreenPop) {

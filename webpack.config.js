@@ -1,4 +1,4 @@
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
 
@@ -19,14 +19,18 @@ module.exports = [{
                     fallback: 'style-loader', use: ['css-loader?minimize', 'sass-loader']
                 })
             },
-            { test: /\.js|jsx$/, exclude: /node_modules/, loader: 'babel-loader' },
+            {test: /\.js|jsx$/, exclude: /node_modules/, loader: 'babel-loader'},
             {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: "url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/font-woff&publicPath=/"
+                loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/font-woff&publicPath=/'
             },
             {
                 test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: "file-loader?name=fonts/[name].[ext]&publicPath=/"
+                loader: 'file-loader?name=fonts/[name].[ext]&publicPath=/'
+            },
+            {
+                test: /\.(png|jpg|jpeg|gif)$/,
+                loader: 'file-loader?name=imgs/[name].[ext]&publicPath=/'
             }
         ]
     },
@@ -36,7 +40,7 @@ module.exports = [{
                 NODE_ENV: JSON.stringify('production')
             }
         }),
-        new ExtractTextPlugin("css/callcenter-component.css"),
+        new ExtractTextPlugin('css/callcenter-component.css'),
         new UglifyJSPlugin()
     ]
 }
