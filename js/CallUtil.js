@@ -5,8 +5,8 @@ import CallConfig from './CallConfig';
 import Const from './Const';
 
 export function makeCall(callNumber, successCallback, failureCallback) {
-    if (CallConfig.agent_work_state !== Const.IDLE) {
-        Alert.error('只能在空闲中拨打电话');
+    if (CallConfig.agent_work_state === Const.OFFLINE) {
+        Alert.error('离线不可以拨打电话');
         return;
     }
     if (/^[\d*#+]{4,}$/.test(callNumber)) {

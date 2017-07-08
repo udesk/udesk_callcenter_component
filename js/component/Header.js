@@ -24,7 +24,6 @@ class Header extends Component {
         let headerBtns = [];
         if (this.props.headerButtons) {
             headerBtns = _.map(this.props.headerButtons, (i) => {
-                console.log(i);
                 let iconEle;
                 if (i.icon) {
                     iconEle = <img src={i.icon} />

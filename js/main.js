@@ -1,7 +1,6 @@
 import '../css/callcenter-component.scss';
 import 'font-awesome/scss/font-awesome.scss';
 import './component/ie8-child-elements';
-require.context('../images', true, /\.(png|jpg|gif)$/);
 import AgentStatePanel from './component/AgentStatePanel.js';
 import Header from './component/Header.js';
 import Socket from './component/socket';
@@ -16,6 +15,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import Agent from './Agent';
 import { makeCall } from './CallUtil';
+require.context('../images', true, /\.(png|jpg|gif)$/);
 
 class UdeskCallCenterComponent extends React.Component {
     constructor() {
@@ -209,7 +209,6 @@ class CallcenterComponent {
     makeCall(number, onSuccess, onFailure) {
         makeCall(number, onSuccess, onFailure);
     }
-
 }
 
 window.UdeskCallcenterComponent = CallcenterComponent;
