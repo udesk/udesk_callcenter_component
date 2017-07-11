@@ -104,6 +104,11 @@
             },
             onDropCall: function(res) {
                 console.log('挂断结果：' + res.error_message);
+            },
+            bottomExtension: '<div>底部区域</div>',
+            headerExtension: '<span>X</span>',
+            onAlert: function(type, message) {
+                console.log(type, message);
             }
         });
     }

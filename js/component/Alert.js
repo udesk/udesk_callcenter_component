@@ -15,17 +15,25 @@ class Alert {
     }
 
     success(text) {
-        this.createElement();
-        this.element.innerText = text;
-        this.element.style.backgroundColor = 'green';
-        this.show();
+        if (this.onAlert && (typeof this.onAlert === 'function')) {
+            this.onAlert('success', text);
+        } else {
+            this.createElement();
+            this.element.innerText = text;
+            this.element.style.backgroundColor = 'green';
+            this.show();
+        }
     }
 
     error(text) {
-        this.createElement();
-        this.element.innerText = text;
-        this.element.style.backgroundColor = 'red';
-        this.show();
+        if (this.onAlert && (typeof this.onAlert === 'function')) {
+            this.onAlert('error', text);
+        } else {
+            this.createElement();
+            this.element.innerText = text;
+            this.element.style.backgroundColor = 'red';
+            this.show();
+        }
     }
 
     destroy() {

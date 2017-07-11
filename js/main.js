@@ -51,7 +51,8 @@ class UdeskCallCenterComponent extends React.Component {
         return <div ref={(ele) => ele && (this.container = ele.parentElement)}>
             <Header onMinimize={this.collapse.bind(this)} onMaximize={this.expand.bind(this)}
                     onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}
-                    onDrop={this.drop.bind(this)}/>
+                    onDrop={this.drop.bind(this)}
+                    headerExtension={this.props.headerExtension}/>
             <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}/>
             <MainContent className={this.state.expand ? '' : 'hide'}
                          showManualScreenPop={this.props.showManualScreenPop}/>
@@ -156,7 +157,7 @@ class UdeskCallCenterComponent extends React.Component {
 }
 
 class CallcenterComponent {
-    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, onWorkStatusChange, onWorkWayChange, onDropCall, showManualScreenPop = false}) {
+    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, onWorkStatusChange, onWorkWayChange, onDropCall, headerExtension, onAlert, showManualScreenPop = false}) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
         //AjaxUtils.host = 'https://' + subDomain + '.udeskcat.com';
@@ -166,8 +167,23 @@ class CallcenterComponent {
         container.appendChild(wrapper);
         render(<UdeskCallCenterComponent callConfig={CallConfig}
                                          showManualScreenPop={showManualScreenPop}
-                                         onDropCall={onDropCall}/>, wrapper);
+                                         onDropCall={onDropCall}
+                                         headerExtension={headerExtension}/>, wrapper);
         this.isDestroyed = false;
+
+        this.bottomExtensionElement = document.createElement('div');
+        this.bottomExtensionElement.className = 'bottom-extension';
+        switch (typeof bottomExtension) {
+            case 'string':
+                this.bottomExtensionElement.innerHTML = bottomExtension;
+                break;
+            case 'object':
+                if (bottomExtension instanceof Document) {
+                    this.bottomExtensionElement.appendChild(bottomExtension);
+                }
+                break;
+        }
+        wrapper.appendChild(this.bottomExtensionElement);
 
         let converter = (callLog) => {
             return {
@@ -235,6 +251,9 @@ class CallcenterComponent {
                 onWorkWayChange && onWorkWayChange(v);
             }
         });
+        if (onAlert) {
+            Alert.onAlert = onAlert;
+        }
     }
 
     makeCall(number, onSuccess, onFailure) {

@@ -27,6 +27,11 @@ class Header extends Component {
                  onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)}>
                 <div className="buttons">
                     {resizeBtn}
+                    {(() => {
+                        if (this.props.headerExtension) {
+                            return <span dangerouslySetInnerHTML={{__html: this.props.headerExtension}}/>;
+                        }
+                    })()}
                 </div>
                 <div className="title">电话</div>
             </div>
