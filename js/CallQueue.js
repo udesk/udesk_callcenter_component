@@ -3,7 +3,6 @@ import Const from './Const';
 import Eventable from './Eventable';
 import _ from 'lodash';
 import AjaxUtils from './AjaxUtils';
-import Agent from './Agent';
 
 class CallQueue extends Eventable {
     constructor() {
@@ -13,6 +12,7 @@ class CallQueue extends Eventable {
             change: [],
             add: []
         };
+        this.callLogCache = [];
     }
 
     put(callLog) {
@@ -33,20 +33,38 @@ class CallQueue extends Eventable {
             this.fire('change', existingCallLog);
             return;
         }
-        self.queue.push(callLog);
+
+        if (this.fetching) {
+            this.callLogCache.push(callLog);
+            return;
+        }
+
+        this.fetching = true;
         this.fetchConversation(callLog.conversation_id, function(res) {
             let conversation = _.assign(callLog, res);
             self.fire('add', conversation);
+            self.fetching = false;
+            self.readCache();
+        }, () => {
+            this.fetching = false;
+            self.readCache();
         });
         return this;
+    }
+
+    readCache() {
+        let lastCallLog = this.callLogCache.shift();
+        if (lastCallLog) {
+            this.put(lastCallLog);
+        }
     }
 
     get(conversationId) {
         return _.find(this.queue, (i) => i.conversation_id === conversationId);
     }
 
-    fetchConversation(conversationId, callback) {
-        AjaxUtils.get("/agent_api/v1/callcenter/desktop/conversation", { conversation_id: conversationId }, callback);
+    fetchConversation(conversationId, callback, failCallback) {
+        AjaxUtils.get('/agent_api/v1/callcenter/desktop/conversation', {conversation_id: conversationId}, callback, failCallback);
     }
 }
 
