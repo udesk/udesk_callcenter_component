@@ -45,8 +45,7 @@ class UdeskCallCenterComponent extends React.Component {
         return <div ref={(ele) => ele && (this.container = ele.parentElement)}>
             <Header onMinimize={this.collapse.bind(this)} onMaximize={this.expand.bind(this)}
                     onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}
-                    onDrop={this.drop.bind(this)}
-                    headerButtons={this.props.headerButtons}/>
+                    onDrop={this.drop.bind(this)}/>
             <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}/>
             <MainContent className={this.state.expand ? '' : 'hide'}/>
         </div>;
@@ -144,7 +143,7 @@ class UdeskCallCenterComponent extends React.Component {
 }
 
 class CallcenterComponent {
-    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, bottomExtension, headerButtons}) {
+    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup}) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
         //AjaxUtils.host = 'http://' + subDomain + '.udeskt1.com';
@@ -152,21 +151,7 @@ class CallcenterComponent {
         let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
         container.appendChild(wrapper);
-        render(<UdeskCallCenterComponent callConfig={CallConfig} headerButtons={headerButtons}/>, wrapper);
-
-        this.bottomExtensionElement = document.createElement('div');
-        this.bottomExtensionElement.className = 'bottom-extension';
-        switch (typeof bottomExtension) {
-            case 'string':
-                this.bottomExtensionElement.innerHTML = bottomExtension;
-                break;
-            case 'element':
-                if (bottomExtension instanceof Document) {
-                    this.bottomExtensionElement.appendChild(bottomExtension);
-                }
-                break;
-        }
-        wrapper.appendChild(this.bottomExtensionElement);
+        render(<UdeskCallCenterComponent callConfig={CallConfig} />, wrapper);
 
         let converter = (callLog) => {
             return {

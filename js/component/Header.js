@@ -21,23 +21,12 @@ class Header extends Component {
                 <img src={images.maximize}/>
             </div>;
         }
-        let headerBtns = [];
-        if (this.props.headerButtons) {
-            headerBtns = _.map(this.props.headerButtons, (i) => {
-                let iconEle;
-                if (i.icon) {
-                    iconEle = <img src={i.icon} />
-                }
-                return <div className="" onClick={i.handler}>{iconEle}{i.text}</div>;
-            });
-        }
         return (
             <div className="top-bar" onDragStart={() => false} onDrop={() => false}
                  unselectable="on"
                  onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)}>
                 <div className="buttons">
                     {resizeBtn}
-                    {headerBtns}
                 </div>
                 <div className="title">电话</div>
             </div>
