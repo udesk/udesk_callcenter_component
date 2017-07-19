@@ -178,7 +178,7 @@ class CallcenterComponent {
                 this.bottomExtensionElement.innerHTML = bottomExtension;
                 break;
             case 'object':
-                if (bottomExtension instanceof Document) {
+                if (bottomExtension instanceof Element) {
                     this.bottomExtensionElement.appendChild(bottomExtension);
                 }
                 break;

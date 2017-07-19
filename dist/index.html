@@ -67,6 +67,8 @@
     var tbody = document.getElementById('screen-pop-history');
 
     function createCallComponent() {
+        var bottomExt = document.createElement('div');
+        bottomExt.innerText = '底部区域';
         if (window.callComp && !window.callComp.isDestroyed) {
             return;
         }
@@ -105,7 +107,7 @@
             onDropCall: function(res) {
                 console.log('挂断结果：' + res.error_message);
             },
-            bottomExtension: '<div>底部区域</div>',
+            bottomExtension: bottomExt,
             headerExtension: '<span>X</span>',
             onAlert: function(type, message) {
                 console.log(type, message);
