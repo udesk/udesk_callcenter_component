@@ -155,6 +155,7 @@ class CallcenterComponent {
 
         let converter = (callLog) => {
             return {
+                call_id: callLog.call_id,
                 conversation_id: callLog.conversation_id,  //通话记录ID
                 call_type: callLog.call_type,  //呼入呼出
                 customer_phone_number: callLog.customer_phone, //客户号码

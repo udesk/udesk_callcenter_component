@@ -43,6 +43,7 @@ var callComponent = new UdeskCallcenterComponent({
 
 属性名称|描述
 ----|----
+call_id|call_id
 conversation_id|通话记录ID
 call_type|通话类型,只能是下列几个值之一，呼入、呼出、呼入（转接）、呼入（三方），呼入（咨询），呼入（强插），呼入（监听），呼入（强拆）
 customer_phone_number|客户号码
