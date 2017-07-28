@@ -15,6 +15,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import Agent from './Agent';
 import { makeCall } from './CallUtil';
+
 require.context('../images', true, /\.(png|jpg|gif)$/);
 
 class UdeskCallCenterComponent extends React.Component {
@@ -151,7 +152,7 @@ class CallcenterComponent {
         let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
         container.appendChild(wrapper);
-        render(<UdeskCallCenterComponent callConfig={CallConfig} />, wrapper);
+        render(<UdeskCallCenterComponent callConfig={CallConfig}/>, wrapper);
 
         let converter = (callLog) => {
             return {
@@ -169,17 +170,29 @@ class CallcenterComponent {
 
         if (onScreenPop) {
             CallInfo.on('screenPop', function(callLog) {
-                onScreenPop(converter(callLog));
+                try {
+                    onScreenPop(converter(callLog));
+                } catch (e) {
+                    console.error(e);
+                }
             });
         }
         if (onRinging) {
             CallInfo.on('ringing', function(callLog) {
-                onRinging(converter(callLog));
+                try {
+                    onRinging(converter(callLog));
+                } catch (e) {
+                    console.error(e);
+                }
             });
         }
         if (onTalking) {
             CallInfo.on('talking', function(callLog) {
-                onTalking(converter(callLog));
+                try {
+                    onTalking(converter(callLog));
+                } catch (e) {
+                    console.error(e);
+                }
             });
         }
         if (onHangup) {
@@ -187,7 +200,11 @@ class CallcenterComponent {
                 let result = converter(callLog);
                 result.hangup_time = new Date().toISOString();
                 delete result.ring_time;
-                onHangup(result);
+                try {
+                    onHangup(result);
+                } catch (e) {
+                    console.error(e);
+                }
             });
         }
     }

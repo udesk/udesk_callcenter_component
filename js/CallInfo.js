@@ -57,7 +57,6 @@ class CallInfo extends Eventable {
                 self.updateFromCallLog(v);
             } else {
                 self.updateCache(v);
-                self.screenPop(v);
             }
         });
 
