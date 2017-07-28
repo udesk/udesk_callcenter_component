@@ -33,10 +33,9 @@ class CallQueue extends Eventable {
             this.fire('change', existingCallLog);
             return;
         }
-
+        self.queue.push(callLog);
         this.fetchConversation(callLog.conversation_id, function(res) {
             let conversation = _.assign(callLog, res);
-            self.queue.push(conversation);
             self.fire('add', conversation);
         });
         return this;
