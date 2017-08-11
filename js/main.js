@@ -48,7 +48,8 @@ class UdeskCallCenterComponent extends React.Component {
                     onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}
                     onDrop={this.drop.bind(this)}/>
             <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}/>
-            <MainContent className={this.state.expand ? '' : 'hide'}/>
+            <MainContent className={this.state.expand ? '' : 'hide'}
+                         showManualScreenPop={this.props.showManualScreenPop}/>
         </div>;
     }
 
@@ -148,21 +149,21 @@ class UdeskCallCenterComponent extends React.Component {
 }
 
 class CallcenterComponent {
-    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup}) {
+    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, showManualScreenPop = false}) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
-        //AjaxUtils.host = 'http://' + subDomain + '.udeskt1.com';
+        //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
 
         let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
         container.appendChild(wrapper);
-        render(<UdeskCallCenterComponent callConfig={CallConfig}/>, wrapper);
+        render(<UdeskCallCenterComponent callConfig={CallConfig} showManualScreenPop={showManualScreenPop}/>, wrapper);
         this.isDestroyed = false;
 
         let converter = (callLog) => {
             return {
                 call_id: callLog.call_id,
-                conversation_id: callLog.conversation_id,  //通话记录ID
+                conversation_id: callLog.conversation_id || callLog.conversation_log_id,  //通话记录ID
                 call_type: callLog.call_type,  //呼入呼出
                 customer_phone_number: callLog.customer_phone, //客户号码
                 queue_name: callLog.queue_desc,  //来源队列

@@ -2,6 +2,8 @@ import Eventable from './Eventable';
 import CallQueue from './CallQueue';
 import _ from 'lodash';
 import Const from './Const';
+import Alert from './component/Alert';
+import AjaxUtils from './AjaxUtils';
 
 class CallInfo extends Eventable {
     constructor() {
@@ -124,6 +126,20 @@ class CallInfo extends Eventable {
     screenPop() {
         this.readCache();
         this.fire('screenPop', this);
+    }
+
+    manualScreenPop() {
+        this.fetchCurrentConversation((res) => {
+            if (res.code === 1000) {
+                this.fire('screenPop', res);
+            } else {
+                Alert.error(res.code_message || '手动弹屏失败');
+            }
+        });
+    }
+
+    fetchCurrentConversation(callback) {
+        AjaxUtils.get('/agent_api/v1/callcenter/desktop/current_conversation', null, callback);
     }
 
     //fetchConversation() {
