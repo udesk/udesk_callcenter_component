@@ -1,5 +1,3 @@
-import utils from '../Tools';
-import AjaxUtils from '../AjaxUtils';
 import Alert from './Alert';
 import CallConfig from '../CallConfig';
 import Const from '../Const';
@@ -8,6 +6,7 @@ import NumberInput from './NumberInput';
 import Keyboard from './Keyboard';
 import CallButton from './CallButton';
 import { makeCall } from '../CallUtil';
+import CallInfo from '../CallInfo';
 
 export default class HangupPanel extends React.Component {
     constructor() {
@@ -15,7 +14,7 @@ export default class HangupPanel extends React.Component {
         this.state = {
             inputNumber: '',
             displayKeyboard: false
-        }
+        };
     }
 
     render() {
@@ -23,10 +22,16 @@ export default class HangupPanel extends React.Component {
             <NumberInput onChange={this.getInputNumber.bind(this)} value={this.state.inputNumber}
                          onKeyboardBtnClick={this.toggleKeyboard.bind(this)}/>
             <Keyboard className={this.state.displayKeyboard ? '' : 'hide'} onClick={(number) => {
-                this.setState({ inputNumber: this.state.inputNumber + number })
+                this.setState({inputNumber: this.state.inputNumber + number});
             }}/>
             <CallButton onClick={this.callout.bind(this)}/>
-        </div>
+            {(() => {
+                if (this.props.showManualScreenPop) {
+                    return <button className="btn-manual-screen-pop" onClick={CallInfo.manualScreenPop.bind(CallInfo)}>
+                        手动弹屏</button>;
+                }
+            })()}
+        </div>;
     }
 
     getInputNumber(e) {

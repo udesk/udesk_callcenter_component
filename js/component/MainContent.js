@@ -24,7 +24,7 @@ class MainContent extends React.Component {
         let className = this.props.className + ' content-wrapper';
         let content;
         if (this.state.callState === 'hangup') {
-            content = <HangupPanel />;
+            content = <HangupPanel showManualScreenPop={this.props.showManualScreenPop}/>;
         } else if (this.state.callState === 'talking') {
             content = <TalkingPanel/>;
         } else if (this.state.callState === 'ringing') {

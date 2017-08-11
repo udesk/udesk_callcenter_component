@@ -4,7 +4,18 @@ import utils from './Tools';
 import CallConfig from './CallConfig';
 import Const from './Const';
 
+let calling = false;
+
 export function makeCall(callNumber, successCallback, failureCallback) {
+    if (calling) {
+        return;
+    }
+    calling = true;
+
+    setTimeout(() => {
+        calling = false;
+    }, 3000);
+
     if (CallConfig.agent_work_state === Const.OFFLINE) {
         Alert.error('离线不可以拨打电话');
         return;
@@ -16,7 +27,7 @@ export function makeCall(callNumber, successCallback, failureCallback) {
         return;
     }
 
-    AjaxUtils.post('/agent_api/v1/callcenter/desktop/make_call', { number: callNumber }, function(res) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/make_call', {number: callNumber}, function(res) {
         switch (res.code) {
             case 1000:
                 Alert.success('已发起外呼请求');
