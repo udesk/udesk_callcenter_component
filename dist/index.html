@@ -47,35 +47,40 @@
 
     </tbody>
 </table>
+<button onclick="destroyCallComponent();">销毁通话组件</button>
+<button onclick="createCallComponent();">创建通话组件</button>
 <script src="./callcenter-component.js"></script>
 <script>
     var tbody = document.getElementById('screen-pop-history');
-    var callComp = new UdeskCallcenterComponent({
-        container: document.body,
-        token: 'xxxxxx',  // 客服token
-        subDomain: 'xxxxxx', // 您在udesk注册的二级域名
-        onScreenPop: function(conversation) {
-            var tr = document.createElement('tr');
-            tr.innerHTML =
-                '<td><a href="javascript:;" onclick="makeCall(\'' + conversation.customer_phone_number + '\')">' +
-                conversation.customer_phone_number + '</a></td>' +   //客户电话
-                '<td>' + conversation.call_type + '</td>' + //呼入、呼出
-                '<td>' + conversation.agent_name + '</td>' +  //客服姓名
-                '<td>' + conversation.agent_id + '</td>' +  //客服ID
-                '<td>' + (conversation.queue_name || '') + '</td>' +  //队列，仅呼入有值，呼出值为null
-                '<td>' + conversation.conversation_id + '</td>' +  //conversation_id
-                '<td>' + conversation.customer_phone_location + '</td>' + //客户手机号归属地
-                '<td>' + conversation.ring_time + '</td>' + //振铃时间
-                '<td>' + conversation.call_id + '</td>' +   //call_id
-                '<td id="' + conversation.conversation_id + '"></td>';
 
-            tbody.prepend(tr);
-        },
-        onHangup: function(conversation) {
-            document.getElementById(conversation.conversation_id).innerText = '已挂断';
-            console.log('hangup', conversation);
-        }
-    });
+    function createCallComponent() {
+        window.callComp = new UdeskCallcenterComponent({
+            container: document.body,
+            token: '146d57e71085a07013dfc53fc5f68cea68df76376dd581cc8b7f7e07238bba10d4b6d297e00e84938886d5280541ad7ef348230b7992db37bfd7231d84dbd360593abc8d',  // 客服token
+            subDomain: 'brazil', // 您在udesk注册的二级域名
+            onScreenPop: function(conversation) {
+                var tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td><a href="javascript:;" onclick="makeCall(\'' + conversation.customer_phone_number + '\')">' +
+                    conversation.customer_phone_number + '</a></td>' +   //客户电话
+                    '<td>' + conversation.call_type + '</td>' + //呼入、呼出
+                    '<td>' + conversation.agent_name + '</td>' +  //客服姓名
+                    '<td>' + conversation.agent_id + '</td>' +  //客服ID
+                    '<td>' + (conversation.queue_name || '') + '</td>' +  //队列，仅呼入有值，呼出值为null
+                    '<td>' + conversation.conversation_id + '</td>' +  //conversation_id
+                    '<td>' + conversation.customer_phone_location + '</td>' + //客户手机号归属地
+                    '<td>' + conversation.ring_time + '</td>' + //振铃时间
+                    '<td>' + conversation.call_id + '</td>' +   //call_id
+                    '<td id="' + conversation.conversation_id + '"></td>';
+
+                tbody.prepend(tr);
+            },
+            onHangup: function(conversation) {
+                document.getElementById(conversation.conversation_id).innerText = '已挂断';
+                console.log('hangup', conversation);
+            }
+        });
+    }
 
     function makeCall(phone_number) {
         callComp.makeCall(phone_number, function() {
@@ -83,6 +88,10 @@
         }, function() {
             console.log('外呼失败');
         });
+    }
+
+    function destroyCallComponent() {
+        callComp.destroy();
     }
 </script>
 </body>
