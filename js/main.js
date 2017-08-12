@@ -12,7 +12,7 @@ import CallInfo from './CallInfo';
 import CallConfig from './CallConfig';
 import MainContent from './component/MainContent';
 import React from 'react';
-import { render } from 'react-dom';
+import { render, unmountComponentAtNode } from 'react-dom';
 import Agent from './Agent';
 import { makeCall } from './CallUtil';
 
@@ -141,6 +141,10 @@ class UdeskCallCenterComponent extends React.Component {
             }
         });
     }
+
+    componentWillUnmount() {
+        this.socket && this.socket.close();
+    }
 }
 
 class CallcenterComponent {
@@ -153,6 +157,7 @@ class CallcenterComponent {
         wrapper.className = 'udesk-callcenter-component';
         container.appendChild(wrapper);
         render(<UdeskCallCenterComponent callConfig={CallConfig}/>, wrapper);
+        this.isDestroyed = false;
 
         let converter = (callLog) => {
             return {
@@ -168,49 +173,68 @@ class CallcenterComponent {
             };
         };
 
+        this.onScreenPop = function(callLog) {
+            try {
+                onScreenPop(converter(callLog));
+            } catch (e) {
+                console.error(e);
+            }
+        };
+        this.onRinging = function(callLog) {
+            try {
+                onRinging(converter(callLog));
+            } catch (e) {
+                console.error(e);
+            }
+        };
+        this.onTalking = function(callLog) {
+            try {
+                onTalking(converter(callLog));
+            } catch (e) {
+                console.error(e);
+            }
+        };
+        this.onHangup = function(callLog) {
+            let result = converter(callLog);
+            result.hangup_time = new Date().toISOString();
+            delete result.ring_time;
+            try {
+                onHangup(result);
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
         if (onScreenPop) {
-            CallInfo.on('screenPop', function(callLog) {
-                try {
-                    onScreenPop(converter(callLog));
-                } catch (e) {
-                    console.error(e);
-                }
-            });
+            CallInfo.on('screenPop', this.onScreenPop);
         }
         if (onRinging) {
-            CallInfo.on('ringing', function(callLog) {
-                try {
-                    onRinging(converter(callLog));
-                } catch (e) {
-                    console.error(e);
-                }
-            });
+            CallInfo.on('ringing', this.onRinging);
         }
         if (onTalking) {
-            CallInfo.on('talking', function(callLog) {
-                try {
-                    onTalking(converter(callLog));
-                } catch (e) {
-                    console.error(e);
-                }
-            });
+            CallInfo.on('talking', this.onTalking);
         }
         if (onHangup) {
-            CallInfo.on('hangup', function(callLog) {
-                let result = converter(callLog);
-                result.hangup_time = new Date().toISOString();
-                delete result.ring_time;
-                try {
-                    onHangup(result);
-                } catch (e) {
-                    console.error(e);
-                }
-            });
+            CallInfo.on('hangup', this.onHangup);
         }
     }
 
     makeCall(number, onSuccess, onFailure) {
         makeCall(number, onSuccess, onFailure);
+    }
+
+    destroy() {
+        if (this.isDestroyed) {
+            return;
+        }
+        unmountComponentAtNode(this.wrapper);
+        this.wrapper.parentNode.removeChild(this.wrapper);
+        Alert.destroy();
+        CallInfo.off('screenPop', this.onScreenPop);
+        CallInfo.off('ringing', this.onRinging);
+        CallInfo.off('talking', this.onTalking);
+        CallInfo.off('hangup', this.onHangup);
+        this.isDestroyed = true;
     }
 }
 
