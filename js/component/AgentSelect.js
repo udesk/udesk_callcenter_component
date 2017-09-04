@@ -55,7 +55,7 @@ export default class AgentSelectComponent extends React.Component {
     loadingAgents() {
         let self = this;
         self.setState({ loading: true });
-        AjaxUtils.get('/agent_api/v1/callcenter/agents', { page: this.page }, function(res) {
+        AjaxUtils.get('/agent_api/v1/callcenter/agents', { page: this.page, callcenter_work_state: 'idle' }, function(res) {
             self.setState({
                 content: _.concat(self.state.content, res.agents),
                 page: res.meta.current_page,
