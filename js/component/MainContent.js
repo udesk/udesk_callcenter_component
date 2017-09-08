@@ -13,9 +13,9 @@ class MainContent extends React.Component {
         };
 
         let self = this;
-        CallInfo.on('change', function(k, v) {
+        CallInfo.on('change', this.callInfoChangeCb = function(k, v) {
             if (k === 'state') {
-                self.setState({ callState: v });
+                self.setState({callState: v});
             }
         });
     }
@@ -32,7 +32,11 @@ class MainContent extends React.Component {
         }
         return <div className={className}>
             {content}
-        </div>
+        </div>;
+    }
+
+    componentWillUnmount() {
+        CallInfo.off('change', this.callInfoChangeCb);
     }
 }
 

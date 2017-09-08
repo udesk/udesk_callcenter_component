@@ -9,18 +9,27 @@ class CallConfig extends Eventable {
     }
 
     setAgentWorkState(state) {
+        if (this.agent_work_state === state) {
+            return;
+        }
         this.agent_work_state = state;
-        this.fire('change', this);
+        this.fire('change', 'agent_work_state', state, this);
     }
 
     setAgentWorkWay(way) {
+        if (this.agent_work_way === way) {
+            return;
+        }
         this.agent_work_way = way;
-        this.fire('change', this);
+        this.fire('change', 'agent_work_way', way, this);
     }
 
     set(k, v) {
+        if (this[k] === v) {
+            return;
+        }
         this[k] = v;
-        this.fire('change', k, v);
+        this.fire('change', k, v, this);
     }
 }
 

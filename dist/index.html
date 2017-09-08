@@ -47,8 +47,21 @@
 
     </tbody>
 </table>
-<button onclick="destroyCallComponent();">销毁通话组件</button>
-<button onclick="createCallComponent();">创建通话组件</button>
+<p>
+    <button onclick="destroyCallComponent();">销毁通话组件</button>
+    <button onclick="createCallComponent();">创建通话组件</button>
+</p>
+<h3>修改客服状态</h3>
+<div>
+    <button onclick="setWorkStatus('idle');">空闲</button>
+    <button onclick="setWorkStatus('busy');">忙碌</button>
+    <button onclick="setWorkStatus('resting');">小休</button>
+    <button onclick="setWorkStatus('offline');">离线</button>
+</div>
+<h3>挂断</h3>
+<div>
+    <button onclick="callComp.hangup();">挂断</button>
+</div>
 <script src="./callcenter-component.js"></script>
 <script>
     var tbody = document.getElementById('screen-pop-history');
@@ -59,7 +72,7 @@
         }
         window.callComp = new UdeskCallcenterComponent({
             container: document.body,
-            token: 'xxxxxx',  // 客服token
+            token: 'xxxxxxxxx',  // 客服token
             subDomain: 'xxxxxxx', // 您在udesk注册的二级域名
             showManualScreenPop: true,
             onScreenPop: function(conversation) {
@@ -82,6 +95,15 @@
             onHangup: function(conversation) {
                 document.getElementById(conversation.conversation_id).innerText = '已挂断';
                 console.log('hangup', conversation);
+            },
+            onWorkStatusChange: function(status) {
+                console.log('客服当前状态:' + status);
+            },
+            onWorkWayChange: function(way) {
+                console.log('客服当前在线方式:' + way);
+            },
+            onDropCall: function(res) {
+                console.log('挂断结果：' + res.error_message);
             }
         });
     }
@@ -95,7 +117,18 @@
     }
 
     function destroyCallComponent() {
-        callComp.destroy();
+        window.callComp.destroy();
+        window.callComp = null;
+    }
+
+    function setWorkStatus(status) {
+        if (window.callComp) {
+            window.callComp.setWorkStatus(status, function() {
+                console.log('修改状态成功');
+            }, function() {
+                console.log('修改状态失败');
+            });
+        }
     }
 </script>
 </body>

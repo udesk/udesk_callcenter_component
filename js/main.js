@@ -14,7 +14,10 @@ import MainContent from './component/MainContent';
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import Agent from './Agent';
+import * as callUtil from './CallUtil';
 import { makeCall } from './CallUtil';
+import CONSTANT from './Const';
+import _ from 'lodash';
 
 require.context('../images', true, /\.(png|jpg|gif)$/);
 
@@ -132,6 +135,8 @@ class UdeskCallCenterComponent extends React.Component {
                         Alert.success('三方成功');
                     }
                     break;
+                case 'drop_call':
+                    self.props.onDropCall && self.props.onDropCall(msg);
             }
         });
 
@@ -149,15 +154,17 @@ class UdeskCallCenterComponent extends React.Component {
 }
 
 class CallcenterComponent {
-    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, showManualScreenPop = false}) {
+    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, onWorkStatusChange, onWorkWayChange, onDropCall, showManualScreenPop = false}) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
-        //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
+        //AjaxUtils.host = 'http://' + subDomain + '.udeskcat.com';
 
         let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
         container.appendChild(wrapper);
-        render(<UdeskCallCenterComponent callConfig={CallConfig} showManualScreenPop={showManualScreenPop}/>, wrapper);
+        render(<UdeskCallCenterComponent callConfig={CallConfig}
+                                         showManualScreenPop={showManualScreenPop}
+                                         onDropCall={onDropCall}/>, wrapper);
         this.isDestroyed = false;
 
         let converter = (callLog) => {
@@ -218,10 +225,30 @@ class CallcenterComponent {
         if (onHangup) {
             CallInfo.on('hangup', this.onHangup);
         }
+
+        CallConfig.on('change', this.onCallConfigChange = function(k, v) {
+            if (k === 'agent_work_state') {
+                onWorkStatusChange(v);
+            } else if (k === 'agent_work_way') {
+                onWorkWayChange(v);
+            }
+        });
     }
 
     makeCall(number, onSuccess, onFailure) {
         makeCall(number, onSuccess, onFailure);
+    }
+
+    setWorkStatus(workStatus, onSuccess, onFailure) {
+        let allStatus = [CONSTANT.IDLE, CONSTANT.BUSY, CONSTANT.RESTING, CONSTANT.OFFLINE];
+        if (!_.includes(allStatus, workStatus)) {
+            throw new Error(`参数只能是以下四种:${allStatus.join(',')}`);
+        }
+        callUtil.setWorkStatus(workStatus, onSuccess, onFailure);
+    }
+
+    hangup(onSuccess, onFailure) {
+        callUtil.hangup(onSuccess, onFailure);
     }
 
     destroy() {
@@ -235,9 +262,15 @@ class CallcenterComponent {
         CallInfo.off('ringing', this.onRinging);
         CallInfo.off('talking', this.onTalking);
         CallInfo.off('hangup', this.onHangup);
+        CallConfig.off('change', this.onCallConfigChange);
         this.isDestroyed = true;
     }
 }
+
+CallcenterComponent.WORK_STATE_IDLE = CONSTANT.IDLE;
+CallcenterComponent.WORK_STATE_BUSY = CONSTANT.BUSY;
+CallcenterComponent.WORK_STATE_REST = CONSTANT.RESTING;
+CallcenterComponent.WORK_STATE_OFFLINE = CONSTANT.OFFLINE;
 
 window.UdeskCallcenterComponent = CallcenterComponent;
 //{
