@@ -15,6 +15,9 @@ import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import Agent from './Agent';
 import { makeCall } from './CallUtil';
+import CONSTANT from './Const';
+import _ from 'lodash';
+import * as callUtil from './CallUtil';
 
 require.context('../images', true, /\.(png|jpg|gif)$/);
 
@@ -152,7 +155,7 @@ class CallcenterComponent {
     constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, showManualScreenPop = false}) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
-        //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
+        //AjaxUtils.host = 'http://' + subDomain + '.udeskcat.com';
 
         let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
@@ -224,6 +227,14 @@ class CallcenterComponent {
         makeCall(number, onSuccess, onFailure);
     }
 
+    setWorkStatus(workStatus) {
+        let allStatus = [CONSTANT.IDLE, CONSTANT.BUSY, CONSTANT.RESTING, CONSTANT.OFFLINE];
+        if (!_.includes(allStatus, workStatus)) {
+            throw new Error(`参数只能是以下四种:${allStatus.join(',')}`);
+        }
+        callUtil.setWorkStatus(workStatus);
+    }
+
     destroy() {
         if (this.isDestroyed) {
             return;
@@ -238,6 +249,11 @@ class CallcenterComponent {
         this.isDestroyed = true;
     }
 }
+
+CallcenterComponent.WORK_STATE_IDLE = CONSTANT.IDLE;
+CallcenterComponent.WORK_STATE_BUSY = CONSTANT.BUSY;
+CallcenterComponent.WORK_STATE_REST = CONSTANT.RESTING;
+CallcenterComponent.WORK_STATE_OFFLINE = CONSTANT.OFFLINE;
 
 window.UdeskCallcenterComponent = CallcenterComponent;
 //{

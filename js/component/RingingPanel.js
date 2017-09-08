@@ -3,6 +3,7 @@ import utils from '../Tools';
 import CustomerInfo from './CustomerInfo';
 import React from 'react';
 import images from './images';
+import HangupButton from './HangupButton';
 
 export default class RingingPanelComponent extends React.Component {
     constructor() {
@@ -25,7 +26,7 @@ export default class RingingPanelComponent extends React.Component {
         }
         return <div className="text-center">
             <img src={images.customer_head}/>
-            <CustomerInfo />
+            <CustomerInfo/>
             <hr/>
             <div className="desc-info">
                 {descInfoContent}
@@ -33,7 +34,12 @@ export default class RingingPanelComponent extends React.Component {
             <div className="time-info">
                 {utils.humanizeTime(this.state.ringingTime)}
             </div>
-        </div>
+            {(() => {
+                if (CallInfo.can_hangup) {
+                    return <div><HangupButton/></div>
+                }
+            })()}
+        </div>;
     }
 
     componentWillUnmount() {

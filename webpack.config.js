@@ -41,7 +41,7 @@ module.exports = [{
             }
         }),
         new ExtractTextPlugin('css/callcenter-component.css'),
-        new UglifyJSPlugin()
+        //new UglifyJSPlugin()
     ]
 }
 ];

@@ -7,6 +7,7 @@ import AjaxUtils from '../AjaxUtils';
 import Alert from './Alert';
 import CustomerInfo from './CustomerInfo';
 import React from 'react';
+import HangupButton from './HangupButton';
 
 export default class TalkingPanelComponent extends React.Component {
     constructor() {
@@ -26,14 +27,14 @@ export default class TalkingPanelComponent extends React.Component {
     }
 
     render() {
-        let agentSelectWrapperClass = "agent-select-wrapper";
+        let agentSelectWrapperClass = 'agent-select-wrapper';
         let descInfoContent = '';
         if (this.state.queue_desc) {
             descInfoContent = '来源:' + this.state.queue_desc;
         }
         if (!this.state.showAgentSelect || this.state.direction === 'out' || this.state.can_end_consult ||
             (!this.state.can_consult && !this.state.can_transfer && !this.state.can_three_party)) {
-            agentSelectWrapperClass += " hide";
+            agentSelectWrapperClass += ' hide';
         }
 
         return <div className="text-center talking-panel">
@@ -69,12 +70,17 @@ export default class TalkingPanelComponent extends React.Component {
                     />
                 </div>
             </div>
-        </div>
+            {(() => {
+                if (CallInfo.can_hangup) {
+                    return <div><HangupButton/></div>;
+                }
+            })()}
+        </div>;
     }
 
     selectAgent(agent) {
         if (this.state.agentSelectType === 'transfer') {
-            AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_call', { agent_no: agent.id }, function(res) {
+            AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_call', {agent_no: agent.id}, function(res) {
                 switch (res.code) {
                     case 1001:
                         Alert.success('转移的请求已经发送！');
@@ -86,7 +92,7 @@ export default class TalkingPanelComponent extends React.Component {
                 Alert.error('转移失败');
             });
         } else if (this.state.agentSelectType === 'consult') {
-            AjaxUtils.post('/agent_api/v1/callcenter/desktop/start_consult', { agent_no: agent.id }, function(res) {
+            AjaxUtils.post('/agent_api/v1/callcenter/desktop/start_consult', {agent_no: agent.id}, function(res) {
                 switch (res.code) {
                     case 1001:
                         Alert.success('咨询的请求已经发送！');
@@ -98,7 +104,7 @@ export default class TalkingPanelComponent extends React.Component {
                 Alert.error('咨询失败');
             });
         } else if (this.state.agentSelectType === 'threeWay') {
-            AjaxUtils.post('/agent_api/v1/callcenter/desktop/three_party', { agent_no: agent.id }, function(res) {
+            AjaxUtils.post('/agent_api/v1/callcenter/desktop/three_party', {agent_no: agent.id}, function(res) {
                 switch (res.code) {
                     case 1001:
                         Alert.success('三方的请求已经发送！');
@@ -125,20 +131,21 @@ export default class TalkingPanelComponent extends React.Component {
     }
 
     showTransferAgentSelect() {
-        this.setState({ agentSelectType: 'transfer', showAgentSelect: true });
+        this.setState({agentSelectType: 'transfer', showAgentSelect: true});
     }
 
     showConsultAgentSelect() {
-        this.setState({ agentSelectType: 'consult', showAgentSelect: true });
+        this.setState({agentSelectType: 'consult', showAgentSelect: true});
     }
 
     showThreeWayAgentSelect() {
-        this.setState({ agentSelectType: 'threeWay', showAgentSelect: true });
+        this.setState({agentSelectType: 'threeWay', showAgentSelect: true});
     }
 
     hideAgentSelect() {
-        this.setState({ agentSelectType: null, showAgentSelect: false });
+        this.setState({agentSelectType: null, showAgentSelect: false});
     }
+
     componentWillUnmount() {
         CallInfo.off('change', this.onCallInfoChange);
     }

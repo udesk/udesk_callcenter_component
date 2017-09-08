@@ -3,6 +3,8 @@ import AjaxUtils from './AjaxUtils';
 import utils from './Tools';
 import CallConfig from './CallConfig';
 import Const from './Const';
+import CallQueue from './CallQueue';
+import _ from 'lodash';
 
 let calling = false;
 
@@ -37,5 +39,32 @@ export function makeCall(callNumber, successCallback, failureCallback) {
         }
     }, function() {
         Alert.error('外呼失败');
+    });
+}
+
+export function setWorkStatus(workStatus) {
+    AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_state', {agent_work_state: workStatus}, function() {
+    }, function() {
+        Alert.error('切换在线状态失败');
+    });
+}
+
+export function hangup() {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/drop_call', null, function(res) {
+        if (res.code === 2049) {
+            _.forEach(CallQueue.queue, (i) => {
+                if (i.state !== 'hangup') {
+                    let callLogCopy = _.clone(i);
+                    callLogCopy.state = 'hangup';
+                    CallQueue.put(callLogCopy);
+                }
+            });
+            return;
+        }
+        if (res.code !== 1001) {
+            Alert.error(res.code_message || '挂断失败！');
+        }
+    }, function() {
+        Alert.error('挂断失败！');
     });
 }

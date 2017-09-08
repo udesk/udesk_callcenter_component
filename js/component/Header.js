@@ -35,7 +35,7 @@ class Header extends Component {
 
     componentDidMount() {
         let self = this;
-        document.onmousemove = function(e) {
+        document.addEventListener('mousemove', this.onMouseMove = function(e) {
             if (self.MouseDown === true) {
                 let offsetX = e.screenX - self.screenX;
                 let offsetY = e.screenY - self.screenY;
@@ -43,11 +43,16 @@ class Header extends Component {
                 self.screenY = e.screenY;
                 self.props.onDrag(offsetX, offsetY);
             }
-        };
-        document.onmouseup = function(e) {
+        });
+        document.addEventListener('mouseup', this.onMouseUp = function(e) {
             self.MouseDown = false;
             self.props.onDrop();
-        };
+        });
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousemove', this.onMouseMove);
+        document.removeEventListener('mouseup', this.onMouseUp);
     }
 
     minimize() {
