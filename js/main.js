@@ -228,9 +228,9 @@ class CallcenterComponent {
 
         CallConfig.on('change', this.onCallConfigChange = function(k, v) {
             if (k === 'agent_work_state') {
-                onWorkStatusChange(v);
+                onWorkStatusChange && onWorkStatusChange(v);
             } else if (k === 'agent_work_way') {
-                onWorkWayChange(v);
+                onWorkWayChange && onWorkWayChange(v);
             }
         });
     }
