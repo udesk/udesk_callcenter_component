@@ -1,4 +1,6 @@
 export default {
     id: '',
-    name: ''
+    name: '',
+    group_id: [],
+    permissions: {}
 }

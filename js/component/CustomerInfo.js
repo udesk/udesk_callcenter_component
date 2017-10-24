@@ -1,5 +1,7 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import CallInfo from '../CallInfo';
+import Agent from '../Agent';
+import { maskPhoneNumber, showPhoneNumber } from '../CallUtil';
 
 class CustomerInfoComponent extends Component {
     constructor(props) {
@@ -20,10 +22,10 @@ class CustomerInfoComponent extends Component {
     render() {
         return (
             <div className="customer-info">
-                <span className="number-content">{this.state.customer_phone}</span>
+                <span className="number-content">{showPhoneNumber(CallInfo.customer, Agent) ? CallInfo.customer_phone : maskPhoneNumber(CallInfo.customer_phone)}</span>
                 <span className="location-content">{this.state.phone_location}</span>
             </div>
-        )
+        );
     }
 
     componentWillUnmount() {

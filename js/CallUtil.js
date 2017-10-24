@@ -76,3 +76,36 @@ export function hangup(successCallback, failureCallback) {
         utils.isFunction(failureCallback) && failureCallback(...arguments);
     });
 }
+
+export function maskPhoneNumber(phoneNumber) {
+    let length = phoneNumber.length;
+    let left = phoneNumber.substring(0, (length - 4) / 2);
+    let right = phoneNumber.substr(left.length + 4);
+    return left + '****' + right;
+}
+
+export function showPhoneNumber(customer, agent) {
+    if (!customer) {
+        return false;
+    }
+
+    let permissions = agent.permissions;
+    let groups = agent.group_id;
+    let agentId = agent.id;
+    let customerGroupId = customer.owner_group_id;
+    let customerOwnerId = customer.owner_id;
+
+    if (permissions.customer_show_cellphone_all) {
+        return true;
+    }
+
+    if (permissions.customer_show_cellphone_group && _.includes(groups, customerGroupId)) {
+        return true;
+    }
+
+    if (permissions.customer_show_cellphone_personal && customerOwnerId === agentId) {
+        return true;
+    }
+
+    return false;
+}

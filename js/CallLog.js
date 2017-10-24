@@ -10,6 +10,7 @@ export default class CallLog {
         this.can_three_party = opt.can_three_party === 'true';
         this.can_hangup = opt.can_hangup === 'true';
         this.is_consult = opt.is_consult === 'true';
+        this.customer = opt.customer;
     }
 
     update(callLog) {
@@ -25,6 +26,7 @@ export default class CallLog {
         this.can_three_party = callLog.can_three_party;
         this.can_hangup = callLog.can_hangup;
         this.is_consult = callLog.is_consult;
+        this.customer = callLog.customer;
         return this;
     }
 }
