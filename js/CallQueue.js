@@ -40,6 +40,7 @@ class CallQueue extends Eventable {
         }
 
         this.fetching = true;
+        this.queue.push(callLog);
         this.fetchConversation(callLog.conversation_id, function(res) {
             let conversation = _.assign(callLog, res);
             self.fire('add', conversation);
