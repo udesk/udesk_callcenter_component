@@ -157,11 +157,11 @@ class UdeskCallCenterComponent extends React.Component {
 }
 
 class CallcenterComponent {
-    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, onWorkStatusChange, onWorkWayChange, onDropCall, headerExtension, onAlert, showManualScreenPop = false}) {
+    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, onWorkStatusChange, onWorkWayChange, onDropCall, headerExtension, onAlert, bottomExtension, showManualScreenPop = false}) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
         //AjaxUtils.host = 'https://' + subDomain + '.udeskcat.com';
-        
+
         let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
         container.appendChild(wrapper);
