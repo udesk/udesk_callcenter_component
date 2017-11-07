@@ -10,7 +10,7 @@ class Alert {
             element = this.element = doc.createElement('div');
             element.id = id;
 
-            body.append(element);
+            body.appendChild(element);
         }
     }
 
