@@ -7,6 +7,8 @@ import CallQueue from './CallQueue';
 import _ from 'lodash';
 
 let calling = false;
+const emptyFunction = function() {
+};
 
 export function makeCall(callNumber, successCallback, failureCallback) {
     if (calling) {
@@ -108,4 +110,72 @@ export function showPhoneNumber(customer, agent) {
     }
 
     return false;
+}
+
+export function transfer(targetId, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_call', {agent_no: targetId}, function(res) {
+        switch (res.code) {
+            case 1001:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+export function startConsult(targetId, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/start_consult', {agent_no: targetId}, function(res) {
+        switch (res.code) {
+            case 1001:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+//{"code":2050,"message":"目标坐席通话中"}
+//{"code":2038,"message":"发起坐席不在通话中"}
+//{"code":2034,"message":"目标座席不存在"}
+//{"code":2036,"message":"已经有三方参与"}
+export function startThreeWayCalling(targetId, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/three_party', {agent_no: targetId}, function(res) {
+        switch (res.code) {
+            case 1001:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+export function stopConsult(successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/end_consult', null, function(res) {
+        switch (res.code) {
+            case 1001:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+export function getAgents({workState, page}, successCallback, failureCallback) {
+    AjaxUtils.get('/agent_api/v1/callcenter/agents', {page: page, callcenter_work_state: workState}, function(res) {
+        successCallback(res);
+    }, function(error) {
+        failureCallback(error);
+    });
 }

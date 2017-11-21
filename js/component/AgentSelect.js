@@ -3,6 +3,7 @@ import AjaxUtils from '../AjaxUtils';
 import Alert from './Alert';
 import React from 'react';
 import _ from 'lodash';
+import { getAgents } from '../CallUtil';
 
 const DEFAULT_CONTENT = '-请选择其他客服-';
 
@@ -31,13 +32,13 @@ export default class AgentSelectComponent extends React.Component {
                 <img src={images.caret_down}/>
             </div>
             <ul onScroll={this.onScroll.bind(this)} className={dropdownClass}>
-                { _.map(this.state.content, (item) => {
+                {_.map(this.state.content, (item) => {
                     let self = this;
                     let onClickFun = function() {
                         self.props.onChange(item);
-                        self.setState({ expand: false, selectedItem: item });
+                        self.setState({expand: false, selectedItem: item});
                     };
-                    return <li key={item.id} onClick={onClickFun}>{item.nick_name}</li>
+                    return <li key={item.id} onClick={onClickFun}>{item.nick_name}</li>;
                 })}
                 {(() => {
                     if (this.state.loading) {
@@ -54,8 +55,10 @@ export default class AgentSelectComponent extends React.Component {
 
     loadingAgents() {
         let self = this;
-        self.setState({ loading: true });
-        AjaxUtils.get('/agent_api/v1/callcenter/agents', { page: this.page, callcenter_work_state: 'idle' }, function(res) {
+        self.setState({loading: true});
+        AjaxUtils.get('/agent_api/v1/callcenter/agents', {
+            page: this.page, callcenter_work_state: 'idle'
+        }, function(res) {
             self.setState({
                 content: _.concat(self.state.content, res.agents),
                 page: res.meta.current_page,
@@ -65,12 +68,17 @@ export default class AgentSelectComponent extends React.Component {
             self.page = res.meta.current_page;
         }, function() {
             Alert.error('获取客服失败！');
-            self.setState({ loading: false });
+            self.setState({loading: false});
+        });
+        getAgents({workState: 'idle', page: this.page}, function() {
+
+        }, function() {
+
         });
     }
 
     toggleExpand() {
-        this.setState({ expand: !this.state.expand });
+        this.setState({expand: !this.state.expand});
     }
 
     onScroll(event) {

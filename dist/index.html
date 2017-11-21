@@ -62,6 +62,15 @@
 <div>
     <button onclick="callComp.hangup();">挂断</button>
 </div>
+<h3>高级通话</h3>
+<input id="agent_id" placeholder="客服ID"/>
+<div>
+    <button onclick="transfer();">转接</button>
+    <button onclick="startConsult();">咨询</button>
+    <button onclick="stopConsult();">结束咨询</button>
+    <button onclick="startThreeWayCalling();">三方</button>
+</div>
+
 <script src="./callcenter-component.js"></script>
 <script>
     var tbody = document.getElementById('screen-pop-history');
@@ -72,8 +81,8 @@
         }
         window.callComp = new UdeskCallcenterComponent({
             container: document.body,
-            token: 'xxxxxxxx',  // 客服token
-            subDomain: 'xxxxxxx', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
+            token: 'xxxxxxx',  // 客服token
+            subDomain: 'xxxxxx', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
             showManualScreenPop: true,
             onScreenPop: function(conversation) {
                 var tr = document.createElement('tr');
@@ -104,6 +113,15 @@
             },
             onDropCall: function(res) {
                 console.log('挂断结果：' + res.error_message);
+            },
+            onTransferResult: function(res) {
+                console.log('转接结果', JSON.stringify(res));
+            },
+            onConsultResult: function(res) {
+                console.log('咨询结果', JSON.stringify(res));
+            },
+            onThreeWayCallingResult: function(res) {
+                console.log('三方结果', JSON.stringify(res));
             }
         });
     }
@@ -127,6 +145,51 @@
                 console.log('修改状态成功');
             }, function() {
                 console.log('修改状态失败');
+            });
+        }
+    }
+
+    function transfer() {
+        let targetId = document.getElementById('agent_id').value;
+        if (window.callComp) {
+            window.callComp.transfer(targetId, function() {
+                console.log('正在尝试转接...');
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
+        } else {
+            alert('请先创建通话组件');
+        }
+    }
+
+    function startConsult() {
+        let targetId = document.getElementById('agent_id').value;
+        if (window.callComp) {
+            window.callComp.startConsult(targetId, function() {
+                console.log('正在尝试咨询...');
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
+        }
+    }
+
+    function stopConsult() {
+        if (window.callComp) {
+            window.callComp.stopConsult(function() {
+                console.log('正在结束咨询...');
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
+        }
+    }
+
+    function startThreeWayCalling() {
+        let targetId = document.getElementById('agent_id').value;
+        if (window.callComp) {
+            window.callComp.startThreeWayCalling(targetId, function() {
+                console.log('正在尝试发起三方通话...');
+            }, function(res) {
+                alert(JSON.stringify(res));
             });
         }
     }

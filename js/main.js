@@ -15,7 +15,6 @@ import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import Agent from './Agent';
 import * as callUtil from './CallUtil';
-import { makeCall } from './CallUtil';
 import CONSTANT from './Const';
 import _ from 'lodash';
 
@@ -124,8 +123,9 @@ class UdeskCallCenterComponent extends React.Component {
                     CallInfo.set('can_transfer', msg.can_transfer === 'true');
 
                     if (msg.code === '6005') {
-                        Alert.success('咨询成功');
+                        Alert.success('成功从咨询中恢复!');
                     }
+                    self.props.onConsultResult(msg);
                     break;
                 case 'three_party':
                     CallInfo.set('can_consult', msg.can_consult === 'true');
@@ -136,6 +136,10 @@ class UdeskCallCenterComponent extends React.Component {
                     if (msg.code === '1000') {
                         Alert.success('三方成功');
                     }
+                    self.props.onThreeWayCallingResult(msg);
+                    break;
+                case 'transfer_result':
+                    self.props.onTransferResult(msg);
                     break;
                 case 'drop_call':
                     self.props.onDropCall && self.props.onDropCall(msg);
@@ -155,8 +159,15 @@ class UdeskCallCenterComponent extends React.Component {
     }
 }
 
+const emptyFunction = function() {
+};
+
 class CallcenterComponent {
-    constructor({container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, onWorkStatusChange, onWorkWayChange, onDropCall, showManualScreenPop = false}) {
+    constructor({
+        container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, onWorkStatusChange,
+        onWorkWayChange, onDropCall, onTransferResult = emptyFunction, onConsultResult = emptyFunction,
+        onThreeWayCallingResult = emptyFunction, showManualScreenPop = false
+    }) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
         //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
@@ -166,7 +177,10 @@ class CallcenterComponent {
         container.appendChild(wrapper);
         render(<UdeskCallCenterComponent callConfig={CallConfig}
                                          showManualScreenPop={showManualScreenPop}
-                                         onDropCall={onDropCall}/>, wrapper);
+                                         onDropCall={onDropCall}
+                                         onTransferResult={onTransferResult}
+                                         onConsultResult={onConsultResult}
+                                         onThreeWayCallingResult={onThreeWayCallingResult}/>, wrapper);
         this.isDestroyed = false;
 
         let converter = (callLog) => {
@@ -235,10 +249,12 @@ class CallcenterComponent {
                 onWorkWayChange && onWorkWayChange(v);
             }
         });
-    }
 
-    makeCall(number, onSuccess, onFailure) {
-        makeCall(number, onSuccess, onFailure);
+        this.transfer = callUtil.transfer;
+        this.startConsult = callUtil.startConsult;
+        this.startThreeWayCalling = callUtil.startThreeWayCalling;
+        this.stopConsult = callUtil.stopConsult;
+        this.makeCall = callUtil.makeCall;
     }
 
     setWorkStatus(workStatus, onSuccess, onFailure) {

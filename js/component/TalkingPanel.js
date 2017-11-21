@@ -3,11 +3,11 @@ import CallInfo from '../CallInfo';
 import utils from '../Tools';
 import ButtonWithImage from './ButtonWithImage';
 import AgentSelect from './AgentSelect';
-import AjaxUtils from '../AjaxUtils';
 import Alert from './Alert';
 import CustomerInfo from './CustomerInfo';
 import React from 'react';
 import HangupButton from './HangupButton';
+import { stopConsult, startConsult, startThreeWayCalling, transfer } from '../CallUtil';
 
 export default class TalkingPanelComponent extends React.Component {
     constructor() {
@@ -64,7 +64,7 @@ export default class TalkingPanelComponent extends React.Component {
                                      className={this.state.can_three_party ? '' : 'hide'}
                                      state={this.state.agentSelectType !== 'threeWay' ? 'normal' : 'cancel'}
                                      cancelHandler={this.hideAgentSelect.bind(this)}/>
-                    <ButtonWithImage image={images.consult} normalHandler={this.endConsult.bind(this)}
+                    <ButtonWithImage image={images.consult} normalHandler={this.stopConsult.bind(this)}
                                      className={this.state.can_end_consult ? '' : 'hide'}
                                      state='normal' content="恢复"
                     />
@@ -80,53 +80,31 @@ export default class TalkingPanelComponent extends React.Component {
 
     selectAgent(agent) {
         if (this.state.agentSelectType === 'transfer') {
-            AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_call', {agent_no: agent.id}, function(res) {
-                switch (res.code) {
-                    case 1001:
-                        Alert.success('转移的请求已经发送！');
-                        break;
-                    default:
-                        Alert.error(res.message || '转移失败！');
-                }
-            }, function() {
-                Alert.error('转移失败');
+            transfer(agent.id, function() {
+                Alert.success('转移的请求已经发送！');
+            }, function(res) {
+                Alert.error(res.message || '转移失败！');
             });
         } else if (this.state.agentSelectType === 'consult') {
-            AjaxUtils.post('/agent_api/v1/callcenter/desktop/start_consult', {agent_no: agent.id}, function(res) {
-                switch (res.code) {
-                    case 1001:
-                        Alert.success('咨询的请求已经发送！');
-                        break;
-                    default:
-                        Alert.error(res.message || '咨询失败');
-                }
-            }, function() {
-                Alert.error('咨询失败');
+            startConsult(agent.id, function(res) {
+                Alert.success('咨询的请求已经发送！');
+            }, function(res) {
+                Alert.error(res.message || '咨询失败');
             });
         } else if (this.state.agentSelectType === 'threeWay') {
-            AjaxUtils.post('/agent_api/v1/callcenter/desktop/three_party', {agent_no: agent.id}, function(res) {
-                switch (res.code) {
-                    case 1001:
-                        Alert.success('三方的请求已经发送！');
-                        break;
-                    default:
-                        Alert.error(res.message || '三方失败！');
-                }
-            }, function() {
-                Alert.error('三方失败');
+            startThreeWayCalling(agent.id, function() {
+                Alert.success('三方的请求已经发送！');
+            }, function(res) {
+                Alert.error(res.message || '三方失败！');
             });
         }
     }
 
-    endConsult() {
-        AjaxUtils.post('/agent_api/v1/callcenter/desktop/end_consult', function(res) {
-            switch (res.code) {
-                case 1001:
-                    Alert.success('正在取消咨询');
-                    break;
-                default:
-                    Alert.error(res.message || '取消咨询失败');
-            }
+    stopConsult() {
+        stopConsult(function() {
+            Alert.success('正在取消咨询');
+        }, function(res) {
+            Alert.error(res.message || '取消咨询失败');
         });
     }
 
