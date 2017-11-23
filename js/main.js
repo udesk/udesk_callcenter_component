@@ -255,6 +255,7 @@ class CallcenterComponent {
         this.startThreeWayCalling = callUtil.startThreeWayCalling;
         this.stopConsult = callUtil.stopConsult;
         this.makeCall = callUtil.makeCall;
+        this.setWorkingWay = callUtil.setWorkingWay;
     }
 
     setWorkStatus(workStatus, onSuccess, onFailure) {

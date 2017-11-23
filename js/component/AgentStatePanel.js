@@ -1,5 +1,4 @@
 import Const from '../Const';
-import AjaxUtils from '../AjaxUtils';
 import Alert from './Alert';
 import CallConfig from '../CallConfig';
 import React from 'react';
@@ -98,7 +97,7 @@ export default class AgentStatePanelComponent extends React.Component {
             Alert.error('只能在挂断的时候切换在线方式');
             return;
         }
-        AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_way', {agent_work_way: way.id}, function() {
+        callUtil.setWorkingWay(way.id, function() {
         }, function() {
             Alert.error('切换在线方式失败');
         });

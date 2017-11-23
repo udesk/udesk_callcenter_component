@@ -57,6 +57,18 @@ export function setWorkStatus(workStatus, successCallback, failureCallback) {
     });
 }
 
+export function setWorkingWay(workingWay, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_way', {agent_work_way: workingWay}, function(res) {
+        if (res.code === 1000) {
+            successCallback(res);
+        } else {
+            failureCallback(res);
+        }
+    }, function() {
+        failureCallback(...arguments);
+    });
+}
+
 export function hangup(successCallback, failureCallback) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/drop_call', null, function(res) {
         if (res.code === 2049) {
@@ -71,6 +83,8 @@ export function hangup(successCallback, failureCallback) {
         }
         if (res.code !== 1001) {
             Alert.error(res.code_message || '挂断失败！');
+            utils.isFunction(failureCallback) && failureCallback(...arguments);
+        } else {
             utils.isFunction(successCallback) && successCallback(...arguments);
         }
     }, function() {

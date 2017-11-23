@@ -58,6 +58,11 @@
     <button onclick="setWorkStatus('resting');">小休</button>
     <button onclick="setWorkStatus('offline');">离线</button>
 </div>
+<h3>修改客服在线方式</h3>
+<div>
+    <button onclick="setWorkingWay('fixed_voip_online')">IP话机</button>
+    <button onclick="setWorkingWay('phone_online')">手机</button>
+</div>
 <h3>挂断</h3>
 <div>
     <button onclick="callComp.hangup();">挂断</button>
@@ -81,8 +86,8 @@
         }
         window.callComp = new UdeskCallcenterComponent({
             container: document.body,
-            token: 'xxxxxxx',  // 客服token
-            subDomain: 'xxxxxx', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
+            token: 'xxxxx',  // 客服token
+            subDomain: 'xxxxx', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
             showManualScreenPop: true,
             onScreenPop: function(conversation) {
                 var tr = document.createElement('tr');
@@ -193,6 +198,17 @@
             });
         }
     }
+
+    function setWorkingWay(workingWay) {
+        if (callComp) {
+            callComp.setWorkingWay(workingWay, function() {
+                console.log('正在尝试修改客服在线方式');
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
+        }
+    }
+
 </script>
 </body>
 </html>
