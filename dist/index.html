@@ -60,8 +60,8 @@
 </div>
 <h3>修改客服在线方式</h3>
 <div>
-    <button onclick="setWorkingWay('fixed_voip_online')">IP话机</button>
-    <button onclick="setWorkingWay('phone_online')">手机</button>
+    <button onclick="setWorkingWay('fixed_voip_online');">IP话机</button>
+    <button onclick="setWorkingWay('phone_online');">手机</button>
 </div>
 <h3>挂断</h3>
 <div>
@@ -127,7 +127,13 @@
             },
             onThreeWayCallingResult: function(res) {
                 console.log('三方结果', JSON.stringify(res));
-            }
+            },
+//            onInitSuccess: function() {
+//                console.log('初始化成功');
+//            },
+//            onInitFailure: function() {
+//                console.log('初始化失败');
+//            }
         });
     }
 

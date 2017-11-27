@@ -40,9 +40,11 @@ class UdeskCallCenterComponent extends React.Component {
             Agent.group_id = res.group_id;
             Agent.permissions = res.permissions;
 
+            self.props.onInitSuccess();
+
             self.connectWebSocket();
         }, function() {
-            Alert.error('获取初始化数据失败!');
+            self.props.onInitFailure();
         });
     }
 
@@ -122,9 +124,6 @@ class UdeskCallCenterComponent extends React.Component {
                     CallInfo.set('can_three_party', msg.can_three_party === 'true');
                     CallInfo.set('can_transfer', msg.can_transfer === 'true');
 
-                    if (msg.code === '6005') {
-                        Alert.success('成功从咨询中恢复!');
-                    }
                     self.props.onConsultResult(msg);
                     break;
                 case 'three_party':
@@ -133,16 +132,13 @@ class UdeskCallCenterComponent extends React.Component {
                     CallInfo.set('can_three_party', msg.can_three_party === 'true');
                     CallInfo.set('can_transfer', msg.can_transfer === 'true');
 
-                    if (msg.code === '1000') {
-                        Alert.success('三方成功');
-                    }
                     self.props.onThreeWayCallingResult(msg);
                     break;
                 case 'transfer_result':
                     self.props.onTransferResult(msg);
                     break;
                 case 'drop_call':
-                    self.props.onDropCall && self.props.onDropCall(msg);
+                    self.props.onDropCall(msg);
             }
         });
 
@@ -164,9 +160,26 @@ const emptyFunction = function() {
 
 class CallcenterComponent {
     constructor({
-        container, subDomain, token, onScreenPop, onRinging, onTalking, onHangup, onWorkStatusChange,
-        onWorkWayChange, onDropCall, onTransferResult = emptyFunction, onConsultResult = emptyFunction,
-        onThreeWayCallingResult = emptyFunction, showManualScreenPop = false
+        container, subDomain, token,
+        showManualScreenPop = false,
+        onScreenPop = emptyFunction,
+        onRinging = emptyFunction,
+        onTalking = emptyFunction,
+        onHangup = emptyFunction,
+        onWorkStatusChange = emptyFunction,
+        onWorkWayChange = emptyFunction,
+        onDropCall = emptyFunction,
+        onTransferResult = emptyFunction,
+        onInitSuccess = emptyFunction,
+        onConsultResult = function(msg) {
+            if (msg.code === '6005') Alert.success('成功从咨询中恢复!');
+        },
+        onThreeWayCallingResult = function(msg) {
+            if (msg.code === '1000') Alert.success('三方成功');
+        },
+        onInitFailure = function() {
+            Alert.error('获取初始化数据失败!');
+        }
     }) {
         AjaxUtils.token = token;
         AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
@@ -180,7 +193,10 @@ class CallcenterComponent {
                                          onDropCall={onDropCall}
                                          onTransferResult={onTransferResult}
                                          onConsultResult={onConsultResult}
-                                         onThreeWayCallingResult={onThreeWayCallingResult}/>, wrapper);
+                                         onThreeWayCallingResult={onThreeWayCallingResult}
+                                         onInitSuccess={onInitSuccess}
+                                         onInitFailure={onInitFailure}/>, wrapper);
+
         this.isDestroyed = false;
 
         let converter = (callLog) => {
@@ -229,24 +245,16 @@ class CallcenterComponent {
             }
         };
 
-        if (onScreenPop) {
-            CallInfo.on('screenPop', this.onScreenPop);
-        }
-        if (onRinging) {
-            CallInfo.on('ringing', this.onRinging);
-        }
-        if (onTalking) {
-            CallInfo.on('talking', this.onTalking);
-        }
-        if (onHangup) {
-            CallInfo.on('hangup', this.onHangup);
-        }
+        CallInfo.on('screenPop', this.onScreenPop);
+        CallInfo.on('ringing', this.onRinging);
+        CallInfo.on('talking', this.onTalking);
+        CallInfo.on('hangup', this.onHangup);
 
         CallConfig.on('change', this.onCallConfigChange = function(k, v) {
             if (k === 'agent_work_state') {
-                onWorkStatusChange && onWorkStatusChange(v);
+                onWorkStatusChange(v);
             } else if (k === 'agent_work_way') {
-                onWorkWayChange && onWorkWayChange(v);
+                onWorkWayChange(v);
             }
         });
 
