@@ -7,7 +7,11 @@ import Alert from './Alert';
 import CustomerInfo from './CustomerInfo';
 import React from 'react';
 import HangupButton from './HangupButton';
-import { stopConsult, startConsult, startThreeWayCalling, transfer } from '../CallUtil';
+import IvrNodeSelect from './IvrNodeSelect';
+import { stopConsult, startConsult, startThreeWayCalling, transfer,startIvrCalling} from '../CallUtil';
+
+
+
 
 export default class TalkingPanelComponent extends React.Component {
     constructor() {
@@ -17,11 +21,13 @@ export default class TalkingPanelComponent extends React.Component {
             agentSelectType: null,
             queue_desc: CallInfo.queue_desc,
             can_end_consult: false
+
         };
         let self = this;
         CallInfo.on('change', this.onCallInfoChange = function(k, v) {
             let obj = {};
             obj[k] = v;
+            console.log(obj)
             self.setState(obj);
         });
     }
@@ -33,7 +39,7 @@ export default class TalkingPanelComponent extends React.Component {
             descInfoContent = '来源:' + this.state.queue_desc;
         }
         if (!this.state.showAgentSelect || this.state.direction === 'out' || this.state.can_end_consult ||
-            (!this.state.can_consult && !this.state.can_transfer && !this.state.can_three_party)) {
+            (!this.state.can_consult && !this.state.can_transfer && !this.state.can_three_party && !this.state.can_transfer_ivr)) {
             agentSelectWrapperClass += ' hide';
         }
 
@@ -44,10 +50,21 @@ export default class TalkingPanelComponent extends React.Component {
             <div className="desc-info">{descInfoContent}</div>
             <div className="time-info">{utils.humanizeTime(this.state.talkingTime)}</div>
             <div className={agentSelectWrapperClass}>
-                <AgentSelect onChange={this.selectAgent.bind(this)}/>
+                {(() => {
+                    if (this.state.agentSelectType === 'ivr_node') {
+                        return <IvrNodeSelect onChange={this.selectAgent.bind(this)}/>
+                    }else {
+                        return <AgentSelect onChange={this.selectAgent.bind(this)}/>
+                    }
+                })()}
             </div>
             <div className='bottom-btns'>
                 <div className="btn-group">
+                    <ButtonWithImage image={images.ivrIcon} normalHandler={this.showIvrSelect.bind(this)}
+                                     content="IVR"
+                                     className={this.state.can_transfer_ivr ? '' : 'hide'}
+                                     state={this.state.agentSelectType !== 'ivr_node' ? 'normal' : 'cancel'}
+                                     cancelHandler={this.hideAgentSelect.bind(this)}/>
                     <ButtonWithImage image={images.transfer} normalHandler={this.showTransferAgentSelect.bind(this)}
                                      content="转移"
                                      className={this.state.can_transfer ? '' : 'hide'}
@@ -79,6 +96,7 @@ export default class TalkingPanelComponent extends React.Component {
     }
 
     selectAgent(agent) {
+        let self = this;
         if (this.state.agentSelectType === 'transfer') {
             transfer(agent.id, function() {
                 Alert.success('转移的请求已经发送！');
@@ -96,6 +114,13 @@ export default class TalkingPanelComponent extends React.Component {
                 Alert.success('三方的请求已经发送！');
             }, function(res) {
                 Alert.error(res.message || '三方失败！');
+            });
+        } else if(this.state.agentSelectType === 'ivr_node'){
+            startIvrCalling(agent, function() {
+                self.hideAgentSelect();
+                Alert.success('ivr的请求已经发送！');
+            }, function(res) {
+                Alert.error(res.message || '转接ivr失败！');
             });
         }
     }
@@ -120,6 +145,9 @@ export default class TalkingPanelComponent extends React.Component {
         this.setState({agentSelectType: 'threeWay', showAgentSelect: true});
     }
 
+    showIvrSelect() {
+        this.setState({agentSelectType: 'ivr_node', showAgentSelect: true});
+    }
     hideAgentSelect() {
         this.setState({agentSelectType: null, showAgentSelect: false});
     }

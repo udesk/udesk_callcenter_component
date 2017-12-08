@@ -196,26 +196,30 @@
         display: none;
     }
     .common-btn {
-        border: 1px solid #ccc;
+        border: 0px solid #ccc;
         text-align: center;
         font-size: 12px;
-        padding: 5px;
+        padding: 12px 15px 0;
         background-color: #fff;
         cursor: pointer;
+
         img {
             height: 20px;
             width: 20px;
             vertical-align: middle;
         }
     }
+    .common-btn:hover{
+        background:rgba(240,240,240,1);
+    }
     button.common-btn {
         outline: none;
     }
     .btn-group {
         display: inline-block;
-        border-right: 1px solid #ccc;
+        //border-right: 1px solid #ccc;
         > .common-btn {
-            border-right: 0;
+            //border-right: 0;
         }
     }
     .inline-block {

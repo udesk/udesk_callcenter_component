@@ -158,6 +158,25 @@ class UdeskCallCenterComponent extends React.Component {
                     break;
                 case 'drop_call':
                     self.props.onDropCall(msg);
+                    break;
+                case 'transfer_ivr_result':
+                    CallInfo.set('can_consult', msg.can_consult === 'true');
+                    CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
+                    CallInfo.set('can_three_party', msg.can_three_party === 'true');
+                    CallInfo.set('can_transfer', msg.can_transfer === 'true');
+                    CallInfo.set('can_transfer_ivr', msg.can_transfer_ivr === 'true');
+                    self.props.onIvrCallResult(msg);
+                    // self.setState({});
+                    break;
+                case 'resume_agent_result':
+                    CallInfo.set('can_consult', msg.can_consult === 'true');
+                    CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
+                    CallInfo.set('can_three_party', msg.can_three_party === 'true');
+                    CallInfo.set('can_transfer', msg.can_transfer === 'true');
+                    CallInfo.set('can_transfer_ivr', msg.can_transfer_ivr === 'true');
+                    self.props.onResumeAgentResult(msg);
+                    // self.setState({});
+                    break;
             }
         });
 
@@ -210,6 +229,8 @@ class CallcenterComponent {
         onDropCall = emptyFunction,
         onTransferResult = emptyFunction,
         onInitSuccess = emptyFunction,
+        onIvrCallResult = emptyFunction,
+        onResumeAgentResult = emptyFunction,
         onConsultResult = function(msg) {
             if (msg.code === '6005') Alert.success('成功从咨询中恢复!');
         },
@@ -236,6 +257,8 @@ class CallcenterComponent {
                                          onConsultResult={onConsultResult}
                                          onThreeWayCallingResult={onThreeWayCallingResult}
                                          onInitSuccess={onInitSuccess}
+                                         onResumeAgentResult={onResumeAgentResult}
+                                         onIvrCallResult={onIvrCallResult}
                                          onInitFailure={onInitFailure}/>, wrapper);
 
         this.isDestroyed = false;
@@ -305,6 +328,7 @@ class CallcenterComponent {
         this.stopConsult = callUtil.stopConsult;
         this.makeCall = callUtil.makeCall;
         this.setWorkingWay = callUtil.setWorkingWay;
+        this.startIvrCalling = callUtil.startIvrCalling;
     }
 
     setWorkStatus(workStatus, onSuccess, onFailure) {

@@ -15,12 +15,12 @@ export default class ButtonWithImageComponent extends React.Component {
             <img src={this.props.image}/>
             {(() => {
                 if (this.props.state === 'normal') {
-                    return <span>{this.props.content}</span>
+                    return <p>{this.props.content}</p>;
                 } else if (this.props.state === 'cancel') {
-                    return <span>{this.props.cancelText || '取消'}</span>
+                    return <p>{this.props.cancelText || '取消'}</p>;
                 }
             }).call(this)}
-        </button>
+        </button>;
     }
 
     onClick() {
