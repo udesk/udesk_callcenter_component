@@ -18,7 +18,7 @@ import * as callUtil from './CallUtil';
 import CONSTANT from './Const';
 import _ from 'lodash';
 
-require.context('../images', true, /\.(png|jpg|gif)$/);
+require.context('../assets/images', true, /\.(png|jpg|gif)$/);
 
 class UdeskCallCenterComponent extends React.Component {
     constructor() {
@@ -198,11 +198,13 @@ class CallcenterComponent {
         },
         onInitFailure = function() {
             Alert.error('获取初始化数据失败!');
-        }
+        },
+        onTokenExpired = emptyFunction
     }) {
         AjaxUtils.token = token;
-        //AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
-        AjaxUtils.host = 'http://' + subDomain + '.udeskcat.com';
+        AjaxUtils.host = 'https://' + subDomain + __server__;
+        AjaxUtils.onTokenExpired = onTokenExpired;
+        //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
 
         let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
@@ -310,6 +312,10 @@ class CallcenterComponent {
         CallInfo.off('hangup', this.onHangup);
         CallConfig.off('change', this.onCallConfigChange);
         this.isDestroyed = true;
+    }
+
+    setToken(token) {
+        AjaxUtils.token = token;
     }
 }
 

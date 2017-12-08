@@ -19,6 +19,7 @@
     "babel-preset-env": "^1.1.4",
     "babel-preset-latest": "^6.16.0",
     "babel-preset-react": "^6.16.0",
+    "copy-webpack-plugin": "^4.2.3",
     "css-loader": "^0.26.1",
     "extract-text-webpack-plugin": "^2.0.0-rc.3",
     "file-loader": "^0.9.0",
@@ -27,10 +28,16 @@
     "style-loader": "^0.13.1",
     "uglifyjs-webpack-plugin": "^0.2.1",
     "url-loader": "^0.5.7",
-    "webpack": "^2.2"
+    "webpack": "^2.2",
+    "webpack-merge": "^4.1.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "start": "npm run dev",
+    "webpack-w": "webpack -w --config ./build/webpack.dev.conf.js --progress --colors",
+    "build": "webpack --config ./build/webpack.base.conf.js --progress --colors",
+    "build:dev": "NODE_ENV=dev webpack --config ./build/webpack.dev.conf.js --progress --colors",
+    "build:prod": "NODE_ENV=prod webpack --config ./build/webpack.prod.conf.js --progress --colors"
   },
   "author": "Udesk",
   "license": "ISC"
