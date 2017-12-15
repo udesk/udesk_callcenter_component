@@ -24,12 +24,17 @@ class UdeskCallCenterComponent extends React.Component {
     constructor() {
         super();
         this.state = {
-            expand: false
+            expand: false,
+            customStates: []
         };
 
         let self = this;
         AjaxUtils.get('/agent_api/v1/callcenter/init_data', null, function(res) {
-            CallConfig.set('agent_work_state', res.agent_work_state);
+            if (res.cc_custom_state_id) {
+                CallConfig.set('agent_work_state', res.agent_work_state + '_' + res.cc_custom_state_id);
+            } else {
+                CallConfig.set('agent_work_state', res.agent_work_state);
+            }
             CallConfig.set('agent_work_way', res.agent_work_way);
 
             self.tower_url = res.tower_host;
@@ -39,6 +44,15 @@ class UdeskCallCenterComponent extends React.Component {
             Agent.name = res.user_name;
             Agent.group_id = res.group_id;
             Agent.permissions = res.permissions;
+
+            self.setState({
+                'customStates': _.map(res.cc_custom_states || [], function(item) {
+                    item.customStateId = item.id;
+                    item.originalStateId = 'resting';
+                    item.id = item.originalStateId + '_' + item.id;
+                    return item;
+                })
+            });
 
             self.props.onInitSuccess();
 
@@ -53,7 +67,8 @@ class UdeskCallCenterComponent extends React.Component {
             <Header onMinimize={this.collapse.bind(this)} onMaximize={this.expand.bind(this)}
                     onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}
                     onDrop={this.drop.bind(this)}/>
-            <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}/>
+            <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}
+                             customStates={this.state.customStates}/>
             <MainContent className={this.state.expand ? '' : 'hide'}
                          showManualScreenPop={this.props.showManualScreenPop}/>
         </div>;
@@ -116,7 +131,11 @@ class UdeskCallCenterComponent extends React.Component {
                     let workWay = msg.agent_work_way;
                     let workState = msg.agent_work_state;
                     CallConfig.set('agent_work_way', workWay);
-                    CallConfig.set('agent_work_state', workState);
+                    if (msg.cc_custom_state_id) {
+                        CallConfig.set('agent_work_state', workState + '_' + msg.cc_custom_state_id);
+                    } else {
+                        CallConfig.set('agent_work_state', workState);
+                    }
                     break;
                 case 'consult_result':
                     CallInfo.set('can_consult', msg.can_consult === 'true');
@@ -182,8 +201,8 @@ class CallcenterComponent {
         }
     }) {
         AjaxUtils.token = token;
-        AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
-        //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
+        //AjaxUtils.host = 'https://' + subDomain + '.udesk.cn';
+        AjaxUtils.host = 'http://' + subDomain + '.udeskcat.com';
 
         let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';

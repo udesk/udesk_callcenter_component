@@ -11,14 +11,14 @@ export default class DropdownComponent extends React.Component {
     }
 
     render() {
-        let { content, value } = this.props;
-        let selected = _.find(content, { id: value });
+        let {content, value} = this.props;
+        let selected = _.find(content, {id: value});
         let dropdownClass = (this.state.expand && !this.props.disabled) ? '' : 'hide';
         dropdownClass += ' ' + this.props.direction;
 
-        return <div className={(this.props.className || '') + " ucm-dropdown"}>
+        return <div className={(this.props.className || '') + ' ucm-dropdown'}>
             <img src={images.caret_down} onClick={this.toggleExpand.bind(this)}/>
-            <div onClick={this.toggleExpand.bind(this)}>{selected ? selected.value : ''}</div>
+            <div onClick={this.toggleExpand.bind(this)}>{selected ? selected.name : ''}</div>
             <ul className={dropdownClass}>
                 {_.map(this.props.content, (item) => {
                     const onChangeCb = (e) => {
@@ -28,16 +28,16 @@ export default class DropdownComponent extends React.Component {
                         }
                     };
                     if (!item.hide) {
-                        return <li key={item.id} onClick={onChangeCb}>{item.value}</li>
+                        return <li key={item.id} onClick={onChangeCb}>{item.name}</li>;
                     }
                 })}
             </ul>
-        </div>
+        </div>;
     }
 
     toggleExpand() {
         if (this.props.disabled) {
-            this.setState({ expand: false });
+            this.setState({expand: false});
             return;
         }
         this.setState({

@@ -18,19 +18,12 @@ agentStateMap[Const.TALKING] = '通话中';
 agentStateMap[Const.RINGING] = '振铃中';
 
 export default class AgentStatePanelComponent extends React.Component {
-    constructor() {
+    constructor(props) {
         super();
-        this.agentStateMap = [
-            {id: Const.IDLE, value: <div className={'work-state-' + Const.IDLE}><i></i>空闲</div>},
-            {id: Const.BUSY, value: <div className={'work-state-' + Const.BUSY}><i></i>忙碌</div>},
-            {id: Const.RESTING, value: <div className={'work-state-' + Const.RESTING}><i></i>小休</div>},
-            {id: Const.OFFLINE, value: <div className={'work-state-' + Const.OFFLINE}><i></i>离线</div>},
-            {id: Const.NEATEN, value: <div className={'work-state-' + Const.BUSY}><i></i>整理中</div>, hide: true}
-        ];
 
         this.agentWayMap = [
-            {id: Const.FIXED_VOIP_ONLINE, value: 'IP话机'},
-            {id: Const.PHONE_ONLINE, value: '手机'}
+            {id: Const.FIXED_VOIP_ONLINE, name: 'IP话机'},
+            {id: Const.PHONE_ONLINE, name: '手机'}
         ];
 
         this.state = {
@@ -60,6 +53,20 @@ export default class AgentStatePanelComponent extends React.Component {
     }
 
     render() {
+        this.agentStateMap = [
+            {id: Const.IDLE, name: <div className={'work-state-' + Const.IDLE}><i></i>空闲</div>},
+            {id: Const.BUSY, name: <div className={'work-state-' + Const.BUSY}><i></i>忙碌</div>},
+            {id: Const.RESTING, name: <div className={'work-state-' + Const.RESTING}><i></i>小休</div>},
+            ..._.map(this.props.customStates, (item) => {
+                if(typeof item.name === 'string') {
+                    item.name = <div className={'work-state-' + item.originalStateId}><i></i>{item.name}</div>;
+                }
+                return item;
+            }),
+            {id: Const.OFFLINE, name: <div className={'work-state-' + Const.OFFLINE}><i></i>离线</div>},
+            {id: Const.NEATEN, name: <div className={'work-state-' + Const.BUSY}><i></i>整理中</div>, hide: true}
+        ];
+
         return <div className="agent-state-panel">
             {
                 (function() {
@@ -89,7 +96,11 @@ export default class AgentStatePanelComponent extends React.Component {
     }
 
     updateAgentWorkState(state) {
-        callUtil.setWorkStatus(state.id);
+        if (state.originalStateId) {
+            callUtil.setCustomWorkStatus(state.originalStateId, state.customStateId);
+        } else {
+            callUtil.setWorkStatus(state.id);
+        }
     }
 
     updateAgentWorkWay(way) {

@@ -57,6 +57,17 @@ export function setWorkStatus(workStatus, successCallback, failureCallback) {
     });
 }
 
+export function setCustomWorkStatus(originalWorkStatus, customStateId, successCallback, failureCallback) {
+    AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_state', {
+        agent_work_state: originalWorkStatus, cc_custom_state_id: customStateId
+    }, function() {
+        utils.isFunction(successCallback) && successCallback(...arguments);
+    }, function() {
+        Alert.error('切换在线状态失败');
+        utils.isFunction(failureCallback) && failureCallback(...arguments);
+    });
+}
+
 export function setWorkingWay(workingWay, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_way', {agent_work_way: workingWay}, function(res) {
         if (res.code === 1000) {
