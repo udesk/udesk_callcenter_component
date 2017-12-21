@@ -21416,7 +21416,7 @@ function getXMLHttpRequest() {
     if (typeof XMLHttpRequest !== 'undefined') {
         xhr = new XMLHttpRequest();
     } else {
-        var versions = ["MSXML2.XmlHttp.5.0", "MSXML2.XmlHttp.4.0", "MSXML2.XmlHttp.3.0", "MSXML2.XmlHttp.2.0", "Microsoft.XmlHttp"];
+        var versions = ['MSXML2.XmlHttp.5.0', 'MSXML2.XmlHttp.4.0', 'MSXML2.XmlHttp.3.0', 'MSXML2.XmlHttp.2.0', 'Microsoft.XmlHttp'];
 
         for (var i = 0, len = versions.length; i < len; i++) {
             try {
@@ -21446,6 +21446,21 @@ function load(options) {
         }
 
         if (xhr.status < 200 || xhr.status >= 300) {
+            if (xhr.status === 400) {
+                var _content = xhr.response;
+                var _contentType = xhr.getResponseHeader('Content-Type');
+                if (_contentType.indexOf('application/json') > -1) {
+                    _content = JSON.parse(_content);
+                    if (_content.code === 'token_expired' && obj.refreshToken && !options.retry) {
+                        obj.refreshToken(function (newToken) {
+                            options.retry = true;
+                            obj.token = newToken;
+                            load(options);
+                        });
+                        return;
+                    }
+                }
+            }
             failureCallback && failureCallback(xhr);
             return;
         }
@@ -21574,7 +21589,8 @@ var obj = {
     put: put,
     delete: del,
     token: '',
-    host: ''
+    host: '',
+    refreshToken: null
 };
 
 module.exports = obj;
@@ -21583,7 +21599,7 @@ function serializeParams(params) {
     var content = [];
 
     for (var i in params) {
-        content.push(encodeURIComponent(i) + "=" + encodeURIComponent(params[i]));
+        content.push(encodeURIComponent(i) + '=' + encodeURIComponent(params[i]));
     }
     content = content.join('&');
     return content;
@@ -50255,6 +50271,26 @@ var UdeskCallCenterComponent = function (_React$Component) {
 var emptyFunction = function emptyFunction() {};
 
 var CallcenterComponent = function () {
+    /**
+     *
+     * @param container
+     * @param subDomain
+     * @param token
+     * @param showManualScreenPop
+     * @param onScreenPop
+     * @param onRinging
+     * @param onTalking
+     * @param onHangup
+     * @param onWorkStatusChange
+     * @param onWorkWayChange
+     * @param onDropCall
+     * @param onTransferResult
+     * @param onInitSuccess
+     * @param onConsultResult
+     * @param onThreeWayCallingResult
+     * @param onInitFailure
+     * @param {function} onTokenExpired - 当token失效是触发，参数是一个回调函数，可以调用回调函数，参数是新的token实现刷新token的功能
+     */
     function CallcenterComponent(_ref) {
         var container = _ref.container,
             subDomain = _ref.subDomain,
@@ -50291,14 +50327,13 @@ var CallcenterComponent = function () {
             onInitFailure = _ref$onInitFailure === undefined ? function () {
             _Alert2.default.error('获取初始化数据失败!');
         } : _ref$onInitFailure,
-            _ref$onTokenExpired = _ref.onTokenExpired,
-            onTokenExpired = _ref$onTokenExpired === undefined ? emptyFunction : _ref$onTokenExpired;
+            onTokenExpired = _ref.onTokenExpired;
 
         _classCallCheck(this, CallcenterComponent);
 
         _AjaxUtils2.default.token = token;
-        _AjaxUtils2.default.host = 'https://' + subDomain + '.udeskcat.com';
-        _AjaxUtils2.default.onTokenExpired = onTokenExpired;
+        _AjaxUtils2.default.host = 'http://' + subDomain + '.udesktiger.com';
+        _AjaxUtils2.default.refreshToken = onTokenExpired;
         //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
 
         var wrapper = this.wrapper = document.createElement('div');

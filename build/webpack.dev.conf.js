@@ -6,7 +6,7 @@ const webpack = require("webpack");
 module.exports = merge(baseWebpackConfig, {
     plugins: [
         new webpack.DefinePlugin({
-            __server__: "'.udeskcat.com'"
+            __server__: "'.udesktiger.com'"
         })
     ]
 });
