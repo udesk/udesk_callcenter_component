@@ -128,9 +128,11 @@
             onThreeWayCallingResult: function(res) {
                 console.log('三方结果', JSON.stringify(res));
             },
-            onTokenExpired() {
-                var newToken = confirm('Token过期，请输入新的token');
-
+            onTokenExpired(callback) {
+                //1秒后刷新token
+                setTimeout(function() {
+                    callback('f3ebff04e6cf899cac39da98bcb1ccdd77e9c8ccd94fa70419668c4bb6510b5fe277cb786662b4c6173706fa2915e9184619f42b766f76226f043693cca1dbdf5a2e1d49');
+                }, 1000);
             }
             //            onInitSuccess: function() {
             //                console.log('初始化成功');

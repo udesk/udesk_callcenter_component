@@ -4,12 +4,12 @@ function getXMLHttpRequest() {
     if (typeof XMLHttpRequest !== 'undefined') {
         xhr = new XMLHttpRequest();
     } else {
-        var versions = ["MSXML2.XmlHttp.5.0",
-            "MSXML2.XmlHttp.4.0",
-            "MSXML2.XmlHttp.3.0",
-            "MSXML2.XmlHttp.2.0",
-            "Microsoft.XmlHttp"
-        ]
+        var versions = ['MSXML2.XmlHttp.5.0',
+            'MSXML2.XmlHttp.4.0',
+            'MSXML2.XmlHttp.3.0',
+            'MSXML2.XmlHttp.2.0',
+            'Microsoft.XmlHttp'
+        ];
 
         for (var i = 0, len = versions.length; i < len; i++) {
             try {
@@ -40,6 +40,22 @@ function load(options) {
         }
 
         if (xhr.status < 200 || xhr.status >= 300) {
+            if (xhr.status === 400) {
+                let content = xhr.response;
+                let contentType = xhr.getResponseHeader('Content-Type');
+                if (contentType.indexOf('application/json') > -1) {
+                    content = JSON.parse(content);
+                    if ((content.code === 'invalid_password' || content.code === 'token_expired') && obj.refreshToken &&
+                        !options.retry) {
+                        obj.refreshToken(function(newToken) {
+                            options.retry = true;
+                            obj.token = newToken;
+                            load(options);
+                        });
+                        return;
+                    }
+                }
+            }
             failureCallback && failureCallback(xhr);
             return;
         }
@@ -139,7 +155,7 @@ function put(url, params, callback, failureCallback) {
             'content-type': 'application/json'
         },
         failureCallback: failureCallback
-    })
+    });
 }
 
 function del(url, params, callback, failureCallback) {
@@ -168,7 +184,8 @@ var obj = {
     put: put,
     delete: del,
     token: '',
-    host: ''
+    host: '',
+    refreshToken: null
 };
 
 module.exports = obj;
@@ -177,7 +194,7 @@ function serializeParams(params) {
     var content = [];
 
     for (var i in params) {
-        content.push(encodeURIComponent(i) + "=" + encodeURIComponent(params[i]));
+        content.push(encodeURIComponent(i) + '=' + encodeURIComponent(params[i]));
     }
     content = content.join('&');
     return content;

@@ -178,6 +178,26 @@ const emptyFunction = function() {
 };
 
 class CallcenterComponent {
+    /**
+     *
+     * @param container
+     * @param subDomain
+     * @param token
+     * @param showManualScreenPop
+     * @param onScreenPop
+     * @param onRinging
+     * @param onTalking
+     * @param onHangup
+     * @param onWorkStatusChange
+     * @param onWorkWayChange
+     * @param onDropCall
+     * @param onTransferResult
+     * @param onInitSuccess
+     * @param onConsultResult
+     * @param onThreeWayCallingResult
+     * @param onInitFailure
+     * @param {function} onTokenExpired - 当token失效是触发，参数是一个回调函数，可以调用回调函数，参数是新的token实现刷新token的功能
+     */
     constructor({
         container, subDomain, token,
         showManualScreenPop = false,
@@ -199,11 +219,11 @@ class CallcenterComponent {
         onInitFailure = function() {
             Alert.error('获取初始化数据失败!');
         },
-        onTokenExpired = emptyFunction
+        onTokenExpired
     }) {
         AjaxUtils.token = token;
-        AjaxUtils.host = 'https://' + subDomain + __server__;
-        AjaxUtils.onTokenExpired = onTokenExpired;
+        AjaxUtils.host = 'http://' + subDomain + __server__;
+        AjaxUtils.refreshToken = onTokenExpired;
         //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
 
         let wrapper = this.wrapper = document.createElement('div');
