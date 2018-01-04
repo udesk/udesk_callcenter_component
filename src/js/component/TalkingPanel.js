@@ -243,6 +243,20 @@ export default class TalkingPanelComponent extends React.Component {
             Alert.error(res.message || '取消咨询失败');
         });
     }
+    holdCallSelect() {
+        holdCallSelect(function(){
+            Alert.success('正在保持通话');
+        },function(res){
+            Alert.error(res.message || '保持通话失败');
+        })
+    }
+    recoveryCallSelect() {
+        recoveryCallSelect(()=>{
+            Alert.success('正在取回通话');
+        },function(res){
+            Alert.error(res.message || '取回通话失败');
+        })
+    }
 
     holdCallSelect() {
         holdCallSelect(function() {

@@ -1,3 +1,6 @@
+import 'es5-shim';
+import 'es5-shim/es5-sham';
+import 'console-polyfill';
 import '../css/callcenter-component.scss';
 import 'font-awesome/scss/font-awesome.scss';
 import './component/ie8-child-elements';
@@ -86,6 +89,8 @@ class UdeskCallCenterComponent extends React.Component {
 
                 }
             }
+            self.tower_url = res.tower_http_host;
+            self.user_id = res.user_id;
 
             Agent.id = res.user_id;
             Agent.name = res.user_name;
@@ -101,7 +106,7 @@ class UdeskCallCenterComponent extends React.Component {
                 })
             });
             self.props.onInitSuccess();
-            websocket.init(res.tower_host, res.user_id);
+            websocket.init(res.tower_http_host, res.user_id);
         }, function() {
             self.props.onInitFailure();
         });
@@ -219,7 +224,7 @@ class CallcenterComponent {
         onTokenExpired
     }) {
         AjaxUtils.token = token;
-        AjaxUtils.host = __protocol__ + '://' + subDomain + __server__;
+        AjaxUtils.host = 'http://' + subDomain + __server__;
         AjaxUtils.refreshToken = onTokenExpired;
         //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
 

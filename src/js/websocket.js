@@ -11,7 +11,14 @@ import Eventable from './Eventable';
 
 class WebsocketConnection extends Eventable {
     init(tower_url, user_id) {
-        this._socket = new Socket(tower_url, user_id);
+        //if (navigator.appName == 'Microsoft Internet Explorer' ||
+        //    !!(navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/rv:11/)) ||
+        //    (typeof $.browser !== 'undefined' && $.browser.msie == 1)) {
+        //    this._socket = new Socket(location.protocol + '//' + location.host, user_id);
+        //} else {
+            this._socket = new Socket(tower_url, user_id);
+        //}
+
         this._socket.onNotice((msg) => {
             if (isFunction(this[msg.type])) {
                 this[msg.type](msg);

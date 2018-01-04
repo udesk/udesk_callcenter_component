@@ -14,17 +14,20 @@ module.exports = {
         filename: 'js/[name].js'
     },
     module: {
-        rules: [
+        loaders: [
+            { test: /\.json$/, exclude: /node_modules/, loader: 'json'},
             {
-                test: /\.css$/, exclude: /node_modules/, loader: ['style-loader', 'css-loader']
+                test: /\.css$/, exclude: /node_modules/, loader: 'style-loader!css-loader'
             },
             {
                 test: /\.scss$/,
-                loaders: ExtractTextPlugin.extract({
-                    fallback: 'style-loader', use: ['css-loader?minimize', 'sass-loader']
-                })
+                loader: ExtractTextPlugin.extract(['css-loader?minimize', 'sass-loader'])
+                //loader: ExtractTextPlugin.extract({
+                //    //fallback: 'style-loader', use: ['css-loader?minimize', 'sass-loader']
+                //    notExtractLoader: 'style-loader', loader: 'css-loader?minimize!sass-loader'
+                //})
             },
-            {test: /\.js|jsx$/, exclude: [/node_modules/, /static/], loader: 'babel-loader'},
+            {test: /\.js|jsx$/, exclude: [/node_modules/, /static/], loader: 'es3ify-loader!babel-loader'},
             {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/font-woff&publicPath=../'
@@ -44,7 +47,7 @@ module.exports = {
         ]
     },
     plugins: [
-        new CopyWebpackPlugin([{from: 'index.html'}]),
+        new CopyWebpackPlugin([{from: 'index.html'}, {from: 'static'}]),
         new ExtractTextPlugin('css/callcenter-component.css')
     ]
 };

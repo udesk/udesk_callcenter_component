@@ -9,8 +9,9 @@ import { makeCall } from '../CallUtil';
 import CallInfo from '../CallInfo';
 
 export default class HangupPanel extends React.Component {
-    constructor() {
+    constructor(props) {
         super();
+        this.props = props;
         this.state = {
             inputNumber: '',
             displayKeyboard: false

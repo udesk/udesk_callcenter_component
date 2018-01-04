@@ -7,8 +7,9 @@ module.exports = merge(baseWebpackConfig, {
     devtool: 'source-map',
     plugins: [
         new webpack.DefinePlugin({
-            __server__: '\'.udesk.cn\'',
-            __protocol__: '\'https\''
+            __server__: '".udeskd1.com"',
+            __protocol__: '"http"'
+            //__server__: "'.cebbank.com'"
         })
     ]
 });

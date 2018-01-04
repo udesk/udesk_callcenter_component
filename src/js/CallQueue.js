@@ -16,7 +16,7 @@ class CallQueue extends Eventable {
     }
 
     put(callLog) {
-        let existingCallLog = _.find(this.queue, ['conversation_id', callLog.conversation_id]);
+        let existingCallLog = _.find(this.queue, {'conversation_id': callLog.conversation_id});
         let self = this;
         if (existingCallLog) {
             //如果通话已经挂断了，忽略所有的callLog

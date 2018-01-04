@@ -7,7 +7,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 module.exports = merge(baseWebpackConfig, {
     plugins: [
         new webpack.DefinePlugin({
-            __server__: '\'.udesk.cn\'',
+            __server__: "'.cebbank.com'",
             __protocol__: '\'https\'',
             'process.env': {
                 NODE_ENV: JSON.stringify('production')

@@ -5,7 +5,7 @@ class Socket {
         this.callbackList = [];
         this.exceptionCallBacks = [];
         var self = this;
-        var socket = this.socket = io(url, {transports: ['websocket'], upgrade: false});
+        var socket = this.socket = io(url);
 
         var config = {
             token: seatToken,

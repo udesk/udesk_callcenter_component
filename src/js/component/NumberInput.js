@@ -13,7 +13,7 @@ export default class NumberInputComponent extends React.Component {
         return <div className="number-input">
             <img src={images.keyboard} onClick={this.props.onKeyboardBtnClick}/>
             <div>
-                <input onChange={this.props.onChange} value={this.props.value}/>
+                <input onKeyUp={this.props.onChange} value={this.props.value}/>
             </div>
         </div>
     }

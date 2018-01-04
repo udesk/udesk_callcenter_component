@@ -1,3 +1,5 @@
+import Base64 from 'Base64';
+
 function getXMLHttpRequest() {
     var xhr;
 
@@ -41,7 +43,7 @@ function load(options) {
 
         if (xhr.status < 200 || xhr.status >= 300) {
             if (xhr.status === 400) {
-                let content = xhr.response;
+                let content = xhr.response || xhr.responseText;
                 let contentType = xhr.getResponseHeader('Content-Type');
                 if (contentType.indexOf('application/json') > -1) {
                     content = JSON.parse(content);
@@ -64,11 +66,11 @@ function load(options) {
         if (xhr.readyState === 4) {
             var contentType = xhr.getResponseHeader('Content-Type');
             if (contentType === 'application/javascript') {
-                successCallback && successCallback(eval(xhr.response), xhr);
+                successCallback && successCallback(eval(xhr.response || xhr.responseText), xhr);
             } else if (contentType.indexOf('application/json') > -1) {
-                successCallback && successCallback(JSON.parse(xhr.response), xhr);
+                successCallback && successCallback(JSON.parse(xhr.response || xhr.responseText), xhr);
             } else {
-                successCallback && successCallback(xhr.response, xhr);
+                successCallback && successCallback(xhr.response || xhr.responseText, xhr);
             }
         }
     }
@@ -79,7 +81,7 @@ function load(options) {
             xhr.setRequestHeader(i, headers[i]);
         }
     }
-    xhr.setRequestHeader('Authorization', 'Basic ' + btoa('agent:' + obj.token));
+    xhr.setRequestHeader('Authorization', 'Basic ' + Base64.btoa('agent:' + obj.token));
 
     xhr.send(content);
 }
@@ -227,3 +229,4 @@ function serializeParams(params) {
 //delete('http://localhost:8080/testDelete', { a: 'b', c: 33, d: true, '888': [1, 2, 3, 4] }, function() {
 //    console.log('args', arguments);
 //});
+

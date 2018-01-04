@@ -31,7 +31,7 @@ export default class Eventable {
         let eventName = arguments[0];
         let events = this._getEvents(eventName);
 
-        let args = [].splice.call(arguments, 1);
+        let args = [].slice.call(arguments, 1);
         for (let i = 0, len = events.length; i < len; i++) {
             Utils.isFunction(events[i]) && events[i].apply(this, args);
         }

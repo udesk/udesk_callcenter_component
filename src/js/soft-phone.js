@@ -1,4 +1,4 @@
-import JsSIP from 'jssip';
+//import JsSIP from 'jssip';
 import _ from 'lodash';
 require.context('../assets/sounds', true, /\.mp3$/);
 
