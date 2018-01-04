@@ -63,6 +63,11 @@
     <button onclick="setWorkingWay('fixed_voip_online');">IP话机</button>
     <button onclick="setWorkingWay('phone_online');">手机</button>
 </div>
+<h3>保持/取回 通话</h3>
+<div>
+    <button onclick="holdCallSelect();">保持通话</button>
+    <button onclick="recoveryCallSelect();">取回通话</button>
+</div>
 <h3>挂断</h3>
 <div>
     <button onclick="callComp.hangup();">挂断</button>
@@ -87,7 +92,11 @@
         }
         window.callComp = new UdeskCallcenterComponent({
             container: document.body,
+<<<<<<< HEAD
             token: 'xxxxxxx',
+=======
+            token: 'xxxxxxx', // 客服token
+>>>>>>> CCL-803 【前端】通话组件支持保持/取回
             subDomain: 'xxxxxx', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
             showManualScreenPop: true,
             onScreenPop: function(conversation) {
@@ -171,6 +180,32 @@
             }, function() {
                 console.log('修改状态失败');
             });
+        }
+    }
+
+    function holdCallSelect() {
+        let targetId = document.getElementById('agent_id').value;
+        if (window.callComp) {
+            window.callComp.holdCallSelect(function() {
+                console.log('正在保持通话...');
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
+        } else {
+            alert('请先创建通话组件');
+        }
+    }
+
+    function recoveryCallSelect() {
+        let targetId = document.getElementById('agent_id').value;
+        if (window.callComp) {
+            window.callComp.recoveryCallSelect(function() {
+                console.log('正在取回通话...');
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
+        } else {
+            alert('请先创建通话组件');
         }
     }
 

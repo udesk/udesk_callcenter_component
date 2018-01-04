@@ -177,6 +177,11 @@ class UdeskCallCenterComponent extends React.Component {
                     self.props.onResumeAgentResult(msg);
                     // self.setState({});
                     break;
+                case 'hold_call':
+                case 'retrieval_call':
+                    CallInfo.set('can_retrieval', msg.can_retrieval === 'true');
+                    CallInfo.set('can_hold', msg.can_hold === 'true')
+                    break;
             }
         });
 
@@ -326,6 +331,8 @@ class CallcenterComponent {
         this.startConsult = callUtil.startConsult;
         this.startThreeWayCalling = callUtil.startThreeWayCalling;
         this.stopConsult = callUtil.stopConsult;
+        this.holdCallSelect = callUtil.holdCallSelect;
+        this.recoveryCallSelect = callUtil.recoveryCallSelect;
         this.makeCall = callUtil.makeCall;
         this.setWorkingWay = callUtil.setWorkingWay;
         this.startIvrCalling = callUtil.startIvrCalling;

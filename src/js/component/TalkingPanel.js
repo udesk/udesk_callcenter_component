@@ -8,10 +8,7 @@ import CustomerInfo from './CustomerInfo';
 import React from 'react';
 import HangupButton from './HangupButton';
 import IvrNodeSelect from './IvrNodeSelect';
-import { stopConsult, startConsult, startThreeWayCalling, transfer,startIvrCalling} from '../CallUtil';
-
-
-
+import { stopConsult, startConsult, startThreeWayCalling, transfer,holdCallSelect,recoveryCallSelect } from '../CallUtil';
 
 export default class TalkingPanelComponent extends React.Component {
     constructor() {
@@ -65,6 +62,15 @@ export default class TalkingPanelComponent extends React.Component {
                                      className={this.state.can_transfer_ivr ? '' : 'hide'}
                                      state={this.state.agentSelectType !== 'ivr_node' ? 'normal' : 'cancel'}
                                      cancelHandler={this.hideAgentSelect.bind(this)}/>
+                    <ButtonWithImage image={images.call_retain} normalHandler={this.holdCallSelect.bind(this)}
+                                     content="保持"
+                                     className={this.state.can_hold ? '' : 'hide'}
+                                     state= 'normal'
+                                     cancelHandler={this.hideAgentSelect.bind(this)}/>
+                    <ButtonWithImage image={images.call_recovery} normalHandler={this.recoveryCallSelect.bind(this)}
+                                     content="取回"
+                                     className={this.state.can_retrieval ? '' : 'hide'}
+                                     state='normal'/>
                     <ButtonWithImage image={images.transfer} normalHandler={this.showTransferAgentSelect.bind(this)}
                                      content="转移"
                                      className={this.state.can_transfer ? '' : 'hide'}
@@ -131,6 +137,20 @@ export default class TalkingPanelComponent extends React.Component {
         }, function(res) {
             Alert.error(res.message || '取消咨询失败');
         });
+    }
+    holdCallSelect() {
+        holdCallSelect(function(){
+            Alert.success('正在保持通话');
+        },function(res){
+            Alert.error(res.message || '保持通话失败');
+        })
+    }
+    recoveryCallSelect() {
+        recoveryCallSelect(()=>{
+            Alert.success('正在取回通话');
+        },function(res){
+            Alert.error(res.message || '取回通话失败');
+        })
     }
 
     showTransferAgentSelect() {

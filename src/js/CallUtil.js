@@ -5,7 +5,6 @@ import CallConfig from './CallConfig';
 import Const from './Const';
 import CallQueue from './CallQueue';
 import _ from 'lodash';
-import CallInfo from './CallInfo';
 
 let calling = false;
 const emptyFunction = function() {
@@ -184,9 +183,10 @@ export function startThreeWayCalling(targetId, successCallback = emptyFunction, 
     });
 }
 
-
 export function startIvrCalling(node, successCallback = emptyFunction, failureCallback = emptyFunction) {
-    AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_ivr', {node_id: node.id,transfer_mode:node.transfer_mode}, function(res) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_ivr', {
+        node_id: node.id, transfer_mode: node.transfer_mode
+    }, function(res) {
         switch (res.code) {
             case 1001:
                 successCallback(res);
@@ -198,7 +198,6 @@ export function startIvrCalling(node, successCallback = emptyFunction, failureCa
         failureCallback(error);
     });
 }
-
 
 export function stopConsult(successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/end_consult', null, function(res) {
@@ -222,10 +221,38 @@ export function getAgents({workState, page}, successCallback, failureCallback) {
     });
 }
 
-export function getIvrNodes(successCallback = emptyFunction, failureCallback = emptyFunction ) {
-    AjaxUtils.get('/agent_api/v1/callcenter/desktop/ivr_nodes',null, function(res) {
+export function getIvrNodes(successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.get('/agent_api/v1/callcenter/desktop/ivr_nodes', null, function(res) {
         switch (res.code) {
             case 1000:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+export function holdCallSelect(successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/hold_call', null, function(res) {
+        switch (res.code) {
+            case 1001:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+export function recoveryCallSelect(successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/retrieval_call', null, function(res) {
+        switch (res.code) {
+            case 1001:
                 successCallback(res);
                 break;
             default:
