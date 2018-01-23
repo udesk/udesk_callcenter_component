@@ -7,7 +7,10 @@ const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 module.exports = merge(baseWebpackConfig, {
     plugins: [
         new webpack.DefinePlugin({
-            __server__: "'.udesk.cn'"
+            __server__: "'.udesk.cn'",
+            "process.env": {
+                NODE_ENV: JSON.stringify("production")
+            }
         }),
         new UglifyJSPlugin()
     ]
