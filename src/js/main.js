@@ -248,7 +248,7 @@ class CallcenterComponent {
         onTokenExpired
     }) {
         AjaxUtils.token = token;
-        AjaxUtils.host = 'https://' + subDomain + __server__;
+        AjaxUtils.host = __protocol__ +'://' + subDomain + __server__;
         AjaxUtils.refreshToken = onTokenExpired;
         //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
 
