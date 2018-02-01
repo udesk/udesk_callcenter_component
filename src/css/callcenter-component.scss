@@ -196,10 +196,19 @@
         display: none;
     }
     .common-btn {
+        &:first-child{
+            padding-left: 0px;
+        }
+        &:nth-child(2){
+            padding-left: 0px;
+        }
+        &:last-child{
+            padding-right: 0px;
+        }
         border: 0px solid #ccc;
         text-align: center;
         font-size: 12px;
-        padding: 12px 15px 0;
+        padding: 12px 14px 0;
         background-color: #fff;
         cursor: pointer;
 

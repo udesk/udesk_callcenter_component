@@ -33458,11 +33458,6 @@ var TalkingPanelComponent = function (_React$Component) {
                     _react2.default.createElement(
                         'div',
                         { className: 'btn-group' },
-                        _react2.default.createElement(_ButtonWithImage2.default, { image: _images2.default.ivrIcon, normalHandler: this.showIvrSelect.bind(this),
-                            content: 'IVR',
-                            className: this.state.can_transfer_ivr ? '' : 'hide',
-                            state: this.state.agentSelectType !== 'ivr_node' ? 'normal' : 'cancel',
-                            cancelHandler: this.hideAgentSelect.bind(this) }),
                         _react2.default.createElement(_ButtonWithImage2.default, { image: _images2.default.call_retain, normalHandler: this.holdCallSelect.bind(this),
                             content: '\u4FDD\u6301',
                             className: this.state.can_hold ? '' : 'hide',
@@ -33472,6 +33467,11 @@ var TalkingPanelComponent = function (_React$Component) {
                             content: '\u53D6\u56DE',
                             className: this.state.can_retrieval ? '' : 'hide',
                             state: 'normal' }),
+                        _react2.default.createElement(_ButtonWithImage2.default, { image: _images2.default.ivrIcon, normalHandler: this.showIvrSelect.bind(this),
+                            content: 'IVR',
+                            className: this.state.can_transfer_ivr ? '' : 'hide',
+                            state: this.state.agentSelectType !== 'ivr_node' ? 'normal' : 'cancel',
+                            cancelHandler: this.hideAgentSelect.bind(this) }),
                         _react2.default.createElement(_ButtonWithImage2.default, { image: _images2.default.transfer, normalHandler: this.showTransferAgentSelect.bind(this),
                             content: '\u8F6C\u79FB',
                             className: this.state.can_transfer ? '' : 'hide',
@@ -33482,16 +33482,15 @@ var TalkingPanelComponent = function (_React$Component) {
                             className: this.state.can_consult ? '' : 'hide',
                             state: this.state.agentSelectType !== 'consult' ? 'normal' : 'cancel',
                             cancelHandler: this.hideAgentSelect.bind(this) }),
+                        _react2.default.createElement(_ButtonWithImage2.default, { image: _images2.default.consult, normalHandler: this.stopConsult.bind(this),
+                            className: this.state.can_end_consult ? '' : 'hide',
+                            state: 'normal', content: '\u6062\u590D' }),
                         _react2.default.createElement(_ButtonWithImage2.default, { image: _images2.default.threeWayCalling,
                             normalHandler: this.showThreeWayAgentSelect.bind(this),
                             content: '\u4E09\u65B9',
                             className: this.state.can_three_party ? '' : 'hide',
                             state: this.state.agentSelectType !== 'threeWay' ? 'normal' : 'cancel',
-                            cancelHandler: this.hideAgentSelect.bind(this) }),
-                        _react2.default.createElement(_ButtonWithImage2.default, { image: _images2.default.consult, normalHandler: this.stopConsult.bind(this),
-                            className: this.state.can_end_consult ? '' : 'hide',
-                            state: 'normal', content: '\u6062\u590D'
-                        })
+                            cancelHandler: this.hideAgentSelect.bind(this) })
                     )
                 ),
                 function () {

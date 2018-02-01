@@ -57,11 +57,6 @@ export default class TalkingPanelComponent extends React.Component {
             </div>
             <div className='bottom-btns'>
                 <div className="btn-group">
-                    <ButtonWithImage image={images.ivrIcon} normalHandler={this.showIvrSelect.bind(this)}
-                                     content="IVR"
-                                     className={this.state.can_transfer_ivr ? '' : 'hide'}
-                                     state={this.state.agentSelectType !== 'ivr_node' ? 'normal' : 'cancel'}
-                                     cancelHandler={this.hideAgentSelect.bind(this)}/>
                     <ButtonWithImage image={images.call_retain} normalHandler={this.holdCallSelect.bind(this)}
                                      content="保持"
                                      className={this.state.can_hold ? '' : 'hide'}
@@ -71,6 +66,11 @@ export default class TalkingPanelComponent extends React.Component {
                                      content="取回"
                                      className={this.state.can_retrieval ? '' : 'hide'}
                                      state='normal'/>
+                    <ButtonWithImage image={images.ivrIcon} normalHandler={this.showIvrSelect.bind(this)}
+                                     content="IVR"
+                                     className={this.state.can_transfer_ivr ? '' : 'hide'}
+                                     state={this.state.agentSelectType !== 'ivr_node' ? 'normal' : 'cancel'}
+                                     cancelHandler={this.hideAgentSelect.bind(this)}/>
                     <ButtonWithImage image={images.transfer} normalHandler={this.showTransferAgentSelect.bind(this)}
                                      content="转移"
                                      className={this.state.can_transfer ? '' : 'hide'}
@@ -81,16 +81,15 @@ export default class TalkingPanelComponent extends React.Component {
                                      className={this.state.can_consult ? '' : 'hide'}
                                      state={this.state.agentSelectType !== 'consult' ? 'normal' : 'cancel'}
                                      cancelHandler={this.hideAgentSelect.bind(this)}/>
+                    <ButtonWithImage image={images.consult} normalHandler={this.stopConsult.bind(this)}
+                                     className={this.state.can_end_consult ? '' : 'hide'}
+                                     state='normal' content="恢复"/>
                     <ButtonWithImage image={images.threeWayCalling}
                                      normalHandler={this.showThreeWayAgentSelect.bind(this)}
                                      content="三方"
                                      className={this.state.can_three_party ? '' : 'hide'}
                                      state={this.state.agentSelectType !== 'threeWay' ? 'normal' : 'cancel'}
                                      cancelHandler={this.hideAgentSelect.bind(this)}/>
-                    <ButtonWithImage image={images.consult} normalHandler={this.stopConsult.bind(this)}
-                                     className={this.state.can_end_consult ? '' : 'hide'}
-                                     state='normal' content="恢复"
-                    />
                 </div>
             </div>
             {(() => {
