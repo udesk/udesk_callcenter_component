@@ -8,7 +8,7 @@ import CustomerInfo from './CustomerInfo';
 import React from 'react';
 import HangupButton from './HangupButton';
 import IvrNodeSelect from './IvrNodeSelect';
-import { stopConsult, startConsult, startThreeWayCalling, transfer,holdCallSelect,recoveryCallSelect } from '../CallUtil';
+import { stopConsult, startConsult, startThreeWayCalling, transfer,holdCallSelect,recoveryCallSelect,startIvrCalling} from '../CallUtil';
 
 export default class TalkingPanelComponent extends React.Component {
     constructor() {
@@ -101,6 +101,7 @@ export default class TalkingPanelComponent extends React.Component {
     }
 
     selectAgent(agent) {
+
         let self = this;
         if (this.state.agentSelectType === 'transfer') {
             transfer(agent.id, function() {
@@ -121,6 +122,7 @@ export default class TalkingPanelComponent extends React.Component {
                 Alert.error(res.message || '三方失败！');
             });
         } else if(this.state.agentSelectType === 'ivr_node'){
+
             startIvrCalling(agent, function() {
                 self.hideAgentSelect();
                 Alert.success('ivr的请求已经发送！');
