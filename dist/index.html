@@ -79,7 +79,15 @@
     <button onclick="startConsult();">咨询</button>
     <button onclick="stopConsult();">结束咨询</button>
     <button onclick="startThreeWayCalling();">三方</button>
-    <!--<button onclick="startIvrCalling();">转ivr</button>-->
+</div>
+<h3>转接IVR</h3>
+<input id="node_id" placeholder="节点id"/>
+<select id="type">
+    <option value ="agent_hold">转接后等待</option>
+    <option value ="agent_hangup">转接后挂机</option>
+</select>
+<div>
+    <button onclick="startIvrCalling();">转接ivr</button>
 </div>
 
 <script src="./js/callcenter-component.js"></script>
@@ -251,9 +259,14 @@
     }
 
     function startIvrCalling() {
-        let targetId = document.getElementById('agent_id').value;
+        let targetId = document.getElementById('node_id').value;
+        let type = document.getElementById('type').value;
+        let node = {
+            transfer_mode:type,
+            id:targetId
+        }
         if (window.callComp) {
-            window.callComp.startIvrCalling(targetId, function() {
+            window.callComp.startIvrCalling(node, function() {
                 console.log('正在尝试转接ivr...');
             }, function(res) {
                 alert(JSON.stringify(res));
