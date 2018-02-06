@@ -1,0 +1,15 @@
+.radio-btn-group {
+    margin-bottom: 5px;
+    button {
+        border: 1px solid #787878;
+        border-left-width: 0;
+        outline: none;
+        cursor: pointer;
+        &:first-of-type {
+            border-left-width: 1px;
+        }
+        &.active {
+            background-color: #7085b3;
+        }
+    }
+}

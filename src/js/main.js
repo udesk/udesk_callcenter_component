@@ -180,7 +180,7 @@ class UdeskCallCenterComponent extends React.Component {
                 case 'hold_call':
                 case 'retrieval_call':
                     CallInfo.set('can_retrieval', msg.can_retrieval === 'true');
-                    CallInfo.set('can_hold', msg.can_hold === 'true')
+                    CallInfo.set('can_hold', msg.can_hold === 'true');
                     break;
             }
         });
@@ -248,7 +248,7 @@ class CallcenterComponent {
         onTokenExpired
     }) {
         AjaxUtils.token = token;
-        AjaxUtils.host = __protocol__ +'://' + subDomain + __server__;
+        AjaxUtils.host = __protocol__ + '://' + subDomain + __server__;
         AjaxUtils.refreshToken = onTokenExpired;
         //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
 
@@ -336,6 +336,10 @@ class CallcenterComponent {
         this.makeCall = callUtil.makeCall;
         this.setWorkingWay = callUtil.setWorkingWay;
         this.startIvrCalling = callUtil.startIvrCalling;
+        this.transferToGroup = callUtil.transferToGroup;
+        this.transferToExternalPhone = callUtil.transferToExternalPhone;
+        this.startConsultingToExternalPhone = callUtil.startConsultingToExternalPhone;
+        this.startThreeWayCallingToExternalPhone = callUtil.startThreeWayCallingToExternalPhone;
     }
 
     setWorkStatus(workStatus, onSuccess, onFailure) {

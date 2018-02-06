@@ -196,7 +196,6 @@
         display: none;
     }
     .common-btn {
-
         border: 0px solid #ccc;
         text-align: center;
         font-size: 12px;
@@ -210,8 +209,8 @@
             vertical-align: middle;
         }
     }
-    .common-btn:hover{
-        background:rgba(240,240,240,1);
+    .common-btn:hover {
+        background: rgba(240, 240, 240, 1);
     }
     button.common-btn {
         outline: none;
@@ -301,6 +300,27 @@
         .agent-select-wrapper {
             padding: 0 30px;
             margin-bottom: 24px;
+            text-align: left;
+            > select {
+                margin-bottom: 5px;
+                height: 26px;
+                background: #fff;
+                width: 100%;
+            }
+            > .external-phone {
+                > input {
+                    height: 23px;
+                    line-height: 23px;
+                    margin-right: 7px;
+                    width: 126px;
+                }
+                > button {
+                    height: 29px;
+                    width: 29px;
+                    background: none;
+                    text-align: center;
+                }
+            }
         }
         .time-info {
             margin-bottom: 25px;
@@ -332,4 +352,5 @@
         width: 100%;
         margin-top: 15px;
     }
+    @import "radio-btn-group";
 }

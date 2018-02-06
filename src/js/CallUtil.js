@@ -213,8 +213,25 @@ export function stopConsult(successCallback = emptyFunction, failureCallback = e
     });
 }
 
+/**
+ * 检查电话号码是否有效
+ * @param {string} phoneNumber
+ * @return {boolean}
+ */
+export function phoneNumberCheck(phoneNumber) {
+    return /^[\d*#+]{4,}$/.test(phoneNumber);
+}
+
 export function getAgents({workState, page}, successCallback, failureCallback) {
     AjaxUtils.get('/agent_api/v1/callcenter/agents', {page: page, callcenter_work_state: workState}, function(res) {
+        successCallback(res);
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+export function getGroups(params, successCallback, failureCallback) {
+    AjaxUtils.get('/agent_api/v1/callcenter/desktop/agent_groups', params, function(res) {
         successCallback(res);
     }, function(error) {
         failureCallback(error);
@@ -251,6 +268,74 @@ export function holdCallSelect(successCallback = emptyFunction, failureCallback 
 
 export function recoveryCallSelect(successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/retrieval_call', null, function(res) {
+        switch (res.code) {
+            case 1001:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+/**
+ * 转接客服组
+ */
+export function transferToGroup(targetId, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_call', {queue_type: targetId}, function(res) {
+        switch (res.code) {
+            case 1001:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+/**
+ * 转接外部电话
+ */
+export function transferToExternalPhone(phoneNumber, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_call_outline', {outline_phone_number: phoneNumber}, function(res) {
+        switch (res.code) {
+            case 1001:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+/**
+ * 咨询外部电话
+ */
+export function startConsultingToExternalPhone(phoneNumber, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/start_consult_outline', {outline_phone_number: phoneNumber}, function(res) {
+        switch (res.code) {
+            case 1001:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+/**
+ * 三方外部电话
+ */
+export function startThreeWayCallingToExternalPhone(phoneNumber, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/three_party_outline', {outline_phone_number: phoneNumber}, function(res) {
         switch (res.code) {
             case 1001:
                 successCallback(res);
