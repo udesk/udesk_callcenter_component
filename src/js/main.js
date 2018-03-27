@@ -3,9 +3,6 @@ import 'font-awesome/scss/font-awesome.scss';
 import './component/ie8-child-elements';
 import AgentStatePanel from './component/AgentStatePanel.js';
 import Header from './component/Header.js';
-import Socket from './component/socket';
-import CallQueue from './CallQueue';
-import CallLog from './CallLog';
 import AjaxUtils from './AjaxUtils';
 import Alert from './component/Alert';
 import CallInfo from './CallInfo';
@@ -15,8 +12,11 @@ import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import Agent from './Agent';
 import * as callUtil from './CallUtil';
-import CONSTANT from './Const';
+import * as CONSTANT from './Const';
+import { VOIP_ONLINE } from './Const';
 import _ from 'lodash';
+import softPhone from './soft-phone';
+import websocket from './websocket';
 
 require.context('../assets/images', true, /\.(png|jpg|gif)$/);
 
@@ -36,9 +36,52 @@ class UdeskCallCenterComponent extends React.Component {
                 CallConfig.set('agent_work_state', res.agent_work_state);
             }
             CallConfig.set('agent_work_way', res.agent_work_way);
+            CallConfig.set('enableVoipOnline', res.is_web_voip_open);
+            if (res.is_web_voip_open) {
+                softPhone.on('registrationFailed', function() {
+                    Alert.error('软电话注册失败');
+                });
 
-            self.tower_url = res.tower_host;
-            self.user_id = res.user_id;
+                softPhone.on('callFailed', function(cause) {
+                    if (cause === 'Canceled') {   //振铃时挂断，属于正常操作，不予提示
+                        return;
+                    }
+                    cause = cause || '呼叫失败';
+                    if (cause === 'User Denied Media Access') {
+                        cause = '无法访问您的耳麦';
+                    }
+                    Alert.error(cause);
+                    CallInfo.set('state', 'hangup');
+                });
+                softPhone.on('sessionProcess', function(originator) {
+                    CallInfo.setProperties({
+                        'state': 'ringing',
+                        'call_type': originator === 'local' ? '呼入' : '呼出',
+                        'can_accept': originator === 'local' ? 'in' : 'out',
+                        'agent_work_way': VOIP_ONLINE
+                    });
+                });
+
+                softPhone.on('sessionConfirmed', function() {
+                    CallInfo.set('state', 'talking');
+                });
+                softPhone.on('sessionEnded', function() {
+                    CallInfo.set('state', 'hangup');
+                });
+                softPhone.on('sessionFailed', function() {
+                    CallInfo.set('state', 'hangup');
+                });
+
+                softPhone.init({
+                    host: res.web_voip_host,
+                    port: res.web_voip_port_num,
+                    username: res.web_voip_id,
+                    password: res.web_voip_password
+                });
+                if (res.agent_work_way === VOIP_ONLINE) {
+                    softPhone.start();
+                }
+            }
 
             Agent.id = res.user_id;
             Agent.name = res.user_name;
@@ -56,7 +99,7 @@ class UdeskCallCenterComponent extends React.Component {
 
             self.props.onInitSuccess();
 
-            self.connectWebSocket();
+            websocket.init(res.tower_host, res.user_id);
         }, function() {
             self.props.onInitFailure();
         });
@@ -117,82 +160,6 @@ class UdeskCallCenterComponent extends React.Component {
         this.dragging = false;
     }
 
-    connectWebSocket() {
-        var self = this;
-        this.socket = new Socket(this.tower_url, this.user_id);
-
-        //websocket
-        this.socket.onNotice(function(msg) {
-            switch (msg.type) {
-                case 'call_log':
-                    CallQueue.put(new CallLog(msg));
-                    break;
-                case 'seat_status':
-                    let workWay = msg.agent_work_way;
-                    let workState = msg.agent_work_state;
-                    CallConfig.set('agent_work_way', workWay);
-                    if (msg.cc_custom_state_id) {
-                        CallConfig.set('agent_work_state', workState + '_' + msg.cc_custom_state_id);
-                    } else {
-                        CallConfig.set('agent_work_state', workState);
-                    }
-                    break;
-                case 'consult_result':
-                    CallInfo.set('can_consult', msg.can_consult === 'true');
-                    CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
-                    CallInfo.set('can_three_party', msg.can_three_party === 'true');
-                    CallInfo.set('can_transfer', msg.can_transfer === 'true');
-
-                    self.props.onConsultResult(msg);
-                    break;
-                case 'three_party':
-                    CallInfo.set('can_consult', msg.can_consult === 'true');
-                    CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
-                    CallInfo.set('can_three_party', msg.can_three_party === 'true');
-                    CallInfo.set('can_transfer', msg.can_transfer === 'true');
-
-                    self.props.onThreeWayCallingResult(msg);
-                    break;
-                case 'transfer_result':
-                    self.props.onTransferResult(msg);
-                    break;
-                case 'drop_call':
-                    self.props.onDropCall(msg);
-                    break;
-                case 'transfer_ivr_result':
-                    CallInfo.set('can_consult', msg.can_consult === 'true');
-                    CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
-                    CallInfo.set('can_three_party', msg.can_three_party === 'true');
-                    CallInfo.set('can_transfer', msg.can_transfer === 'true');
-                    CallInfo.set('can_transfer_ivr', msg.can_transfer_ivr === 'true');
-                    self.props.onIvrCallResult(msg);
-                    // self.setState({});
-                    break;
-                case 'resume_agent_result':
-                    CallInfo.set('can_consult', msg.can_consult === 'true');
-                    CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
-                    CallInfo.set('can_three_party', msg.can_three_party === 'true');
-                    CallInfo.set('can_transfer', msg.can_transfer === 'true');
-                    CallInfo.set('can_transfer_ivr', msg.can_transfer_ivr === 'true');
-                    self.props.onResumeAgentResult(msg);
-                    // self.setState({});
-                    break;
-                case 'hold_call':
-                case 'retrieval_call':
-                    CallInfo.set('can_retrieval', msg.can_retrieval === 'true');
-                    CallInfo.set('can_hold', msg.can_hold === 'true');
-                    break;
-            }
-        });
-
-        this.socket.onException(function(msg) {
-            switch (msg.error) {
-                case 'connected_at_other_place':
-                    Alert.error(msg.message);
-            }
-        });
-    }
-
     componentWillUnmount() {
         this.socket && this.socket.close();
     }
@@ -204,22 +171,24 @@ const emptyFunction = function() {
 class CallcenterComponent {
     /**
      *
-     * @param container
-     * @param subDomain
-     * @param token
-     * @param showManualScreenPop
-     * @param onScreenPop
-     * @param onRinging
-     * @param onTalking
-     * @param onHangup
-     * @param onWorkStatusChange
-     * @param onWorkWayChange
-     * @param onDropCall
-     * @param onTransferResult
-     * @param onInitSuccess
-     * @param onConsultResult
-     * @param onThreeWayCallingResult
-     * @param onInitFailure
+     * @param {document} container
+     * @param {string} subDomain
+     * @param {string} token
+     * @param {boolean} showManualScreenPop
+     * @param {function} onScreenPop
+     * @param {function} onRinging
+     * @param {function} onTalking
+     * @param {function} onHangup
+     * @param {function} onWorkStatusChange
+     * @param {function} onWorkWayChange
+     * @param {function} onDropCall
+     * @param {function} onTransferResult
+     * @param {function} onInitSuccess
+     * @param {function} onIvrCallResult
+     * @param {function} onResumeAgentResult
+     * @param {function} onConsultResult
+     * @param {function} onThreeWayCallingResult
+     * @param {function} onInitFailure
      * @param {function} onTokenExpired - 当token失效是触发，参数是一个回调函数，可以调用回调函数，参数是新的token实现刷新token的功能
      */
     constructor({
@@ -257,14 +226,16 @@ class CallcenterComponent {
         container.appendChild(wrapper);
         render(<UdeskCallCenterComponent callConfig={CallConfig}
                                          showManualScreenPop={showManualScreenPop}
-                                         onDropCall={onDropCall}
-                                         onTransferResult={onTransferResult}
-                                         onConsultResult={onConsultResult}
-                                         onThreeWayCallingResult={onThreeWayCallingResult}
                                          onInitSuccess={onInitSuccess}
                                          onResumeAgentResult={onResumeAgentResult}
-                                         onIvrCallResult={onIvrCallResult}
                                          onInitFailure={onInitFailure}/>, wrapper);
+
+        websocket.on('consultResult', onConsultResult);
+        websocket.on('threeWayCallingResult', onThreeWayCallingResult);
+        websocket.on('transferResult', onTransferResult);
+        websocket.on('dropCall', onDropCall);
+        websocket.on('ivrCallResult', onIvrCallResult);
+        websocket.on('resumeAgentResult', onResumeAgentResult);
 
         this.isDestroyed = false;
 

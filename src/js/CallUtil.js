@@ -2,9 +2,11 @@ import Alert from './component/Alert';
 import AjaxUtils from './AjaxUtils';
 import utils from './Tools';
 import CallConfig from './CallConfig';
-import Const from './Const';
+import * as Const from './Const';
+import { VOIP_ONLINE } from './Const';
 import CallQueue from './CallQueue';
 import _ from 'lodash';
+import softPhone from './soft-phone';
 
 let calling = false;
 const emptyFunction = function() {
@@ -26,10 +28,13 @@ export function makeCall(callNumber, successCallback, failureCallback) {
         utils.isFunction(failureCallback) && failureCallback(new Error('离线不可以外呼'));
         return;
     }
-    if (/^[\d*#+]{4,}$/.test(callNumber)) {
-        // utils.isFunction(successCallback) && successCallback();
-    } else {
+    if (!/^[\d*#+]{4,}$/.test(callNumber)) {
         utils.isFunction(failureCallback) && failureCallback(new Error('电话号码格式不正确'));
+        return;
+    }
+
+    if (CallConfig.agent_work_way === VOIP_ONLINE) {
+        softPhone.call(callNumber);
         return;
     }
 
@@ -47,6 +52,17 @@ export function makeCall(callNumber, successCallback, failureCallback) {
         Alert.error('外呼失败');
         utils.isFunction(failureCallback) && failureCallback(new Error('外呼失败'));
     });
+}
+
+export function answer() {
+    let ishttps = 'https:' == document.location.protocol ? true : false;
+    if(CallConfig.agent_work_way === VOIP_ONLINE && !ishttps){
+        alert('请在https://下登录使用网页电话');
+        return
+    }
+    if (CallConfig.agent_work_way === VOIP_ONLINE) {
+        softPhone.answer();
+    }
 }
 
 export function setWorkStatus(workStatus, successCallback, failureCallback) {
@@ -70,6 +86,11 @@ export function setCustomWorkStatus(originalWorkStatus, customStateId, successCa
 }
 
 export function setWorkingWay(workingWay, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    let ishttps = 'https:' == document.location.protocol ? true : false;
+    if(workingWay === 'voip_online' && !ishttps){
+        alert('请在https://下登录使用网页电话');
+        return
+    }
     AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_way', {agent_work_way: workingWay}, function(res) {
         if (res.code === 1000) {
             successCallback(res);
@@ -81,7 +102,16 @@ export function setWorkingWay(workingWay, successCallback = emptyFunction, failu
     });
 }
 
-export function hangup(successCallback, failureCallback) {
+export function hangup(successCallback = emptyFunction, failureCallback = emptyFunction) {
+    if (CallConfig.agent_work_way === VOIP_ONLINE) {
+        try {
+            softPhone.hangupAllSessions();
+            successCallback();
+        } catch (e) {
+            failureCallback(e);
+        }
+        return;
+    }
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/drop_call', null, function(res) {
         if (res.code === 2049) {
             _.forEach(CallQueue.queue, (i) => {

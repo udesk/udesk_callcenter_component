@@ -1,6 +1,6 @@
 import Alert from './Alert';
 import CallConfig from '../CallConfig';
-import Const from '../Const';
+import * as Const from '../Const';
 import React from 'react';
 import NumberInput from './NumberInput';
 import Keyboard from './Keyboard';

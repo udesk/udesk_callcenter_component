@@ -1,4 +1,4 @@
-import Const from './Const';
+import * as Const from './Const';
 import Eventable from './Eventable';
 
 class CallConfig extends Eventable {
@@ -6,6 +6,7 @@ class CallConfig extends Eventable {
         super();
         this.agent_work_state = Const.OFFLINE;
         this.agent_work_way = Const.FIXED_VOIP_ONLINE;
+        this.enableVoipOnline = false;
     }
 
     setAgentWorkState(state) {
@@ -13,7 +14,7 @@ class CallConfig extends Eventable {
             return;
         }
         this.agent_work_state = state;
-        this.fire('change', 'agent_work_state', state, this);
+        this.trigger('change', 'agent_work_state', state, this);
     }
 
     setAgentWorkWay(way) {
@@ -21,7 +22,7 @@ class CallConfig extends Eventable {
             return;
         }
         this.agent_work_way = way;
-        this.fire('change', 'agent_work_way', way, this);
+        this.trigger('change', 'agent_work_way', way, this);
     }
 
     set(k, v) {
@@ -29,7 +30,7 @@ class CallConfig extends Eventable {
             return;
         }
         this[k] = v;
-        this.fire('change', k, v, this);
+        this.trigger('change', k, v, this);
     }
 }
 

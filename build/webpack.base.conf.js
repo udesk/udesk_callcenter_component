@@ -33,6 +33,10 @@ module.exports = {
             {
                 test: /\.(png|jpg|jpeg|gif)$/,
                 loader: "file-loader?name=imgs/[name].[ext]&publicPath=../"
+            },
+            {
+                test: /\.mp3$/,
+                loader: "file-loader?name=sounds/[name].[ext]&publicPath=../"
             }
         ]
     },

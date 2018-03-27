@@ -1,3 +1,5 @@
+import { RINGING, VOIP_ONLINE } from './Const';
+
 export default class CallLog {
     constructor(opt) {
         this.state = opt.state;

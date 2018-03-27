@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "font-awesome": "^4.7.0",
+    "jssip": "^3.2.7",
     "lodash": "^4.17.3",
     "prop-types": "^15.6.0",
     "react": "^15.6.2",

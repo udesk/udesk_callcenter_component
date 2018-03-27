@@ -62,6 +62,7 @@
 <div>
     <button onclick="setWorkingWay('fixed_voip_online');">IP话机</button>
     <button onclick="setWorkingWay('phone_online');">手机</button>
+    <button onclick="setWorkingWay('voip_online');">网页电话</button>
 </div>
 <h3>保持/取回 通话</h3>
 <div>
@@ -100,8 +101,8 @@
         }
         window.callComp = new UdeskCallcenterComponent({
             container: document.body,
-            token: 'xxxxx', //客服token
-            subDomain: 'xxxxx', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
+            token: '88354be49e4aa632bdbfb8a60bcae04ec157fad4b4fa554daebae3de1d7bc8de9cc80e9f3c39174cb45d3c3ab52fdcfdaf1216ff2dedc11aa13a1b14e89819065a547cf2', // 客服token
+            subDomain: 'linapp', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
             showManualScreenPop: true,
             onScreenPop: function(conversation) {
                 var tr = document.createElement('tr');

@@ -13,7 +13,7 @@ export default class Eventable {
             return;
         }
         this[k] = v;
-        this.fire('change', k, v, this);
+        this.trigger('change', k, v, this);
     }
 
     setProperties(obj) {
@@ -24,12 +24,13 @@ export default class Eventable {
                 changedFields.push(k);
             }
         });
-        _.forEach(changedFields, (i) => this.fire('change', i, this[i]));
+        _.forEach(changedFields, (i) => this.trigger('change', i, this[i]));
     }
 
-    fire() {
+    trigger() {
         let eventName = arguments[0];
-        let events = this.eventMap[eventName];
+        let events = this._getEvents(eventName);
+
         let args = [].splice.call(arguments, 1);
         for (let i = 0, len = events.length; i < len; i++) {
             Utils.isFunction(events[i]) && events[i].apply(this, args);
@@ -37,10 +38,20 @@ export default class Eventable {
     };
 
     on(eventName, callback) {
-        this.eventMap[eventName].push(callback);
+        this._getEvents(eventName).push(callback);
+    }
+
+    _getEvents(eventName) {
+        let events = this.eventMap[eventName];
+        if (!events) {
+            events = this.eventMap[eventName] = [];
+        }
+        return events;
     }
 
     off(eventName, callback) {
-        _.remove(this.eventMap[eventName], (i) => i === callback);
+        if (this.eventMap[eventName]) {
+            _.remove(this.eventMap[eventName], (i) => i === callback);
+        }
     }
 }

@@ -1,4 +1,4 @@
-import Const from '../Const';
+import * as Const from '../Const';
 import Alert from './Alert';
 import CallConfig from '../CallConfig';
 import React from 'react';
@@ -26,6 +26,20 @@ export default class AgentStatePanelComponent extends React.Component {
             {id: Const.PHONE_ONLINE, name: '手机'}
         ];
 
+        this.agentStateMap = [
+            {id: Const.IDLE, name: <div className={'work-state-' + Const.IDLE}><i></i>空闲</div>},
+            {id: Const.BUSY, name: <div className={'work-state-' + Const.BUSY}><i></i>忙碌</div>},
+            {id: Const.RESTING, name: <div className={'work-state-' + Const.RESTING}><i></i>小休</div>},
+            ..._.map(props.customStates, (item) => {
+                if (typeof item.name === 'string') {
+                    item.name = <div className={'work-state-' + item.originalStateId}><i></i>{item.name}</div>;
+                }
+                return item;
+            }),
+            {id: Const.OFFLINE, name: <div className={'work-state-' + Const.OFFLINE}><i></i>离线</div>},
+            {id: Const.NEATEN, name: <div className={'work-state-' + Const.BUSY}><i></i>整理中</div>, hide: true}
+        ];
+
         this.state = {
             agent_work_state: CallConfig.agent_work_state,
             agent_work_way: CallConfig.agent_work_way,
@@ -42,6 +56,11 @@ export default class AgentStatePanelComponent extends React.Component {
                 self.setState({
                     agent_work_way: v
                 });
+            } else if (k === 'enableVoipOnline') {
+                if(v) {
+                    self.agentWayMap.push({id: Const.VOIP_ONLINE, name: '网页在线'});
+                    self.forceUpdate();
+                }
             }
         });
 
@@ -53,20 +72,6 @@ export default class AgentStatePanelComponent extends React.Component {
     }
 
     render() {
-        this.agentStateMap = [
-            {id: Const.IDLE, name: <div className={'work-state-' + Const.IDLE}><i></i>空闲</div>},
-            {id: Const.BUSY, name: <div className={'work-state-' + Const.BUSY}><i></i>忙碌</div>},
-            {id: Const.RESTING, name: <div className={'work-state-' + Const.RESTING}><i></i>小休</div>},
-            ..._.map(this.props.customStates, (item) => {
-                if(typeof item.name === 'string') {
-                    item.name = <div className={'work-state-' + item.originalStateId}><i></i>{item.name}</div>;
-                }
-                return item;
-            }),
-            {id: Const.OFFLINE, name: <div className={'work-state-' + Const.OFFLINE}><i></i>离线</div>},
-            {id: Const.NEATEN, name: <div className={'work-state-' + Const.BUSY}><i></i>整理中</div>, hide: true}
-        ];
-
         return <div className="agent-state-panel">
             {
                 (function() {

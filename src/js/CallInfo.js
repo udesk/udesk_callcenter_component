@@ -1,7 +1,7 @@
 import Eventable from './Eventable';
 import CallQueue from './CallQueue';
 import _ from 'lodash';
-import Const from './Const';
+import * as Const from './Const';
 import Alert from './component/Alert';
 import AjaxUtils from './AjaxUtils';
 
@@ -33,16 +33,16 @@ class CallInfo extends Eventable {
                     self.set('ringingTime', 0);
                     self.startRingingTiming();
                     clearInterval(self.talkingTimingIntervalId);
-                    self.fire('ringing', self);
+                    self.trigger('ringing', self);
                 } else if (v === 'talking') {
                     self.set('talkingTime', 0);
                     self.startTalkingTiming();
                     clearInterval(self.ringingTimingIntervalId);
-                    self.fire('talking', self);
+                    self.trigger('talking', self);
                 } else if (v === 'hangup') {
                     clearInterval(self.talkingTimingIntervalId);
                     clearInterval(self.ringingTimingIntervalId);
-                    self.fire('hangup', self);
+                    self.trigger('hangup', self);
                 }
             }
             //if (k === 'conversation_id') {
@@ -125,13 +125,13 @@ class CallInfo extends Eventable {
      */
     screenPop() {
         this.readCache();
-        this.fire('screenPop', this);
+        this.trigger('screenPop', this);
     }
 
     manualScreenPop() {
         this.fetchCurrentConversation((res) => {
             if (res.code === 1000) {
-                this.fire('screenPop', res);
+                this.trigger('screenPop', res);
             } else {
                 Alert.error(res.code_message || '手动弹屏失败');
             }

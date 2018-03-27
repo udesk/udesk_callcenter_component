@@ -4,10 +4,11 @@ const merge = require('webpack-merge');
 const webpack = require('webpack');
 
 module.exports = merge(baseWebpackConfig, {
+    devtool: 'source-map',
     plugins: [
         new webpack.DefinePlugin({
-            __server__: '\'.udeskt1.com\'',
-            __protocol__: '\'http\''
+            __server__: '\'.udeskcat.com\'',
+            __protocol__: '\'https\''
         })
     ]
 });
