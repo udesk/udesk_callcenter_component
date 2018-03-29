@@ -18709,6 +18709,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var calling = false;
 var emptyFunction = function emptyFunction() {};
+var lastConsultType = 'agent';
 
 function makeCall(callNumber, successCallback, failureCallback) {
     if (calling) {
@@ -18861,6 +18862,7 @@ function startConsult(targetId) {
     var successCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : emptyFunction;
     var failureCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : emptyFunction;
 
+    lastConsultType = 'agent';
     _AjaxUtils2.default.post('/agent_api/v1/callcenter/desktop/start_consult', { agent_no: targetId }, function (res) {
         switch (res.code) {
             case 1001:
@@ -18918,7 +18920,11 @@ function stopConsult() {
     var successCallback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : emptyFunction;
     var failureCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : emptyFunction;
 
-    _AjaxUtils2.default.post('/agent_api/v1/callcenter/desktop/end_consult', null, function (res) {
+    var url = '/agent_api/v1/callcenter/desktop/end_consult';
+    if (lastConsultType !== 'agent') {
+        url = '/agent_api/v1/callcenter/desktop/end_consult_outline';
+    }
+    _AjaxUtils2.default.post(url, null, function (res) {
         switch (res.code) {
             case 1001:
                 successCallback(res);
@@ -19058,6 +19064,7 @@ function startConsultingToExternalPhone(phoneNumber) {
     var successCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : emptyFunction;
     var failureCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : emptyFunction;
 
+    lastConsultType = 'outline';
     _AjaxUtils2.default.post('/agent_api/v1/callcenter/desktop/start_consult_outline', { outline_phone_number: phoneNumber }, function (res) {
         switch (res.code) {
             case 1001:
