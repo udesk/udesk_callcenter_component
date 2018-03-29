@@ -83,8 +83,8 @@
 <h3>转接IVR</h3>
 <input id="node_id" placeholder="节点id"/>
 <select id="type">
-    <option value ="agent_hold">转接后等待</option>
-    <option value ="agent_hangup">转接后挂机</option>
+    <option value="agent_hold">转接后等待</option>
+    <option value="agent_hangup">转接后挂机</option>
 </select>
 <div>
     <button onclick="startIvrCalling();">转接ivr</button>
@@ -100,8 +100,8 @@
         }
         window.callComp = new UdeskCallcenterComponent({
             container: document.body,
-            token: 'xxxx', // 客服token
-            subDomain: 'xxxx', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
+            token: '12da61da45f0c8b0079326d4e30e627faa480e43cbde906bd0d8dd871fa3ec369b2faafe5d67306c8202a7aeeafa4d01af53319b7e673fdbc38707a8e9d56f885abc4e73', // 客服token
+            subDomain: 'linapp', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
             showManualScreenPop: true,
             onScreenPop: function(conversation) {
                 var tr = document.createElement('tr');
@@ -262,9 +262,9 @@
         let targetId = document.getElementById('node_id').value;
         let type = document.getElementById('type').value;
         let node = {
-            transfer_mode:type,
-            id:targetId
-        }
+            transfer_mode: type,
+            id: targetId
+        };
         if (window.callComp) {
             window.callComp.startIvrCalling(node, function() {
                 console.log('正在尝试转接ivr...');
