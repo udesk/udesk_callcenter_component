@@ -9,6 +9,7 @@ import _ from 'lodash';
 let calling = false;
 const emptyFunction = function() {
 };
+let lastConsultType = 'agent';
 
 export function makeCall(callNumber, successCallback, failureCallback) {
     if (calling) {
@@ -152,6 +153,7 @@ export function transfer(targetId, successCallback = emptyFunction, failureCallb
 }
 
 export function startConsult(targetId, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    lastConsultType = 'agent';
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/start_consult', {agent_no: targetId}, function(res) {
         switch (res.code) {
             case 1001:
@@ -200,7 +202,11 @@ export function startIvrCalling(node, successCallback = emptyFunction, failureCa
 }
 
 export function stopConsult(successCallback = emptyFunction, failureCallback = emptyFunction) {
-    AjaxUtils.post('/agent_api/v1/callcenter/desktop/end_consult', null, function(res) {
+    let url = '/agent_api/v1/callcenter/desktop/end_consult';
+    if (lastConsultType !== 'agent') {
+        url = '/agent_api/v1/callcenter/desktop/end_consult_outline';
+    }
+    AjaxUtils.post(url, null, function(res) {
         switch (res.code) {
             case 1001:
                 successCallback(res);
@@ -318,6 +324,7 @@ export function transferToExternalPhone(phoneNumber, successCallback = emptyFunc
  * 咨询外部电话
  */
 export function startConsultingToExternalPhone(phoneNumber, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    lastConsultType = 'outline';
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/start_consult_outline', {outline_phone_number: phoneNumber}, function(res) {
         switch (res.code) {
             case 1001:
