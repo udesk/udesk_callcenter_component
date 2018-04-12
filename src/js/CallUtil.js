@@ -27,7 +27,7 @@ export function makeCall(callNumber, successCallback, failureCallback) {
         return;
     }
     if (/^[\d*#+]{4,}$/.test(callNumber)) {
-        utils.isFunction(successCallback) && successCallback();
+        // utils.isFunction(successCallback) && successCallback();
     } else {
         utils.isFunction(failureCallback) && failureCallback(new Error('电话号码格式不正确'));
         return;
