@@ -96,6 +96,9 @@ class SoftPhone {
     }
 
     stop() {
+        if(!this._ua){
+            return;
+        }
         this._ua.stop();
     }
 

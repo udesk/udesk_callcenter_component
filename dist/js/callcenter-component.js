@@ -40111,6 +40111,9 @@ var SoftPhone = function () {
     }, {
         key: 'stop',
         value: function stop() {
+            if (!this._ua) {
+                return;
+            }
             this._ua.stop();
         }
     }, {
