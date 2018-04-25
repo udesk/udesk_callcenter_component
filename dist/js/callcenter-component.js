@@ -31708,6 +31708,10 @@ var _CallQueue = __webpack_require__(60);
 
 var _CallQueue2 = _interopRequireDefault(_CallQueue);
 
+var _CallInfo = __webpack_require__(23);
+
+var _CallInfo2 = _interopRequireDefault(_CallInfo);
+
 var _lodash = __webpack_require__(13);
 
 var _lodash2 = _interopRequireDefault(_lodash);
@@ -31725,6 +31729,9 @@ var emptyFunction = function emptyFunction() {};
 var lastConsultType = 'agent';
 
 function makeCall(callNumber, successCallback, failureCallback) {
+
+    //
+
     if (calling) {
         return;
     }
@@ -31745,6 +31752,7 @@ function makeCall(callNumber, successCallback, failureCallback) {
     }
 
     if (_CallConfig2.default.agent_work_way === _Const.VOIP_ONLINE) {
+        _CallInfo2.default.set('can_accept', 'out');
         _softPhone2.default.call(callNumber);
         return;
     }
@@ -32562,6 +32570,234 @@ module.exports = ReactCurrentOwner;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Eventable2 = __webpack_require__(47);
+
+var _Eventable3 = _interopRequireDefault(_Eventable2);
+
+var _CallQueue = __webpack_require__(60);
+
+var _CallQueue2 = _interopRequireDefault(_CallQueue);
+
+var _lodash = __webpack_require__(13);
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _Const = __webpack_require__(18);
+
+var Const = _interopRequireWildcard(_Const);
+
+var _Alert = __webpack_require__(19);
+
+var _Alert2 = _interopRequireDefault(_Alert);
+
+var _AjaxUtils = __webpack_require__(46);
+
+var _AjaxUtils2 = _interopRequireDefault(_AjaxUtils);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var CallInfo = function (_Eventable) {
+    _inherits(CallInfo, _Eventable);
+
+    function CallInfo() {
+        _classCallCheck(this, CallInfo);
+
+        var _this = _possibleConstructorReturn(this, (CallInfo.__proto__ || Object.getPrototypeOf(CallInfo)).call(this));
+
+        _this.queue_desc = '';
+        _this.customer_phone = '';
+        _this.phone_location = '';
+        _this.ringingTime = 0;
+        _this.talkingTime = 0;
+        _this.call_type = '呼入';
+        _this.queue_desc = '';
+        _this.state = 'hangup';
+        _this.cache = []; //如果正在通话，缓存新的未挂断的通话。
+        _this.eventMap = {
+            change: [],
+            ringing: [],
+            talking: [],
+            hangup: [],
+            screenPop: []
+        };
+
+        var self = _this;
+        _this.on('change', function (k, v, callInfo) {
+            var state = self.state;
+            if (k === 'state') {
+                if (v === 'ringing') {
+                    self.set('ringingTime', 0);
+                    self.startRingingTiming();
+                    clearInterval(self.talkingTimingIntervalId);
+                    self.trigger('ringing', self);
+                } else if (v === 'talking') {
+                    self.set('talkingTime', 0);
+                    self.startTalkingTiming();
+                    clearInterval(self.ringingTimingIntervalId);
+                    self.trigger('talking', self);
+                } else if (v === 'hangup') {
+                    clearInterval(self.talkingTimingIntervalId);
+                    clearInterval(self.ringingTimingIntervalId);
+                    self.trigger('hangup', self);
+                }
+            }
+            //if (k === 'conversation_id') {
+            //    self.set('call_type', res.call_type);
+            //    self.set('queue_desc', res.queue_desc);
+            //    self.set('customer_phone', res.customer_phone);
+            //    self.set('phone_location', res.phone_location);
+            //}
+        });
+
+        _CallQueue2.default.on('change', function (v) {
+            //当新消息到来并且与当前弹屏的conversation_id一致，跳过cache，直接更新callInfo
+            if (v.conversation_id === self.conversation_id) {
+                self.updateFromCallLog(v);
+            } else {
+                self.updateCache(v);
+            }
+        });
+
+        //当有新的callLog时，放到cache中
+        _CallQueue2.default.on('add', function (callLog) {
+            if (callLog.state !== 'hangup') {
+                self.updateCache(callLog);
+                self.screenPop(callLog);
+            }
+        });
+        return _this;
+    }
+
+    _createClass(CallInfo, [{
+        key: 'startRingingTiming',
+        value: function startRingingTiming() {
+            var self = this;
+            clearInterval(this.ringingTimingIntervalId);
+            this.ringingTimingIntervalId = setInterval(function () {
+                self.set('ringingTime', self.ringingTime + 1);
+            }, 1000);
+        }
+    }, {
+        key: 'startTalkingTiming',
+        value: function startTalkingTiming() {
+            var self = this;
+            clearInterval(this.talkingTimingIntervalId);
+            this.talkingTimingIntervalId = setInterval(function () {
+                self.set('talkingTime', self.talkingTime + 1);
+            }, 1000);
+        }
+
+        /**
+         * 更新cache
+         * @param callLog
+         */
+
+    }, {
+        key: 'updateCache',
+        value: function updateCache(callLog) {
+            var conversation = _lodash2.default.find(this.cache, ['conversation_id', callLog.conversation_id]);
+            if (conversation) {
+                if (callLog.state === Const.HANGUP) {
+                    _lodash2.default.remove(this.cache, function (i) {
+                        return i === conversation;
+                    });
+                }
+            } else {
+                if (callLog.state === Const.HANGUP) {
+                    return;
+                }
+                this.cache.push(callLog);
+            }
+        }
+
+        /**
+         * 读取缓存的第一条callLog
+         */
+
+    }, {
+        key: 'readCache',
+        value: function readCache() {
+            this.updateFromCallLog(this.cache.shift());
+        }
+
+        /**
+         * 更新弹屏信息
+         * @param callLog
+         */
+
+    }, {
+        key: 'updateFromCallLog',
+        value: function updateFromCallLog(callLog) {
+            this.setProperties(callLog);
+        }
+
+        /**
+         * 弹屏
+         */
+
+    }, {
+        key: 'screenPop',
+        value: function screenPop() {
+            this.readCache();
+            this.trigger('screenPop', this);
+        }
+    }, {
+        key: 'manualScreenPop',
+        value: function manualScreenPop() {
+            var _this2 = this;
+
+            this.fetchCurrentConversation(function (res) {
+                if (res.code === 1000) {
+                    _this2.trigger('screenPop', res);
+                } else {
+                    _Alert2.default.error(res.code_message || '手动弹屏失败');
+                }
+            });
+        }
+    }, {
+        key: 'fetchCurrentConversation',
+        value: function fetchCurrentConversation(callback) {
+            _AjaxUtils2.default.get('/agent_api/v1/callcenter/desktop/current_conversation', null, callback);
+        }
+
+        //fetchConversation() {
+        //    let self = this;
+        //    AjaxUtils.get("/agent_api/v1/callcenter/desktop/conversation", { conversation_id: this.conversation_id }, function(res) {
+        //        self.set('call_type', res.call_type);
+        //        self.set('queue_desc', res.queue_desc);
+        //        self.set('customer_phone', res.customer_phone);
+        //        self.set('phone_location', res.phone_location);
+        //    });
+        //}
+
+    }]);
+
+    return CallInfo;
+}(_Eventable3.default);
+
+exports.default = new CallInfo();
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(process) {/**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -32831,234 +33067,6 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
   }
 }
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Eventable2 = __webpack_require__(47);
-
-var _Eventable3 = _interopRequireDefault(_Eventable2);
-
-var _CallQueue = __webpack_require__(60);
-
-var _CallQueue2 = _interopRequireDefault(_CallQueue);
-
-var _lodash = __webpack_require__(13);
-
-var _lodash2 = _interopRequireDefault(_lodash);
-
-var _Const = __webpack_require__(18);
-
-var Const = _interopRequireWildcard(_Const);
-
-var _Alert = __webpack_require__(19);
-
-var _Alert2 = _interopRequireDefault(_Alert);
-
-var _AjaxUtils = __webpack_require__(46);
-
-var _AjaxUtils2 = _interopRequireDefault(_AjaxUtils);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var CallInfo = function (_Eventable) {
-    _inherits(CallInfo, _Eventable);
-
-    function CallInfo() {
-        _classCallCheck(this, CallInfo);
-
-        var _this = _possibleConstructorReturn(this, (CallInfo.__proto__ || Object.getPrototypeOf(CallInfo)).call(this));
-
-        _this.queue_desc = '';
-        _this.customer_phone = '';
-        _this.phone_location = '';
-        _this.ringingTime = 0;
-        _this.talkingTime = 0;
-        _this.call_type = '呼入';
-        _this.queue_desc = '';
-        _this.state = 'hangup';
-        _this.cache = []; //如果正在通话，缓存新的未挂断的通话。
-        _this.eventMap = {
-            change: [],
-            ringing: [],
-            talking: [],
-            hangup: [],
-            screenPop: []
-        };
-
-        var self = _this;
-        _this.on('change', function (k, v, callInfo) {
-            var state = self.state;
-            if (k === 'state') {
-                if (v === 'ringing') {
-                    self.set('ringingTime', 0);
-                    self.startRingingTiming();
-                    clearInterval(self.talkingTimingIntervalId);
-                    self.trigger('ringing', self);
-                } else if (v === 'talking') {
-                    self.set('talkingTime', 0);
-                    self.startTalkingTiming();
-                    clearInterval(self.ringingTimingIntervalId);
-                    self.trigger('talking', self);
-                } else if (v === 'hangup') {
-                    clearInterval(self.talkingTimingIntervalId);
-                    clearInterval(self.ringingTimingIntervalId);
-                    self.trigger('hangup', self);
-                }
-            }
-            //if (k === 'conversation_id') {
-            //    self.set('call_type', res.call_type);
-            //    self.set('queue_desc', res.queue_desc);
-            //    self.set('customer_phone', res.customer_phone);
-            //    self.set('phone_location', res.phone_location);
-            //}
-        });
-
-        _CallQueue2.default.on('change', function (v) {
-            //当新消息到来并且与当前弹屏的conversation_id一致，跳过cache，直接更新callInfo
-            if (v.conversation_id === self.conversation_id) {
-                self.updateFromCallLog(v);
-            } else {
-                self.updateCache(v);
-            }
-        });
-
-        //当有新的callLog时，放到cache中
-        _CallQueue2.default.on('add', function (callLog) {
-            if (callLog.state !== 'hangup') {
-                self.updateCache(callLog);
-                self.screenPop(callLog);
-            }
-        });
-        return _this;
-    }
-
-    _createClass(CallInfo, [{
-        key: 'startRingingTiming',
-        value: function startRingingTiming() {
-            var self = this;
-            clearInterval(this.ringingTimingIntervalId);
-            this.ringingTimingIntervalId = setInterval(function () {
-                self.set('ringingTime', self.ringingTime + 1);
-            }, 1000);
-        }
-    }, {
-        key: 'startTalkingTiming',
-        value: function startTalkingTiming() {
-            var self = this;
-            clearInterval(this.talkingTimingIntervalId);
-            this.talkingTimingIntervalId = setInterval(function () {
-                self.set('talkingTime', self.talkingTime + 1);
-            }, 1000);
-        }
-
-        /**
-         * 更新cache
-         * @param callLog
-         */
-
-    }, {
-        key: 'updateCache',
-        value: function updateCache(callLog) {
-            var conversation = _lodash2.default.find(this.cache, ['conversation_id', callLog.conversation_id]);
-            if (conversation) {
-                if (callLog.state === Const.HANGUP) {
-                    _lodash2.default.remove(this.cache, function (i) {
-                        return i === conversation;
-                    });
-                }
-            } else {
-                if (callLog.state === Const.HANGUP) {
-                    return;
-                }
-                this.cache.push(callLog);
-            }
-        }
-
-        /**
-         * 读取缓存的第一条callLog
-         */
-
-    }, {
-        key: 'readCache',
-        value: function readCache() {
-            this.updateFromCallLog(this.cache.shift());
-        }
-
-        /**
-         * 更新弹屏信息
-         * @param callLog
-         */
-
-    }, {
-        key: 'updateFromCallLog',
-        value: function updateFromCallLog(callLog) {
-            this.setProperties(callLog);
-        }
-
-        /**
-         * 弹屏
-         */
-
-    }, {
-        key: 'screenPop',
-        value: function screenPop() {
-            this.readCache();
-            this.trigger('screenPop', this);
-        }
-    }, {
-        key: 'manualScreenPop',
-        value: function manualScreenPop() {
-            var _this2 = this;
-
-            this.fetchCurrentConversation(function (res) {
-                if (res.code === 1000) {
-                    _this2.trigger('screenPop', res);
-                } else {
-                    _Alert2.default.error(res.code_message || '手动弹屏失败');
-                }
-            });
-        }
-    }, {
-        key: 'fetchCurrentConversation',
-        value: function fetchCurrentConversation(callback) {
-            _AjaxUtils2.default.get('/agent_api/v1/callcenter/desktop/current_conversation', null, callback);
-        }
-
-        //fetchConversation() {
-        //    let self = this;
-        //    AjaxUtils.get("/agent_api/v1/callcenter/desktop/conversation", { conversation_id: this.conversation_id }, function(res) {
-        //        self.set('call_type', res.call_type);
-        //        self.set('queue_desc', res.queue_desc);
-        //        self.set('customer_phone', res.customer_phone);
-        //        self.set('phone_location', res.phone_location);
-        //    });
-        //}
-
-    }]);
-
-    return CallInfo;
-}(_Eventable3.default);
-
-exports.default = new CallInfo();
 
 /***/ }),
 /* 25 */
@@ -38222,7 +38230,7 @@ module.exports = ReactInstanceMap;
 
 
 
-var SyntheticEvent = __webpack_require__(23);
+var SyntheticEvent = __webpack_require__(24);
 
 var getEventTarget = __webpack_require__(78);
 
@@ -43516,7 +43524,7 @@ var _react = __webpack_require__(7);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _CallInfo = __webpack_require__(24);
+var _CallInfo = __webpack_require__(23);
 
 var _CallInfo2 = _interopRequireDefault(_CallInfo);
 
@@ -53154,7 +53162,7 @@ var _Dropdown = __webpack_require__(155);
 
 var _Dropdown2 = _interopRequireDefault(_Dropdown);
 
-var _CallInfo = __webpack_require__(24);
+var _CallInfo = __webpack_require__(23);
 
 var _CallInfo2 = _interopRequireDefault(_CallInfo);
 
@@ -53502,7 +53510,7 @@ var _react = __webpack_require__(7);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _CallInfo = __webpack_require__(24);
+var _CallInfo = __webpack_require__(23);
 
 var _CallInfo2 = _interopRequireDefault(_CallInfo);
 
@@ -53676,7 +53684,7 @@ var _CallConfig2 = _interopRequireDefault(_CallConfig);
 
 var _Const = __webpack_require__(18);
 
-var _CallInfo = __webpack_require__(24);
+var _CallInfo = __webpack_require__(23);
 
 var _CallInfo2 = _interopRequireDefault(_CallInfo);
 
@@ -54456,7 +54464,7 @@ var _CallButton2 = _interopRequireDefault(_CallButton);
 
 var _CallUtil = __webpack_require__(17);
 
-var _CallInfo = __webpack_require__(24);
+var _CallInfo = __webpack_require__(23);
 
 var _CallInfo2 = _interopRequireDefault(_CallInfo);
 
@@ -54913,7 +54921,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _CallInfo = __webpack_require__(24);
+var _CallInfo = __webpack_require__(23);
 
 var _CallInfo2 = _interopRequireDefault(_CallInfo);
 
@@ -55043,7 +55051,7 @@ var _images = __webpack_require__(20);
 
 var _images2 = _interopRequireDefault(_images);
 
-var _CallInfo = __webpack_require__(24);
+var _CallInfo = __webpack_require__(23);
 
 var _CallInfo2 = _interopRequireDefault(_CallInfo);
 
@@ -55535,7 +55543,7 @@ var _Alert = __webpack_require__(19);
 
 var _Alert2 = _interopRequireDefault(_Alert);
 
-var _CallInfo = __webpack_require__(24);
+var _CallInfo = __webpack_require__(23);
 
 var _CallInfo2 = _interopRequireDefault(_CallInfo);
 
@@ -67391,7 +67399,7 @@ var EventPropagators = __webpack_require__(43);
 var ExecutionEnvironment = __webpack_require__(9);
 var ReactDOMComponentTree = __webpack_require__(6);
 var ReactUpdates = __webpack_require__(21);
-var SyntheticEvent = __webpack_require__(23);
+var SyntheticEvent = __webpack_require__(24);
 
 var inputValueTracking = __webpack_require__(121);
 var getEventTarget = __webpack_require__(78);
@@ -74286,7 +74294,7 @@ var EventPropagators = __webpack_require__(43);
 var ExecutionEnvironment = __webpack_require__(9);
 var ReactDOMComponentTree = __webpack_require__(6);
 var ReactInputSelection = __webpack_require__(112);
-var SyntheticEvent = __webpack_require__(23);
+var SyntheticEvent = __webpack_require__(24);
 
 var getActiveElement = __webpack_require__(93);
 var isTextInputElement = __webpack_require__(123);
@@ -74481,7 +74489,7 @@ var EventPropagators = __webpack_require__(43);
 var ReactDOMComponentTree = __webpack_require__(6);
 var SyntheticAnimationEvent = __webpack_require__(269);
 var SyntheticClipboardEvent = __webpack_require__(270);
-var SyntheticEvent = __webpack_require__(23);
+var SyntheticEvent = __webpack_require__(24);
 var SyntheticFocusEvent = __webpack_require__(273);
 var SyntheticKeyboardEvent = __webpack_require__(275);
 var SyntheticMouseEvent = __webpack_require__(53);
@@ -74703,7 +74711,7 @@ module.exports = SimpleEventPlugin;
 
 
 
-var SyntheticEvent = __webpack_require__(23);
+var SyntheticEvent = __webpack_require__(24);
 
 /**
  * @interface Event
@@ -74745,7 +74753,7 @@ module.exports = SyntheticAnimationEvent;
 
 
 
-var SyntheticEvent = __webpack_require__(23);
+var SyntheticEvent = __webpack_require__(24);
 
 /**
  * @interface Event
@@ -74786,7 +74794,7 @@ module.exports = SyntheticClipboardEvent;
 
 
 
-var SyntheticEvent = __webpack_require__(23);
+var SyntheticEvent = __webpack_require__(24);
 
 /**
  * @interface Event
@@ -74903,7 +74911,7 @@ module.exports = SyntheticFocusEvent;
 
 
 
-var SyntheticEvent = __webpack_require__(23);
+var SyntheticEvent = __webpack_require__(24);
 
 /**
  * @interface Event
@@ -75078,7 +75086,7 @@ module.exports = SyntheticTouchEvent;
 
 
 
-var SyntheticEvent = __webpack_require__(23);
+var SyntheticEvent = __webpack_require__(24);
 
 /**
  * @interface Event

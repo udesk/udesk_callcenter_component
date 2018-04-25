@@ -5,6 +5,7 @@ import CallConfig from './CallConfig';
 import * as Const from './Const';
 import { VOIP_ONLINE } from './Const';
 import CallQueue from './CallQueue';
+import CallInfo from './CallInfo'
 import _ from 'lodash';
 import softPhone from './soft-phone';
 
@@ -14,6 +15,10 @@ const emptyFunction = function() {
 let lastConsultType = 'agent';
 
 export function makeCall(callNumber, successCallback, failureCallback) {
+
+
+    //
+
     if (calling) {
         return;
     }
@@ -34,6 +39,7 @@ export function makeCall(callNumber, successCallback, failureCallback) {
     }
 
     if (CallConfig.agent_work_way === VOIP_ONLINE) {
+        CallInfo.set('can_accept','out');
         softPhone.call(callNumber);
         return;
     }
