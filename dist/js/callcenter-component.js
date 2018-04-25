@@ -55827,7 +55827,7 @@ var CallcenterComponent = function () {
         _classCallCheck(this, CallcenterComponent);
 
         _AjaxUtils2.default.token = token;
-        _AjaxUtils2.default.host = 'https' + '://' + subDomain + '.udeskcat.com';
+        _AjaxUtils2.default.host = 'https' + '://' + subDomain + '.udeskt1.com';
         _AjaxUtils2.default.refreshToken = onTokenExpired;
         //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
 

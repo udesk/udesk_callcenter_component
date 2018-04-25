@@ -7,7 +7,7 @@ module.exports = merge(baseWebpackConfig, {
     devtool: 'source-map',
     plugins: [
         new webpack.DefinePlugin({
-            __server__: '\'.udeskcat.com\'',
+            __server__: '\'.udeskt1.com\'',
             __protocol__: '\'https\''
         })
     ]
