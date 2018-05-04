@@ -313,6 +313,7 @@ class CallcenterComponent {
         this.transferToExternalPhone = callUtil.transferToExternalPhone;
         this.startConsultingToExternalPhone = callUtil.startConsultingToExternalPhone;
         this.startThreeWayCallingToExternalPhone = callUtil.startThreeWayCallingToExternalPhone;
+        this.getAutomaticCallNumGroup = callUtil.getAutomaticCallNumGroup;
     }
 
     setWorkStatus(workStatus, onSuccess, onFailure) {

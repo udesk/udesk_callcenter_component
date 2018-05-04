@@ -26,6 +26,11 @@ class WebsocketConnection extends Eventable {
     }
 
     call_log(msg) {
+
+        if(msg.state === 'ringing' && msg.ad_task_id){
+            CallInfo.set('cc_ad_task',{ad_task_id:msg.ad_task_id,customer_id:msg.customer_id,numbers:msg.ad_task_numbers.split(",")});
+        }
+
         CallQueue.put(new CallLog(msg));
     }
 

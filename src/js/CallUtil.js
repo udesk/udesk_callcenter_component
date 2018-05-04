@@ -390,3 +390,10 @@ export function startThreeWayCallingToExternalPhone(phoneNumber, successCallback
         failureCallback(error);
     });
 }
+
+/**
+* 获取自动外呼的值
+*/
+export function getAutomaticCallNumGroup() {
+    return CallInfo.cc_ad_task;
+}

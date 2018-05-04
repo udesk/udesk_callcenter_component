@@ -90,6 +90,10 @@
 <div>
     <button onclick="startIvrCalling();">转接ivr</button>
 </div>
+<h3>测试自动外呼任务客户号码组存储</h3>
+<div>
+    <button onclick="getAutomaticCallNumGroup();">测试</button>
+</div>
 <h3>监控-修改客服状态</h3>
 <input id="monitor_workStatus_id" placeholder="客服ID"/>
 <div>
@@ -116,6 +120,7 @@
     <button onclick="monitorAgentInterpose();">强插</button>
     <button onclick="monitorAgentSubstitute();">拦截</button>
 </div>
+
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
@@ -317,12 +322,25 @@
             });
         }
     }
+
+    function getAutomaticCallNumGroup() {
+        if (callComp) {
+            let cc_ad_task = callComp.getAutomaticCallNumGroup()
+            if(cc_ad_task){
+                alert(JSON.stringify(cc_ad_task));
+            }else{
+                alert('还没有储存自动外呼任务的客户号码组')
+            }
+        }
+    }
+
+
+
     function setMonitorWorkStatus(agent_work_state) {
         if (callComp && callAPI) {
             let resting_id = document.getElementById('resting_id').value;
             let anget_id = document.getElementById('monitor_workStatus_id').value;
             if(agent_work_state === 'resting' && resting_id.length !== 0){
-                console.log('???')
                 callAPI.setMonitorWorkRestingStatus(anget_id,resting_id,function() {
                     console.log('正在尝试修改其他客服状态')
                 },function(res) {
@@ -370,13 +388,14 @@
     function monitorAgentSubstitute() {
         if (callComp && callAPI) {
             let agent_id = document.getElementById('monitor_agent_id').value;
-            callAPI.monitorAgentSubstitute(agent_id,function() {
+            callAPI.monitorAgentSubstitute(agent_id, function() {
                 console.log('正在尝试拦截');
-            },function(res) {
+            }, function(res) {
                 alert(JSON.stringify(res));
             })
         }
     }
+
 
 </script>
 </body>
