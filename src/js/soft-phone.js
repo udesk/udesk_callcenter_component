@@ -92,6 +92,9 @@ class SoftPhone {
     }
 
     start() {
+        if(!this._ua){
+            return;
+        }
         this._ua.start();
     }
 

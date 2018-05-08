@@ -90,9 +90,44 @@
 <div>
     <button onclick="startIvrCalling();">转接ivr</button>
 </div>
-
+<h3>监控-修改客服状态</h3>
+<input id="monitor_workStatus_id" placeholder="客服ID"/>
+<div>
+    <button onclick="setMonitorWorkStatus('idle');">空闲</button>
+    <button onclick="setMonitorWorkStatus('busy');">忙碌</button>
+    <button onclick="setMonitorWorkStatus('offline');">离线</button>
+</div>
+<div>
+    <p>如果在小休的的输入框中,输入了自定义小休的id那么切换到自定义小休的状态</p>
+    <input id="resting_id" placeholder="小休ID"/>
+    <button onclick="setMonitorWorkStatus('resting');">小休</button>
+</div>
+<h3>监控-切换客服在线方式</h3>
+<input id="monitor_workingWay_id" placeholder="客服ID"/>
+<div>
+    <button onclick="setMonitorAgentWorkWay('fixed_voip_online');">IP话机</button>
+    <button onclick="setMonitorAgentWorkWay('phone_online');">手机</button>
+    <button onclick="setMonitorAgentWorkWay('voip_online');">网页电话</button>
+</div>
+<h3>监控-高级通话</h3>
+<input id="monitor_agent_id" placeholder="客服ID"/>
+<div>
+    <button onclick="monitorAgentListeing();">监听</button>
+    <button onclick="monitorAgentInterpose();">强插</button>
+    <button onclick="monitorAgentSubstitute();">拦截</button>
+</div>
 <script src="./js/callcenter-component.js"></script>
+<script src="./js/call-api.js"></script>
 <script>
+    window.callAPI.tokenInit(
+        '0c5159a30f67f352215829f59f5e34f48870f8ef7aae638a2eef1f95d65c79d23861361caa5388cb880bada2769087d8f30e676974edb7195ab76c2af7a60a295a96418d',
+        'linapp',
+        function(callback) {
+            setTimeout(function() {
+                callback('f3ebff04e6cf899cac39da98bcb1ccdd77e9c8ccd94fa70419668c4bb6510b5fe277cb786662b4c6173706fa2915e9184619f42b766f76226f043693cca1dbdf5a2e1d49');
+            }, 1000);
+        }
+    )
     var tbody = document.getElementById('screen-pop-history');
 
     function createCallComponent() {
@@ -101,8 +136,8 @@
         }
         window.callComp = new UdeskCallcenterComponent({
             container: document.body,
-            token: 'xxxx', // 客服token
-            subDomain: 'xxxx', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
+            token: '0c5159a30f67f352215829f59f5e34f48870f8ef7aae638a2eef1f95d65c79d23861361caa5388cb880bada2769087d8f30e676974edb7195ab76c2af7a60a295a96418d', // 客服token
+            subDomain: 'linapp', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
             showManualScreenPop: true,
             onScreenPop: function(conversation) {
                 var tr = document.createElement('tr');
@@ -282,6 +317,66 @@
             }, function(res) {
                 alert(JSON.stringify(res));
             });
+        }
+    }
+    function setMonitorWorkStatus(agent_work_state) {
+        if (callComp && callAPI) {
+            let resting_id = document.getElementById('resting_id').value;
+            let anget_id = document.getElementById('monitor_workStatus_id').value;
+            if(agent_work_state === 'resting' && resting_id.length !== 0){
+                console.log('???')
+                callAPI.setMonitorWorkRestingStatus(anget_id,resting_id,function() {
+                    console.log('正在尝试修改其他客服状态')
+                },function(res) {
+                    alert(JSON.stringify(res));
+                })
+            }else {
+                callAPI.setMonitorWorkStatus(anget_id,agent_work_state,function() {
+                    console.log('正在尝试修改其他客服状态')
+                },function(res) {
+                    alert(JSON.stringify(res));
+                })
+            }
+        }
+    }
+    function setMonitorAgentWorkWay(agent_work_way) {
+        if (callComp && callAPI) {
+            let anget_id = document.getElementById('monitor_workingWay_id').value;
+            callAPI.setMonitorAgentWorkWay(anget_id,agent_work_way,function() {
+                console.log('正在尝试修改其他客服设备状态');
+            },function(res) {
+                alert(JSON.stringify(res));
+            })
+        }
+    }
+    function monitorAgentListeing() {
+        if (callComp && callAPI) {
+            let agent_id = document.getElementById('monitor_agent_id').value;
+            callAPI.monitorAgentListeing(agent_id,function() {
+                console.log('正在尝试监听');
+            },function(res) {
+                alert(JSON.stringify(res));
+            })
+        }
+    }
+    function monitorAgentInterpose() {
+        if (callComp && callAPI) {
+            let agent_id = document.getElementById('monitor_agent_id').value;
+            callAPI.monitorAgentInterpose(agent_id,function() {
+                console.log('正在尝试强插');
+            },function(res) {
+                alert(JSON.stringify(res));
+            })
+        }
+    }
+    function monitorAgentSubstitute() {
+        if (callComp && callAPI) {
+            let agent_id = document.getElementById('monitor_agent_id').value;
+            callAPI.monitorAgentSubstitute(agent_id,function() {
+                console.log('正在尝试拦截');
+            },function(res) {
+                alert(JSON.stringify(res));
+            })
         }
     }
 

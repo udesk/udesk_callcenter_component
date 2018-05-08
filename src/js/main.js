@@ -72,14 +72,18 @@ class UdeskCallCenterComponent extends React.Component {
                     CallInfo.set('state', 'hangup');
                 });
 
-                softPhone.init({
-                    host: res.web_voip_host,
-                    port: res.web_voip_port_num,
-                    username: res.web_voip_id,
-                    password: res.web_voip_password
-                });
-                if (res.agent_work_way === VOIP_ONLINE) {
-                    softPhone.start();
+                try {
+                    softPhone.init({
+                        host: res.web_voip_host,
+                        port: res.web_voip_port_num,
+                        username: res.web_voip_id,
+                        password: res.web_voip_password
+                    });
+                    if (res.agent_work_way === VOIP_ONLINE) {
+                        softPhone.start();
+                    }
+                } catch(err){
+
                 }
             }
 
@@ -96,9 +100,7 @@ class UdeskCallCenterComponent extends React.Component {
                     return item;
                 })
             });
-
             self.props.onInitSuccess();
-
             websocket.init(res.tower_host, res.user_id);
         }, function() {
             self.props.onInitFailure();
@@ -337,6 +339,7 @@ class CallcenterComponent {
         CallInfo.off('talking', this.onTalking);
         CallInfo.off('hangup', this.onHangup);
         CallConfig.off('change', this.onCallConfigChange);
+        CallConfig.reset();
         this.isDestroyed = true;
     }
 

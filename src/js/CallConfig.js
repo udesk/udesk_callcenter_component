@@ -32,6 +32,11 @@ class CallConfig extends Eventable {
         this[k] = v;
         this.trigger('change', k, v, this);
     }
+    reset(){
+        this.agent_work_state = Const.OFFLINE;
+        this.agent_work_way = Const.FIXED_VOIP_ONLINE;
+        this.enableVoipOnline = false;
+    }
 }
 
 export default new CallConfig();
