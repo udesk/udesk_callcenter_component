@@ -119,14 +119,17 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
+    let token = 'xxxx';
+    let subDomain = 'xxxx';
+    let onTokenExpired = function(callback) {
+        setTimeout(function() {
+            callback('9c77501dc7bd76f9318be84ad62f08e81bb7b7702305edb9dec86463c9cf05c96617fe57fba223813b499eebb0630f400cd9467453fa7fc7e5e0b243d619db535af4f4c7');
+        }, 1000);
+    }
     window.callAPI.tokenInit(
-        '0c5159a30f67f352215829f59f5e34f48870f8ef7aae638a2eef1f95d65c79d23861361caa5388cb880bada2769087d8f30e676974edb7195ab76c2af7a60a295a96418d',
-        'linapp',
-        function(callback) {
-            setTimeout(function() {
-                callback('f3ebff04e6cf899cac39da98bcb1ccdd77e9c8ccd94fa70419668c4bb6510b5fe277cb786662b4c6173706fa2915e9184619f42b766f76226f043693cca1dbdf5a2e1d49');
-            }, 1000);
-        }
+        token,
+        subDomain,
+        onTokenExpired
     )
     var tbody = document.getElementById('screen-pop-history');
 
@@ -136,8 +139,8 @@
         }
         window.callComp = new UdeskCallcenterComponent({
             container: document.body,
-            token: '0c5159a30f67f352215829f59f5e34f48870f8ef7aae638a2eef1f95d65c79d23861361caa5388cb880bada2769087d8f30e676974edb7195ab76c2af7a60a295a96418d', // 客服token
-            subDomain: 'linapp', // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
+            token: token, // 客服token
+            subDomain: subDomain, // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
             showManualScreenPop: true,
             onScreenPop: function(conversation) {
                 var tr = document.createElement('tr');
@@ -178,12 +181,7 @@
             onThreeWayCallingResult: function(res) {
                 console.log('三方结果', JSON.stringify(res));
             },
-            onTokenExpired(callback) {
-                //1秒后刷新token
-                setTimeout(function() {
-                    callback('f3ebff04e6cf899cac39da98bcb1ccdd77e9c8ccd94fa70419668c4bb6510b5fe277cb786662b4c6173706fa2915e9184619f42b766f76226f043693cca1dbdf5a2e1d49');
-                }, 1000);
-            },
+            onTokenExpired: onTokenExpired ,
             onIvrCallResult: function(res) {
                 console.log('ivr转回结果', JSON.stringify(res));
             },

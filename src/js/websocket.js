@@ -100,6 +100,34 @@ class WebsocketConnection extends Eventable {
         CallInfo.set('can_retrieval', msg.can_retrieval === 'true');
         CallInfo.set('can_hold', msg.can_hold === 'true');
     }
+    barge_in(data) {
+        switch (data.code) {
+            case '1000':
+                Alert.success('强插成功');
+                break;
+            default:
+                Alert.error('强插失败');
+        }
+    }
+    listening_result(data) {
+        switch (data.code) {
+            case '1000':
+                Alert.success('监听成功');
+                break;
+            default:
+                Alert.error('监听失败');
+        }
+    }
+    substitute_result(data) {
+
+        switch (data.code) {
+            case '1000':
+                Alert.success('拦截成功');
+                break;
+            default:
+                Alert.error('拦截失败');
+        }
+    }
 }
 
 export default new WebsocketConnection();
