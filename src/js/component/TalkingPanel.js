@@ -4,6 +4,7 @@ import utils from '../Tools';
 import ButtonWithImage from './ButtonWithImage';
 import AgentSelect from './AgentSelect';
 import GroupSelect from './GroupSelect';
+import ExternalContactsSelect from  './ExternalContactsSelect'
 import Alert from './Alert';
 import CustomerInfo from './CustomerInfo';
 import React from 'react';
@@ -88,15 +89,7 @@ export default class TalkingPanelComponent extends React.Component {
                                     case 'group':
                                         return <GroupSelect onChange={this._selectGroup.bind(this)}/>;
                                     case 'externalPhone':
-                                        return <div className="external-phone">
-                                            <input onKeyPress={this._enterExternalPhone.bind(this)} onChange={(e) => {
-                                                this.setState({
-                                                    externalPhoneNumber: e.target.value
-                                                });
-                                            }}/>
-                                            <button onClick={this._onClickExternalPhone.bind(this)}><i
-                                                className="fa fa-phone"/></button>
-                                        </div>;
+                                        return <ExternalContactsSelect mode = 'input_search' onChange={this._onClickExternalPhone.bind(this)} />
                                 }
                             }
                         })()}
@@ -198,22 +191,12 @@ export default class TalkingPanelComponent extends React.Component {
         }
     }
 
-    _enterExternalPhone(e) {
-        if (e.key === 'Enter') {
-            let value = e.target.value.trim();
-            if (!phoneNumberCheck(value)) {
-                Alert.error('不是有效的电话号码');
-                return;
-            }
 
-            this.transfer(this.state.type, value);
-        }
-
-    }
-
-    _onClickExternalPhone() {
-        if (this.state.externalPhoneNumber) {
-            this.transfer(this.state.type, this.state.externalPhoneNumber);
+    _onClickExternalPhone(external) {
+        if (external.cellphone) {
+            this.transfer(this.state.type, external.cellphone);
+        }else {
+            Alert.error('选择的外部联系人没有电话号码');
         }
     }
 

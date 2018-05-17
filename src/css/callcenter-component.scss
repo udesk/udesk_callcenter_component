@@ -352,5 +352,12 @@
         width: 100%;
         margin-top: 15px;
     }
+    .custom_option {
+        p {
+            margin-top:5px;
+            margin-bottom: 5px;
+        }
+    }
+
     @import "radio-btn-group";
 }

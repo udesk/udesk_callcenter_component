@@ -293,6 +293,19 @@ export function getIvrNodes(successCallback = emptyFunction, failureCallback = e
         failureCallback(error);
     });
 }
+export function getExternalcontactsSearch(prefix_input='', page = 1, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.get('/agent_api/v1/callcenter/desktop/external_contacts_prefix_search', {prefix_input:prefix_input,page:page}, function(res) {
+        switch (res.code) {
+            case 1000:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
 
 export function holdCallSelect(successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/hold_call', null, function(res) {

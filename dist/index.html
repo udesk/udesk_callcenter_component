@@ -124,11 +124,11 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    let token = 'xxxx';
-    let subDomain = 'xxxx';
-    let onTokenExpired = function(callback) {
+    var token = '5bcd6156778ae0be3fa51d7edc92c60dbe128f9b4a49f468098c7b03e270bc01df92a9ae2dee9623e204d02da068d846e6004c6395ce22ef31f43d98d874ffe559572713';
+    var subDomain = 'linapp';
+    var onTokenExpired = function(callback) {
         setTimeout(function() {
-            callback('9c77501dc7bd76f9318be84ad62f08e81bb7b7702305edb9dec86463c9cf05c96617fe57fba223813b499eebb0630f400cd9467453fa7fc7e5e0b243d619db535af4f4c7');
+            callback('88354be49e4aa632bdbfb8a60bcae04ec157fad4b4fa554daebae3de1d7bc8de9cc80e9f3c39174cb45d3c3ab52fdcfdaf1216ff2dedc11aa13a1b14e89819065a547cf2');
         }, 1000);
     }
     window.callAPI.tokenInit(
@@ -227,7 +227,7 @@
     }
 
     function holdCallSelect() {
-        let targetId = document.getElementById('agent_id').value;
+        var targetId = document.getElementById('agent_id').value;
         if (window.callComp) {
             window.callComp.holdCallSelect(function() {
                 console.log('正在保持通话...');
@@ -240,7 +240,7 @@
     }
 
     function recoveryCallSelect() {
-        let targetId = document.getElementById('agent_id').value;
+        var targetId = document.getElementById('agent_id').value;
         if (window.callComp) {
             window.callComp.recoveryCallSelect(function() {
                 console.log('正在取回通话...');
@@ -253,7 +253,7 @@
     }
 
     function transfer() {
-        let targetId = document.getElementById('agent_id').value;
+        var targetId = document.getElementById('agent_id').value;
         if (window.callComp) {
             window.callComp.transfer(targetId, function() {
                 console.log('正在尝试转接...');
@@ -266,7 +266,7 @@
     }
 
     function startConsult() {
-        let targetId = document.getElementById('agent_id').value;
+        var targetId = document.getElementById('agent_id').value;
         if (window.callComp) {
             window.callComp.startConsult(targetId, function() {
                 console.log('正在尝试咨询...');
@@ -287,7 +287,7 @@
     }
 
     function startThreeWayCalling() {
-        let targetId = document.getElementById('agent_id').value;
+        var targetId = document.getElementById('agent_id').value;
         if (window.callComp) {
             window.callComp.startThreeWayCalling(targetId, function() {
                 console.log('正在尝试发起三方通话...');
@@ -298,9 +298,9 @@
     }
 
     function startIvrCalling() {
-        let targetId = document.getElementById('node_id').value;
-        let type = document.getElementById('type').value;
-        let node = {
+        var targetId = document.getElementById('node_id').value;
+        var type = document.getElementById('type').value;
+        var node = {
             transfer_mode: type,
             id: targetId
         };
@@ -325,7 +325,7 @@
 
     function getAutomaticCallNumGroup() {
         if (callComp) {
-            let cc_ad_task = callComp.getAutomaticCallNumGroup()
+            var cc_ad_task = callComp.getAutomaticCallNumGroup()
             if(cc_ad_task){
                 alert(JSON.stringify(cc_ad_task));
             }else{
@@ -338,8 +338,8 @@
 
     function setMonitorWorkStatus(agent_work_state) {
         if (callComp && callAPI) {
-            let resting_id = document.getElementById('resting_id').value;
-            let anget_id = document.getElementById('monitor_workStatus_id').value;
+            var resting_id = document.getElementById('resting_id').value;
+            var anget_id = document.getElementById('monitor_workStatus_id').value;
             if(agent_work_state === 'resting' && resting_id.length !== 0){
                 callAPI.setMonitorWorkRestingStatus(anget_id,resting_id,function() {
                     console.log('正在尝试修改其他客服状态')
@@ -357,7 +357,7 @@
     }
     function setMonitorAgentWorkWay(agent_work_way) {
         if (callComp && callAPI) {
-            let anget_id = document.getElementById('monitor_workingWay_id').value;
+            var anget_id = document.getElementById('monitor_workingWay_id').value;
             callAPI.setMonitorAgentWorkWay(anget_id,agent_work_way,function() {
                 console.log('正在尝试修改其他客服设备状态');
             },function(res) {
@@ -367,7 +367,7 @@
     }
     function monitorAgentListeing() {
         if (callComp && callAPI) {
-            let agent_id = document.getElementById('monitor_agent_id').value;
+            var agent_id = document.getElementById('monitor_agent_id').value;
             callAPI.monitorAgentListeing(agent_id,function() {
                 console.log('正在尝试监听');
             },function(res) {
@@ -377,7 +377,7 @@
     }
     function monitorAgentInterpose() {
         if (callComp && callAPI) {
-            let agent_id = document.getElementById('monitor_agent_id').value;
+            var agent_id = document.getElementById('monitor_agent_id').value;
             callAPI.monitorAgentInterpose(agent_id,function() {
                 console.log('正在尝试强插');
             },function(res) {
@@ -387,7 +387,7 @@
     }
     function monitorAgentSubstitute() {
         if (callComp && callAPI) {
-            let agent_id = document.getElementById('monitor_agent_id').value;
+            var agent_id = document.getElementById('monitor_agent_id').value;
             callAPI.monitorAgentSubstitute(agent_id, function() {
                 console.log('正在尝试拦截');
             }, function(res) {

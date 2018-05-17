@@ -20,9 +20,10 @@ export default class BaseSelect extends React.Component {
     }
 
     constructor({
-        optionLabelPath = 'nick_name',
-        placeholder = ''
-    }) {
+                    optionLabelPath = 'nick_name',
+                    placeholder = '',
+                    customOptionDiv = false
+                }) {
         super();
         this.maxPage = 1;
         this.page = 1;
@@ -41,19 +42,38 @@ export default class BaseSelect extends React.Component {
         if (!this.state.expand) {
             dropdownClass = dropdownClass + ' hide';
         }
+
         return <div className="agent-select">
-            <div className="display-frame" onClick={this.toggleExpand.bind(this)}>
-                <span>{this.state.selectedItem ? this.state.selectedItem[this.state.optionLabelPath] : this.state.placeholder}</span>
-                <img src={images.caret_down}/>
-            </div>
+            {(() => {
+                if (this.props.mode === 'input_search') {
+                    let placeholder = this.state.placeholder;
+                    return <div className="external-phone">
+                        <input style={{width: '162px'}} placeholder = {placeholder} onChange={(e) => {
+                            this.onSearch(e.target.value);
+                        }}/>
+                    </div>
+                } else {
+                    return <div className="display-frame" onClick={this.toggleExpand.bind(this)}>
+                                <span>{this.state.selectedItem ? this.state.selectedItem[this.state.optionLabelPath] : this.state.placeholder}</span>
+                                <img src={images.caret_down}/>
+                            </div>
+                }
+
+            }).call(this)}
+
             <ul onScroll={this.onScroll.bind(this)} className={dropdownClass}>
                 {_.map(this.state.content, (item) => {
                     let self = this;
                     let onClickFun = function() {
                         self.props.onChange(item);
-                        self.setState({expand: false, selectedItem: item});
+                        self.setState({expand: false, selectedItem: item,search:''});
                     };
-                    return <li key={item.id} onClick={onClickFun}>{item[this.state.optionLabelPath]}</li>;
+                    if (this.state.customOptionDiv) {
+                        return this.customOptionStructure(item,onClickFun)
+                    } else {
+                        return <li key={item.id} onClick={onClickFun}>{item[this.state.optionLabelPath]}</li>;
+                    }
+
                 })}
                 {(() => {
                     if (this.state.loading) {
@@ -85,4 +105,16 @@ export default class BaseSelect extends React.Component {
             this.loadMore();
         }
     }
+    onSearch(val) {
+
+        this.setState({
+            search:val,
+            content: [],
+            loading: false
+        });
+    }
+    customOptionStructure(item,clickFun){
+        return <li key={item.id} onClick={clickFun}>{item[this.state.optionLabelPath]}</li>;
+    }
+
 }
