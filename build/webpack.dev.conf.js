@@ -9,7 +9,7 @@ module.exports = merge(baseWebpackConfig, {
         new webpack.DefinePlugin({
             __server__: '".udeskd1.com"',
             __protocol__: '"http"'
-            //__server__: "'.cebbank.com'"
+            //__server__: "'.cebbank.com:8080'"
         })
     ]
 });

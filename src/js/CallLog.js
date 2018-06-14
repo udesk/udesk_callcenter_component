@@ -16,6 +16,10 @@ export default class CallLog {
         this.can_hangup = opt.can_hangup === 'true';
         this.is_consult = opt.is_consult === 'true';
         this.customer = opt.customer;
+        this.customer_id = opt.customer_id;
+        this.ad_task_id = opt.ad_task_id;
+        this.ad_task_numbers = opt.ad_task_numbers;
+        this.customer_open_id = opt.customer_open_id;
     }
 
     update(callLog) {
@@ -35,6 +39,10 @@ export default class CallLog {
         this.can_hangup = callLog.can_hangup;
         this.is_consult = callLog.is_consult;
         this.customer = callLog.customer;
+        this.customer_id = callLog.customer_id;
+        this.ad_task_id = callLog.ad_task_id;
+        this.ad_task_numbers = callLog.ad_task_numbers;
+        this.customer_open_id = callLog.customer_open_id;
         return this;
     }
 }

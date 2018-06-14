@@ -256,7 +256,11 @@ class CallcenterComponent {
                 customer_phone_location: callLog.phone_location,  //归属地
                 agent_id: Agent.id,
                 agent_name: Agent.name,
-                ring_time: callLog.ring_at
+                ring_time: callLog.ring_at,
+                ad_task_id:callLog.ad_task_id,//自动外呼任务id
+                customer_id:callLog.customer_id, //客户id
+                ad_task_numbers:callLog.ad_task_numbers, // "18812345678,18712345678" # 号码/号码组}
+                customer_open_id:callLog.customer_open_id
             };
         };
 

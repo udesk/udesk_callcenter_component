@@ -45,6 +45,10 @@
     <th>归属地</th>
     <th>振铃时间</th>
     <th>Call ID</th>
+    <th>任务id</th>
+    <th>客户id</th>
+    <th>号码/号码组</th>
+    <th>customer_open_id</th>
     <th>是否挂断</th>
     </thead>
     <tbody id="screen-pop-history">
@@ -124,6 +128,8 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
+    // fffd2c32926995365f5763be07c12e656d80dcc6a1df364eac43533090c5584ae4413bf57e1a6e3456d577058f946f25ce211ac522da3f1a4ba7ae967996ad1d5a2fc9b8
+    // reocar
     var token = 'fffd2c32926995365f5763be07c12e656d80dcc6a1df364eac43533090c5584ae4413bf57e1a6e3456d577058f946f25ce211ac522da3f1a4ba7ae967996ad1d5a2fc9b8';
     var subDomain = 'reocar';
     var onTokenExpired = function(callback) {
@@ -160,9 +166,16 @@
                     '<td>' + conversation.customer_phone_location + '</td>' + //客户手机号归属地
                     '<td>' + conversation.ring_time + '</td>' + //振铃时间
                     '<td>' + conversation.call_id + '</td>' +   //call_id
+                    '<td>' + conversation.ad_task_id + '</td>' +   //任务id
+                    '<td>' + conversation.customer_id + '</td>' +   //客户id
+                    '<td>' + conversation.ad_task_numbers + '</td>' +   //号码池
+                    '<td>' + conversation.customer_open_id + '</td>' +   //call_id
                     '<td id="' + conversation.conversation_id + '"></td>';
 
                 $(tbody).prepend(tr);
+            },
+            onRinging: function(conversation) {
+                console.log('ringing', conversation);
             },
             onHangup: function(conversation) {
                 document.getElementById(conversation.conversation_id).innerText = '已挂断';

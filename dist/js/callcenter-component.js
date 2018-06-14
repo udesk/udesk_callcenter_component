@@ -342,7 +342,11 @@
 	                customer_phone_location: callLog.phone_location,
 	                agent_id: _Agent2["default"].id,
 	                agent_name: _Agent2["default"].name,
-	                ring_time: callLog.ring_at
+	                ring_time: callLog.ring_at,
+	                ad_task_id: callLog.ad_task_id,
+	                customer_id: callLog.customer_id,
+	                ad_task_numbers: callLog.ad_task_numbers,
+	                customer_open_id: callLog.customer_open_id
 	            };
 	        };
 	
@@ -37617,6 +37621,7 @@
 	    };
 	
 	    HangupPanel.prototype.getInputNumber = function getInputNumber(e) {
+	        console.log(e);
 	        this.setState({
 	            inputNumber: e.target.value
 	        });
@@ -48053,6 +48058,10 @@
 	        this.can_hangup = opt.can_hangup === 'true';
 	        this.is_consult = opt.is_consult === 'true';
 	        this.customer = opt.customer;
+	        this.customer_id = opt.customer_id;
+	        this.ad_task_id = opt.ad_task_id;
+	        this.ad_task_numbers = opt.ad_task_numbers;
+	        this.customer_open_id = opt.customer_open_id;
 	    }
 	
 	    CallLog.prototype.update = function update(callLog) {
@@ -48072,6 +48081,10 @@
 	        this.can_hangup = callLog.can_hangup;
 	        this.is_consult = callLog.is_consult;
 	        this.customer = callLog.customer;
+	        this.customer_id = callLog.customer_id;
+	        this.ad_task_id = callLog.ad_task_id;
+	        this.ad_task_numbers = callLog.ad_task_numbers;
+	        this.customer_open_id = callLog.customer_open_id;
 	        return this;
 	    };
 	
