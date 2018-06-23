@@ -36,7 +36,6 @@ export default class HangupPanel extends React.Component {
     }
 
     getInputNumber(e) {
-        console.log(e);
         this.setState({
             inputNumber: e.target.value
         });

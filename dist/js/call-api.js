@@ -67,7 +67,7 @@
 	
 	    CallAPI.prototype.tokenInit = function tokenInit(token, subDomain, onTokenExpired) {
 	        _AjaxUtils2["default"].token = token;
-	        _AjaxUtils2["default"].host = ("http") + '://' + subDomain + (".udeskd1.com");
+	        _AjaxUtils2["default"].host = ("http") + '://' + subDomain + (".cebbank.com:8080");
 	        _AjaxUtils2["default"].refreshToken = onTokenExpired;
 	    };
 	

@@ -310,7 +310,7 @@
 	        _classCallCheck(this, CallcenterComponent);
 	
 	        _AjaxUtils2["default"].token = token;
-	        _AjaxUtils2["default"].host = 'http://' + subDomain + (".udeskd1.com");
+	        _AjaxUtils2["default"].host = 'http://' + subDomain + (".cebbank.com:8080");
 	        _AjaxUtils2["default"].refreshToken = onTokenExpired;
 	
 	
@@ -37621,7 +37621,6 @@
 	    };
 	
 	    HangupPanel.prototype.getInputNumber = function getInputNumber(e) {
-	        console.log(e);
 	        this.setState({
 	            inputNumber: e.target.value
 	        });
