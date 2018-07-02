@@ -19,20 +19,17 @@ agentStateMap[Const.RINGING] = '振铃中';
 
 export default class AgentStatePanelComponent extends React.Component {
     constructor(props) {
-        super();
-
+        super(props);
         this.agentWayMap = [
             {id: Const.FIXED_VOIP_ONLINE, name: 'IP话机'},
             {id: Const.PHONE_ONLINE, name: '手机'}
         ];
-
-
         this.state = {
             agent_work_state: CallConfig.agent_work_state,
             agent_work_way: CallConfig.agent_work_way,
+            default_callout_number: CallConfig.default_callout_number,
             callState: Const.HANGUP
         };
-
         let self = this;
         CallConfig.on('change', this.callConfigChangCb = function(k, v) {
             if (k === 'agent_work_state') {
@@ -43,7 +40,11 @@ export default class AgentStatePanelComponent extends React.Component {
                 self.setState({
                     agent_work_way: v
                 });
-            } else if (k === 'enableVoipOnline') {
+            } else if (k === 'default_callout_number') {
+                self.setState({
+                    default_callout_number: v
+                });
+            }else if (k === 'enableVoipOnline') {
                 if(v) {
                     self.agentWayMap.push({id: Const.VOIP_ONLINE, name: '网页电话'});
                     self.forceUpdate();
@@ -56,7 +57,6 @@ export default class AgentStatePanelComponent extends React.Component {
             }
         });
     }
-
     render() {
         this.agentStateMap = [
             {id: Const.IDLE, name: <div className={'work-state-' + Const.IDLE}><i></i>空闲</div>},
@@ -71,7 +71,6 @@ export default class AgentStatePanelComponent extends React.Component {
             {id: Const.OFFLINE, name: <div className={'work-state-' + Const.OFFLINE}><i></i>离线</div>},
             {id: Const.NEATEN, name: <div className={'work-state-' + Const.BUSY}><i></i>整理中</div>, hide: true}
         ];
-
         return <div className="agent-state-panel">
             {
                 (function() {
@@ -93,9 +92,16 @@ export default class AgentStatePanelComponent extends React.Component {
             }
 
             <Dropdown direction={this.props.dropdownDirection} content={this.agentWayMap}
-                      value={this.state.agent_work_way} className="way-select"
+                      value={this.state.agent_work_way} className="state-select"
                       onChange={this.updateAgentWorkWay.bind(this)}
                       disabled={this.state.callState !== Const.HANGUP}
+            />
+            <Dropdown direction={this.props.dropdownDirection} content={this.props.callout_numbers}
+                      value={this.state.default_callout_number} className="way-select"
+                      optionLabelPath={'option'}
+                      onChange={this.updateCalloutNumbers.bind(this)}
+                      disabled={this.state.callState !== Const.HANGUP}
+                      className={'ucm-dropdown-long'}
             />
         </div>;
     }
@@ -107,14 +113,26 @@ export default class AgentStatePanelComponent extends React.Component {
             callUtil.setWorkStatus(state.id);
         }
     }
-
+    updateCalloutNumbers(number){
+        var id = number.id === null ? '' : number.id;
+        if (this.state.callState !== Const.HANGUP) {
+            Alert.error('只能在挂断的时候切换中继号');
+            return;
+        }
+        callUtil.setupDefaultNumber(id, () => {
+            CallConfig.set('default_callout_number',number.id);
+        }, () => {
+            Alert.error('切换中继号失败');
+        });
+    }
     updateAgentWorkWay(way) {
         if (this.state.callState !== Const.HANGUP) {
             Alert.error('只能在挂断的时候切换在线方式');
             return;
         }
-        callUtil.setWorkingWay(way.id, function() {
-        }, function() {
+        callUtil.setWorkingWay(way.id, ()=>{
+
+        }, () => {
             Alert.error('切换在线方式失败');
         });
     }

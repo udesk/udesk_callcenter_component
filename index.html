@@ -64,6 +64,13 @@
     <button onclick="setWorkingWay('phone_online');">手机</button>
     <button onclick="setWorkingWay('voip_online');">网页电话</button>
 </div>
+<h3>修改中继号</h3>
+<div>
+    <p>获取中继号时,务必保持initdata接口初始化成功,未成功时只有一个id为null的默认项</p>
+    <input id="call_number_id" placeholder="中继号ID"/>
+    <button onclick="getCallNumbers();">获取中继号</button>
+    <button onclick="setupDefaultNumber();">修改中继号</button>
+</div>
 <h3>保持/取回 通话</h3>
 <div>
     <button onclick="holdCallSelect();">保持通话</button>
@@ -124,11 +131,11 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    var token = 'xxxxxx';
-    var subDomain = 'xxxxxx';
+    var token = '988b3f98088031220665d6aafa20125d9fc58bd84c25906a648ae06f9006bf751dbf34a9911df386a979291028fb14086699206f9a5167860320b9c7f5f7b3b35a93d301';
+    var subDomain = 'linapp';
     var onTokenExpired = function(callback) {
         setTimeout(function() {
-            callback('xxxxxx');
+            callback('988b3f98088031220665d6aafa20125d9fc58bd84c25906a648ae06f9006bf751dbf34a9911df386a979291028fb14086699206f9a5167860320b9c7f5f7b3b35a93d301');
         }, 1000);
     }
     window.callAPI.tokenInit(
@@ -193,7 +200,6 @@
             onResumeAgentResult: function(res) {
                 console.log('ivr转回结果', JSON.stringify(res));
             }
-
             //            onInitSuccess: function() {
             //                console.log('初始化成功');
             //            },
@@ -322,6 +328,17 @@
             });
         }
     }
+    function setupDefaultNumber() {
+        var callNumberId = document.getElementById('call_number_id').value;
+        if (callComp) {
+            callComp.setupDefaultNumber(callNumberId, function(res) {
+                console.log('正在尝试修改中继号');
+                alert(JSON.stringify(res));
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
+        }
+    }
 
     function getAutomaticCallNumGroup() {
         if (callComp) {
@@ -334,7 +351,12 @@
         }
     }
 
-
+    function getCallNumbers() {
+        if (callComp) {
+            var call_numbers = callComp.getCallNumbers()
+            alert(JSON.stringify(call_numbers));
+        }
+    }
 
     function setMonitorWorkStatus(agent_work_state) {
         if (callComp && callAPI) {

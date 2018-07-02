@@ -410,3 +410,27 @@ export function startThreeWayCallingToExternalPhone(phoneNumber, successCallback
 export function getAutomaticCallNumGroup() {
     return CallInfo.cc_ad_task;
 }
+
+
+/**
+ * 更新中继号
+ */
+export function setupDefaultNumber(phoneNumber_id, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1//callcenter/agents/setup_default_number', {id: phoneNumber_id}, function(res) {
+        switch (res.code) {
+            case 1000:
+                successCallback(res);
+                break;
+            default:
+                failureCallback(res);
+        }
+    }, function(error) {
+        failureCallback(error);
+    });
+}
+
+export function getCalloutNumbers() {
+    return CallConfig.callout_numbers;
+}
+
+

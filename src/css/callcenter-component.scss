@@ -15,7 +15,7 @@
 
 .udesk-callcenter-component {
     background-color: #fff;
-    width: 270px;
+    width: 400px;
     position: fixed;
     right: 0;
     bottom: 0;
@@ -64,13 +64,16 @@
         .state-select {
             width: 65px;
             float: right;
+            margin-left: 40px;
         }
         .working {
             font-size: 14px;
+            margin-left: 40px;
         }
     }
     .ucm-dropdown {
         position: relative;
+        display: inline-block;
         font-size: 14px;
         > img, div {
             cursor: pointer;
@@ -101,6 +104,13 @@
                 bottom: 100%;
                 top: auto;
             }
+        }
+    }
+    .ucm-dropdown-long{
+        //margin-right: 300px;;
+        width: 120px;
+        ul{
+            width: 150px;
         }
     }
     .work-state-idle, .work-state-busy, .work-state-resting, .work-state-offline, .work-state-ringing, .work-state-talking, .work-state-neaten {
@@ -202,6 +212,7 @@
         padding: 12px 10px 0;
         background-color: #fff;
         cursor: pointer;
+        width: 60px;
 
         img {
             height: 20px;

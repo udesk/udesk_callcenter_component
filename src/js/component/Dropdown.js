@@ -3,10 +3,13 @@ import React from 'react';
 import _ from 'lodash';
 
 export default class DropdownComponent extends React.Component {
-    constructor() {
+    constructor({
+                    optionLabelPath = 'name'
+                }) {
         super();
         this.state = {
-            expand: false
+            expand: false,
+            optionLabelPath
         };
     }
 
@@ -28,7 +31,7 @@ export default class DropdownComponent extends React.Component {
                         }
                     };
                     if (!item.hide) {
-                        return <li key={item.id} onClick={onChangeCb}>{item.name}</li>;
+                        return <li key={item.id} onClick={onChangeCb}>{item[this.state.optionLabelPath]}</li>;
                     }
                 })}
             </ul>

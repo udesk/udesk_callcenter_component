@@ -6,6 +6,8 @@ class CallConfig extends Eventable {
         super();
         this.agent_work_state = Const.OFFLINE;
         this.agent_work_way = Const.FIXED_VOIP_ONLINE;
+        this.default_callout_number = null;
+        this.callout_numbers = [];
         this.enableVoipOnline = false;
     }
 
@@ -24,7 +26,13 @@ class CallConfig extends Eventable {
         this.agent_work_way = way;
         this.trigger('change', 'agent_work_way', way, this);
     }
-
+    setDefaultCalloutNumber(num) {
+        if (this.default_callout_number === num) {
+            return;
+        }
+        this.default_callout_number = num;
+        this.trigger('change', 'default_callout_number', num, this);
+    }
     set(k, v) {
         if (this[k] === v) {
             return;

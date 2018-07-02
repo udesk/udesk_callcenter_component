@@ -25,7 +25,8 @@ class UdeskCallCenterComponent extends React.Component {
         super();
         this.state = {
             expand: false,
-            customStates: []
+            customStates: [],
+            callout_numbers:[{id:null,name:'--',option:'--'}]
         };
 
         let self = this;
@@ -86,11 +87,25 @@ class UdeskCallCenterComponent extends React.Component {
 
                 }
             }
+            if(res.default_callout_number){
+                CallConfig.set('default_callout_number',res.default_callout_number)
+            }
+            CallConfig.set('callout_numbers',res.callout_numbers);
 
             Agent.id = res.user_id;
             Agent.name = res.user_name;
             Agent.group_id = res.group_id;
             Agent.permissions = res.permissions;
+
+
+            let callout_numbers =  _.map(res.callout_numbers || [],(item)=>{
+                return {
+                    id:item.id,
+                    name:item.name||item.number,
+                    option:item.name?item.name + '-' + item.number : item.number
+                }
+            })
+
 
             self.setState({
                 'customStates': _.map(res.cc_custom_states || [], function(item) {
@@ -98,8 +113,10 @@ class UdeskCallCenterComponent extends React.Component {
                     item.originalStateId = 'resting';
                     item.id = item.originalStateId + '_' + item.id;
                     return item;
-                })
+                }),
+                'callout_numbers': [{id:null,name:'--',option:'--'}].concat(callout_numbers)
             });
+
             self.props.onInitSuccess();
             websocket.init(res.tower_host, res.user_id);
         }, function() {
@@ -113,35 +130,14 @@ class UdeskCallCenterComponent extends React.Component {
                     onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}
                     onDrop={this.drop.bind(this)}/>
             <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}
-                             customStates={this.state.customStates}/>
+                             customStates={this.state.customStates}
+                             callout_numbers={this.state.callout_numbers}/>
             <MainContent className={this.state.expand ? '' : 'hide'}
                          showManualScreenPop={this.props.showManualScreenPop}/>
         </div>;
     }
 
-    //componentDidMount() {
-    //    let self = this;
-    //    clearInterval(this.intervaleId);
-    //    this.intervaleId = setInterval(function() {
-    //        if (self.dragging) {
-    //            return;
-    //        }
-    //        let { top, bottom, left, right, height, width } = self.container.getBoundingClientRect();
-    //        if (top < 0) {
-    //            self.container.style.bottom = (window.innerHeight - height) + 'px';
-    //            self.headerComponent.mouseDown = false;
-    //        }
-    //        if (bottom > window.innerHeight) {
-    //            self.container.style.bottom = '0';
-    //        }
-    //        if (left < 0) {
-    //            self.container.style.right = (window.innerWidth - width) + 'px';
-    //        }
-    //        if (right > window.innerWidth) {
-    //            self.container.style.right = '0';
-    //        }
-    //    }, 1000);
-    //}
+
 
     collapse() {
         this.setState({expand: false});
@@ -152,10 +148,7 @@ class UdeskCallCenterComponent extends React.Component {
     }
 
     drag(offsetX, offsetY) {
-        //this.dragging = true;
-        //let { right:containerRight, bottom:containerBottom } = this.container.getBoundingClientRect();
-        //this.container.style.right = (window.innerWidth - containerRight - offsetX) + 'px';
-        //this.container.style.bottom = (window.innerHeight - containerBottom - offsetY) + 'px';
+
     }
 
     drop() {
@@ -314,6 +307,8 @@ class CallcenterComponent {
         this.startConsultingToExternalPhone = callUtil.startConsultingToExternalPhone;
         this.startThreeWayCallingToExternalPhone = callUtil.startThreeWayCallingToExternalPhone;
         this.getAutomaticCallNumGroup = callUtil.getAutomaticCallNumGroup;
+        this.setupDefaultNumber = callUtil.setupDefaultNumber;
+        this.getCallNumbers = callUtil.getCalloutNumbers;
     }
 
     setWorkStatus(workStatus, onSuccess, onFailure) {
