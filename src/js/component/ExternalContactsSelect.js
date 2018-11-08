@@ -56,6 +56,12 @@ export default class ExternalContactsSelect extends BaseSelect {
         let page = 1;
         this.setState({loading: true});
         getExternalcontactsSearch(val, page, (res) => {
+            res.external_contacts.push({
+                cellphone: val,
+                email: "",
+                id: -1,
+                nick_name: `使用${val}`
+            });
             this.maxPage = res.meta.page_count;
             this.page = res.meta.current_page;
             this.setState({
