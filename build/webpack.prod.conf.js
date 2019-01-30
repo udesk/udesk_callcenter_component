@@ -5,6 +5,7 @@ const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = merge(baseWebpackConfig, {
+    mode: 'production',
     plugins: [
         new webpack.DefinePlugin({
             __server__: '\'.udesk.cn\'',

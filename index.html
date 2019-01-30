@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title></title>
+    <title>通话组件测试</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="./css/callcenter-component.css">
@@ -32,16 +32,18 @@
         历史弹屏
     </caption>
     <thead>
-    <th>客户号码</th>
-    <th>通话类型</th>
-    <th>客服姓名</th>
-    <th>客服ID</th>
-    <th>来源队列</th>
-    <th>通话记录ID</th>
-    <th>归属地</th>
-    <th>振铃时间</th>
-    <th>Call ID</th>
-    <th>是否挂断</th>
+    <tr>
+        <th>客户号码</th>
+        <th>通话类型</th>
+        <th>客服姓名</th>
+        <th>客服ID</th>
+        <th>来源队列</th>
+        <th>通话记录ID</th>
+        <th>归属地</th>
+        <th>振铃时间</th>
+        <th>Call ID</th>
+        <th>是否挂断</th>
+    </tr>
     </thead>
     <tbody id="screen-pop-history">
 
@@ -87,6 +89,9 @@
     <button onclick="startConsult();">咨询</button>
     <button onclick="stopConsult();">结束咨询</button>
     <button onclick="startThreeWayCalling();">三方</button>
+    <button onclick="transferAfterConsult();">咨询后转接</button>
+    <button onclick="threeWayCallingAfterConsult();">咨询后三方</button>
+    <button onclick="transferAfterThreeWayCalling();">三方后转接</button>
 </div>
 <h3>转接IVR</h3>
 <input id="node_id" placeholder="节点id"/>
@@ -123,7 +128,7 @@
 <h3>监控-高级通话</h3>
 <input id="monitor_agent_id" placeholder="客服ID"/>
 <div>
-    <button onclick="monitorAgentListeing();">监听</button>
+    <button onclick="monitorAgentListening();">监听</button>
     <button onclick="monitorAgentInterpose();">强插</button>
     <button onclick="monitorAgentSubstitute();">拦截</button>
 </div>
@@ -131,18 +136,18 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    var token = 'xxxx';
-    var subDomain = 'xxxxx';
+    var token = '7719bc8d6e84d158f90875ef59c05e2f93089e6743f2d3819b1c55632bfcb65429d503194ab01b807d9e52a3b20118062d15a3af8bd8a21ec4d9fe8f795722265a1673af';
+    var subDomain = 'linapp';
     var onTokenExpired = function(callback) {
         setTimeout(function() {
             callback('xxxx');
         }, 1000);
-    }
+    };
     window.callAPI.tokenInit(
         token,
         subDomain,
-        onTokenExpired
-    )
+        onTokenExpired,
+    );
     var tbody = document.getElementById('screen-pop-history');
 
     function createCallComponent() {
@@ -193,13 +198,13 @@
             onThreeWayCallingResult: function(res) {
                 console.log('三方结果', JSON.stringify(res));
             },
-            onTokenExpired: onTokenExpired ,
+            onTokenExpired: onTokenExpired,
             onIvrCallResult: function(res) {
                 console.log('ivr转回结果', JSON.stringify(res));
             },
             onResumeAgentResult: function(res) {
                 console.log('ivr转回结果', JSON.stringify(res));
-            }
+            },
             //            onInitSuccess: function() {
             //                console.log('初始化成功');
             //            },
@@ -308,7 +313,7 @@
         var type = document.getElementById('type').value;
         var node = {
             transfer_mode: type,
-            id: targetId
+            id: targetId,
         };
         if (window.callComp) {
             window.callComp.startIvrCalling(node, function() {
@@ -328,6 +333,7 @@
             });
         }
     }
+
     function setupDefaultNumber() {
         var callNumberId = document.getElementById('call_number_id').value;
         if (callComp) {
@@ -342,18 +348,18 @@
 
     function getAutomaticCallNumGroup() {
         if (callComp) {
-            var cc_ad_task = callComp.getAutomaticCallNumGroup()
-            if(cc_ad_task){
+            var cc_ad_task = callComp.getAutomaticCallNumGroup();
+            if (cc_ad_task) {
                 alert(JSON.stringify(cc_ad_task));
-            }else{
-                alert('还没有储存自动外呼任务的客户号码组')
+            } else {
+                alert('还没有储存自动外呼任务的客户号码组');
             }
         }
     }
 
     function getCallNumbers() {
         if (callComp) {
-            var call_numbers = callComp.getCallNumbers()
+            var call_numbers = callComp.getCallNumbers();
             alert(JSON.stringify(call_numbers));
         }
     }
@@ -362,51 +368,55 @@
         if (callComp && callAPI) {
             var resting_id = document.getElementById('resting_id').value;
             var anget_id = document.getElementById('monitor_workStatus_id').value;
-            if(agent_work_state === 'resting' && resting_id.length !== 0){
-                callAPI.setMonitorWorkRestingStatus(anget_id,resting_id,function() {
-                    console.log('正在尝试修改其他客服状态')
-                },function(res) {
+            if (agent_work_state === 'resting' && resting_id.length !== 0) {
+                callAPI.setMonitorWorkRestingStatus(anget_id, resting_id, function() {
+                    console.log('正在尝试修改其他客服状态');
+                }, function(res) {
                     alert(JSON.stringify(res));
-                })
-            }else {
-                callAPI.setMonitorWorkStatus(anget_id,agent_work_state,function() {
-                    console.log('正在尝试修改其他客服状态')
-                },function(res) {
+                });
+            } else {
+                callAPI.setMonitorWorkStatus(anget_id, agent_work_state, function() {
+                    console.log('正在尝试修改其他客服状态');
+                }, function(res) {
                     alert(JSON.stringify(res));
-                })
+                });
             }
         }
     }
+
     function setMonitorAgentWorkWay(agent_work_way) {
         if (callComp && callAPI) {
             var anget_id = document.getElementById('monitor_workingWay_id').value;
-            callAPI.setMonitorAgentWorkWay(anget_id,agent_work_way,function() {
+            callAPI.setMonitorAgentWorkWay(anget_id, agent_work_way, function() {
                 console.log('正在尝试修改其他客服设备状态');
-            },function(res) {
+            }, function(res) {
                 alert(JSON.stringify(res));
-            })
+            });
         }
     }
-    function monitorAgentListeing() {
+
+    function monitorAgentListening() {
         if (callComp && callAPI) {
             var agent_id = document.getElementById('monitor_agent_id').value;
-            callAPI.monitorAgentListeing(agent_id,function() {
+            callAPI.monitorAgentListening(agent_id, function() {
                 console.log('正在尝试监听');
-            },function(res) {
+            }, function(res) {
                 alert(JSON.stringify(res));
-            })
+            });
         }
     }
+
     function monitorAgentInterpose() {
         if (callComp && callAPI) {
             var agent_id = document.getElementById('monitor_agent_id').value;
-            callAPI.monitorAgentInterpose(agent_id,function() {
+            callAPI.monitorAgentInterpose(agent_id, function() {
                 console.log('正在尝试强插');
-            },function(res) {
+            }, function(res) {
                 alert(JSON.stringify(res));
-            })
+            });
         }
     }
+
     function monitorAgentSubstitute() {
         if (callComp && callAPI) {
             var agent_id = document.getElementById('monitor_agent_id').value;
@@ -414,7 +424,40 @@
                 console.log('正在尝试拦截');
             }, function(res) {
                 alert(JSON.stringify(res));
-            })
+            });
+        }
+    }
+
+    function transferAfterConsult() {
+        if (callComp) {
+            var agent_id = document.getElementById('agent_id').value;
+            callComp.transferAfterConsult(agent_id, function() {
+                console.log('正在转接');
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
+        }
+    }
+
+    function threeWayCallingAfterConsult() {
+        if (callComp) {
+            var agent_id = document.getElementById('agent_id').value;
+            callComp.threeWayCallingAfterConsult(agent_id, function() {
+                console.log('正在转接');
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
+        }
+    }
+
+    function transferAfterThreeWayCalling() {
+        if (callComp) {
+            var agent_id = document.getElementById('agent_id').value;
+            callComp.transferAfterThreeWayCalling(agent_id, function() {
+                console.log('正在转接');
+            }, function(res) {
+                alert(JSON.stringify(res));
+            });
         }
     }
 
