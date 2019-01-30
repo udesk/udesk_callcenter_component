@@ -1,5 +1,3 @@
-import { RINGING, VOIP_ONLINE } from './Const';
-
 export default class CallLog {
     constructor(opt) {
         this.state = opt.state;
@@ -15,6 +13,14 @@ export default class CallLog {
         this.can_transfer_ivr = opt.can_transfer_ivr === 'true';
         this.can_hangup = opt.can_hangup === 'true';
         this.is_consult = opt.is_consult === 'true';
+
+        //可否咨询后转接
+        this.can_transfer_after_consult = this.can_transfer_after_consult === 'true';
+        //可否咨询后三方
+        this.can_party_after_consult = this.can_party_after_consult === 'true';
+        //可否三方后转接
+        this.call_transfer_after_party = this.call_transfer_after_party === 'true';
+
         this.customer = opt.customer;
     }
 
@@ -33,6 +39,10 @@ export default class CallLog {
         this.can_three_party = callLog.can_three_party;
         this.can_transfer_ivr = callLog.can_transfer_ivr;
         this.can_hangup = callLog.can_hangup;
+        this.can_transfer_after_consult = callLog.can_transfer_after_consult;
+        this.can_party_after_consult = callLog.can_party_after_consult;
+        this.call_transfer_after_party = callLog.call_transfer_after_party;
+
         this.is_consult = callLog.is_consult;
         this.customer = callLog.customer;
         return this;

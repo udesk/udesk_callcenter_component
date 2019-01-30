@@ -1,13 +1,13 @@
-import Alert from './component/Alert';
-import AjaxUtils from './AjaxUtils';
-import utils from './Tools';
-import CallConfig from './CallConfig';
-import * as Const from './Const';
-import { VOIP_ONLINE } from './Const';
-import CallQueue from './CallQueue';
-import CallInfo from './CallInfo'
 import _ from 'lodash';
+import AjaxUtils from './AjaxUtils';
+import CallConfig from './CallConfig';
+import CallInfo from './CallInfo';
+import CallQueue from './CallQueue';
+import Alert from './component/Alert';
+import * as Const from './Const';
+import {VOIP_ONLINE} from './Const';
 import softPhone from './soft-phone';
+import utils from './Tools';
 
 let calling = false;
 const emptyFunction = function() {
@@ -15,7 +15,6 @@ const emptyFunction = function() {
 let lastConsultType = 'agent';
 
 export function makeCall(callNumber, successCallback, failureCallback) {
-
 
     //
 
@@ -39,7 +38,7 @@ export function makeCall(callNumber, successCallback, failureCallback) {
     }
 
     if (CallConfig.agent_work_way === VOIP_ONLINE) {
-        CallInfo.set('can_accept','out');
+        CallInfo.set('can_accept', 'out');
         softPhone.call(callNumber);
         return;
     }
@@ -62,9 +61,9 @@ export function makeCall(callNumber, successCallback, failureCallback) {
 
 export function answer() {
     let ishttps = 'https:' == document.location.protocol ? true : false;
-    if(CallConfig.agent_work_way === VOIP_ONLINE && !ishttps){
+    if (CallConfig.agent_work_way === VOIP_ONLINE && !ishttps) {
         alert('请在https://下登录使用网页电话');
-        return
+        return;
     }
     if (CallConfig.agent_work_way === VOIP_ONLINE) {
         softPhone.answer();
@@ -82,7 +81,7 @@ export function setWorkStatus(workStatus, successCallback, failureCallback) {
 
 export function setCustomWorkStatus(originalWorkStatus, customStateId, successCallback, failureCallback) {
     AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_state', {
-        agent_work_state: originalWorkStatus, cc_custom_state_id: customStateId
+        agent_work_state: originalWorkStatus, cc_custom_state_id: customStateId,
     }, function() {
         utils.isFunction(successCallback) && successCallback(...arguments);
     }, function() {
@@ -93,9 +92,9 @@ export function setCustomWorkStatus(originalWorkStatus, customStateId, successCa
 
 export function setWorkingWay(workingWay, successCallback = emptyFunction, failureCallback = emptyFunction) {
     let ishttps = 'https:' == document.location.protocol ? true : false;
-    if(workingWay === 'voip_online' && !ishttps){
+    if (workingWay === 'voip_online' && !ishttps) {
         alert('请在https://下登录使用网页电话');
-        return
+        return;
     }
     AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_way', {agent_work_way: workingWay}, function(res) {
         if (res.code === 1000) {
@@ -223,7 +222,7 @@ export function startThreeWayCalling(targetId, successCallback = emptyFunction, 
 
 export function startIvrCalling(node, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_ivr', {
-        node_id: node.id, transfer_mode: node.transfer_mode
+        node_id: node.id, transfer_mode: node.transfer_mode,
     }, function(res) {
         switch (res.code) {
             case 1001:
@@ -293,8 +292,9 @@ export function getIvrNodes(successCallback = emptyFunction, failureCallback = e
         failureCallback(error);
     });
 }
-export function getExternalcontactsSearch(prefix_input='', page = 1, successCallback = emptyFunction, failureCallback = emptyFunction) {
-    AjaxUtils.get('/agent_api/v1/callcenter/desktop/external_contacts_prefix_search', {prefix_input:prefix_input,page:page}, function(res) {
+
+export function getExternalcontactsSearch(prefix_input = '', page = 1, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.get('/agent_api/v1/callcenter/desktop/external_contacts_prefix_search', {prefix_input: prefix_input, page: page}, function(res) {
         switch (res.code) {
             case 1000:
                 successCallback(res);
@@ -356,7 +356,7 @@ export function transferToGroup(targetId, successCallback = emptyFunction, failu
  * 转接外部电话
  */
 export function transferToExternalPhone(phoneNumber, successCallback = emptyFunction, failureCallback = emptyFunction) {
-    AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_call_outline', {outline_phone_number: phoneNumber}, function(res) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop//transfer_call_outline', {outline_phone_number: phoneNumber}, function(res) {
         switch (res.code) {
             case 1001:
                 successCallback(res);
@@ -405,18 +405,17 @@ export function startThreeWayCallingToExternalPhone(phoneNumber, successCallback
 }
 
 /**
-* 获取自动外呼的值
-*/
+ * 获取自动外呼的值
+ */
 export function getAutomaticCallNumGroup() {
     return CallInfo.cc_ad_task;
 }
-
 
 /**
  * 更新中继号
  */
 export function setupDefaultNumber(phoneNumber_id, successCallback = emptyFunction, failureCallback = emptyFunction) {
-    AjaxUtils.post('/agent_api/v1//callcenter/agents/setup_default_number', {id: phoneNumber_id}, function(res) {
+    AjaxUtils.post('/agent_api/v1/callcenter/agents/setup_default_number', {id: phoneNumber_id}, function(res) {
         switch (res.code) {
             case 1000:
                 successCallback(res);
@@ -433,4 +432,50 @@ export function getCalloutNumbers() {
     return CallConfig.callout_numbers;
 }
 
+//咨询后转接
+export function transferAfterConsult(agent_no, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_after_consult', {agent_no}, function(res) {
+            switch (res.code) {
+                case 1001:
+                    successCallback(res);
+                    break;
+                default:
+                    failureCallback(res);
+            }
+        }, function(error) {
+            failureCallback(error);
+        },
+    );
+}
 
+//咨询后三方
+export function threeWayCallingAfterConsult(agent_no, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/three_party_after_consult', {agent_no}, function(res) {
+            switch (res.code) {
+                case 1001:
+                    successCallback(res);
+                    break;
+                default:
+                    failureCallback(res);
+            }
+        }, function(error) {
+            failureCallback(error);
+        },
+    );
+}
+
+//三方后转接
+export function transferAfterThreeWayCalling(agent_no, successCallback = emptyFunction, failureCallback = emptyFunction) {
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_after_three_party', {agent_no}, function(res) {
+            switch (res.code) {
+                case 1001:
+                    successCallback(res);
+                    break;
+                default:
+                    failureCallback(res);
+            }
+        }, function(error) {
+            failureCallback(error);
+        },
+    );
+}

@@ -1,20 +1,23 @@
-import '../css/callcenter-component.scss';
 import 'font-awesome/scss/font-awesome.scss';
-import './component/ie8-child-elements';
-import AgentStatePanel from './component/AgentStatePanel.js';
-import Header from './component/Header.js';
-import AjaxUtils from './AjaxUtils';
-import Alert from './component/Alert';
-import CallInfo from './CallInfo';
-import CallConfig from './CallConfig';
-import MainContent from './component/MainContent';
-import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
-import Agent from './Agent';
-import * as callUtil from './CallUtil';
-import * as CONSTANT from './Const';
-import { VOIP_ONLINE } from './Const';
 import _ from 'lodash';
+import React from 'react';
+import {
+    render,
+    unmountComponentAtNode,
+} from 'react-dom';
+import '../css/callcenter-component.scss';
+import Agent from './Agent';
+import AjaxUtils from './AjaxUtils';
+import CallConfig from './CallConfig';
+import CallInfo from './CallInfo';
+import * as callUtil from './CallUtil';
+import AgentStatePanel from './component/AgentStatePanel.js';
+import Alert from './component/Alert';
+import Header from './component/Header.js';
+import './component/ie8-child-elements';
+import MainContent from './component/MainContent';
+import * as CONSTANT from './Const';
+import {VOIP_ONLINE} from './Const';
 import softPhone from './soft-phone';
 import websocket from './websocket';
 
@@ -26,7 +29,7 @@ class UdeskCallCenterComponent extends React.Component {
         this.state = {
             expand: false,
             customStates: [],
-            callout_numbers:[{id:null,name:'--',option:'--'}]
+            callout_numbers: [{id: null, name: '--', option: '--'}],
         };
 
         let self = this;
@@ -59,7 +62,7 @@ class UdeskCallCenterComponent extends React.Component {
                         'state': 'ringing',
                         'call_type': originator === 'local' ? '呼入' : '呼出',
                         'can_accept': originator === 'local' ? 'in' : 'out',
-                        'agent_work_way': VOIP_ONLINE
+                        'agent_work_way': VOIP_ONLINE,
                     });
                 });
 
@@ -78,34 +81,32 @@ class UdeskCallCenterComponent extends React.Component {
                         host: res.web_voip_host,
                         port: res.web_voip_port_num,
                         username: res.web_voip_id,
-                        password: res.web_voip_password
+                        password: res.web_voip_password,
                     });
                     if (res.agent_work_way === VOIP_ONLINE) {
                         softPhone.start();
                     }
-                } catch(err){
+                } catch (err) {
 
                 }
             }
-            if(res.default_callout_number){
-                CallConfig.set('default_callout_number',res.default_callout_number)
+            if (res.default_callout_number) {
+                CallConfig.set('default_callout_number', res.default_callout_number);
             }
-            CallConfig.set('callout_numbers',res.callout_numbers);
+            CallConfig.set('callout_numbers', res.callout_numbers);
 
             Agent.id = res.user_id;
             Agent.name = res.user_name;
             Agent.group_id = res.group_id;
             Agent.permissions = res.permissions;
 
-
-            let callout_numbers =  _.map(res.callout_numbers || [],(item)=>{
+            let callout_numbers = _.map(res.callout_numbers || [], (item) => {
                 return {
-                    id:item.id,
-                    name:item.name||item.number,
-                    option:item.name?item.name + '-' + item.number : item.number
-                }
-            })
-
+                    id: item.id,
+                    name: item.name || item.number,
+                    option: item.name ? item.name + '-' + item.number : item.number,
+                };
+            });
 
             self.setState({
                 'customStates': _.map(res.cc_custom_states || [], function(item) {
@@ -114,7 +115,7 @@ class UdeskCallCenterComponent extends React.Component {
                     item.id = item.originalStateId + '_' + item.id;
                     return item;
                 }),
-                'callout_numbers': [{id:null,name:'--',option:'--'}].concat(callout_numbers)
+                'callout_numbers': [{id: null, name: '--', option: '--'}].concat(callout_numbers),
             });
 
             self.props.onInitSuccess();
@@ -136,8 +137,6 @@ class UdeskCallCenterComponent extends React.Component {
                          showManualScreenPop={this.props.showManualScreenPop}/>
         </div>;
     }
-
-
 
     collapse() {
         this.setState({expand: false});
@@ -209,7 +208,7 @@ class CallcenterComponent {
         onInitFailure = function() {
             Alert.error('获取初始化数据失败!');
         },
-        onTokenExpired
+        onTokenExpired,
     }) {
         AjaxUtils.token = token;
         AjaxUtils.host = __protocol__ + '://' + subDomain + __server__;
@@ -244,7 +243,7 @@ class CallcenterComponent {
                 customer_phone_location: callLog.phone_location,  //归属地
                 agent_id: Agent.id,
                 agent_name: Agent.name,
-                ring_time: callLog.ring_at
+                ring_time: callLog.ring_at,
             };
         };
 
@@ -309,6 +308,9 @@ class CallcenterComponent {
         this.getAutomaticCallNumGroup = callUtil.getAutomaticCallNumGroup;
         this.setupDefaultNumber = callUtil.setupDefaultNumber;
         this.getCallNumbers = callUtil.getCalloutNumbers;
+        this.transferAfterConsult = callUtil.transferAfterConsult;
+        this.threeWayCallingAfterConsult = callUtil.threeWayCallingAfterConsult;
+        this.transferAfterThreeWayCalling = callUtil.transferAfterThreeWayCalling;
     }
 
     setWorkStatus(workStatus, onSuccess, onFailure) {

@@ -1,19 +1,8 @@
-import images from './images';
-import CallInfo from '../CallInfo';
-import utils from '../Tools';
-import ButtonWithImage from './ButtonWithImage';
-import AgentSelect from './AgentSelect';
-import GroupSelect from './GroupSelect';
-import ExternalContactsSelect from  './ExternalContactsSelect'
-import Alert from './Alert';
-import CustomerInfo from './CustomerInfo';
-import React from 'react';
-import HangupButton from './HangupButton';
-import IvrNodeSelect from './IvrNodeSelect';
 import _ from 'lodash';
+import React from 'react';
+import CallInfo from '../CallInfo';
 import {
     holdCallSelect,
-    phoneNumberCheck,
     recoveryCallSelect,
     startConsult,
     startConsultingToExternalPhone,
@@ -21,14 +10,27 @@ import {
     startThreeWayCalling,
     startThreeWayCallingToExternalPhone,
     stopConsult,
+    threeWayCallingAfterConsult,
     transfer,
+    transferAfterConsult,
+    transferAfterThreeWayCalling,
     transferToExternalPhone,
     transferToGroup
 } from '../CallUtil';
+import utils from '../Tools';
+import AgentSelect from './AgentSelect';
+import Alert from './Alert';
+import ButtonWithImage from './ButtonWithImage';
+import CustomerInfo from './CustomerInfo';
+import ExternalContactsSelect from './ExternalContactsSelect';
+import GroupSelect from './GroupSelect';
+import HangupButton from './HangupButton';
+import images from './images';
+import IvrNodeSelect from './IvrNodeSelect';
 
 export default class TalkingPanelComponent extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             talkingTime: 0,
             type: null,
@@ -46,15 +48,16 @@ export default class TalkingPanelComponent extends React.Component {
     }
 
     render() {
+        let {
+            can_transfer_after_consult,
+            can_party_after_consult,
+            call_transfer_after_party
+        } = this.state;
+
         let agentSelectWrapperClass = 'agent-select-wrapper';
         let descInfoContent = '';
         if (this.state.queue_desc) {
             descInfoContent = '来源:' + this.state.queue_desc;
-        }
-        if (!this.state.showAgentSelect || this.state.direction === 'out' || this.state.can_end_consult ||
-            (!this.state.can_consult && !this.state.can_transfer && !this.state.can_three_party &&
-             !this.state.can_transfer_ivr)) {
-            agentSelectWrapperClass += ' hide';
         }
 
         return <div className="text-center talking-panel">
@@ -66,31 +69,27 @@ export default class TalkingPanelComponent extends React.Component {
             {(() => {
                 if (this.state.type === 'ivr_node') {
                     return <div className={agentSelectWrapperClass}><IvrNodeSelect
-                        onChange={this._selectAgent.bind(this)}/></div>;
+                        onChange={this._selectAgent}/></div>;
                 } else {
+                    if (!this.state.showAgentSelect || this.state.direction === 'out' || this.state.can_end_consult ||
+                        (!this.state.can_consult && !this.state.can_transfer && !this.state.can_three_party &&
+                         !this.state.can_transfer_ivr)) {
+                        return null;
+                    }
                     return <div className={agentSelectWrapperClass}>
+                        <select value={this.state.targetType}
+                                onChange={event => this.setState({targetType: event.target.value})}>
+                            {_.map(this.state.targetTypes, (i) => <option key={i.value}
+                                                                          value={i.value}>{i.name}</option>)}
+                        </select>
                         {(() => {
-                            if (this.state.type !== 'ivr_node') {
-                                return <select value={this.state.targetType}
-                                               onChange={event => this.setState({targetType: event.target.value})}>
-                                    {_.map(this.state.targetTypes, (i) => <option key={i.value}
-                                                                                  value={i.value}>{i.name}</option>)}
-                                </select>;
-                            }
-                        })()}
-
-                        {(() => {
-                            if (this.state.type === 'ivr_node') {
-                                return <IvrNodeSelect onChange={this._selectIvrNode.bind(this)}/>;
-                            } else {
-                                switch (this.state.targetType) {
-                                    case 'agent':
-                                        return <AgentSelect onChange={this._selectAgent.bind(this)}/>;
-                                    case 'group':
-                                        return <GroupSelect onChange={this._selectGroup.bind(this)}/>;
-                                    case 'externalPhone':
-                                        return <ExternalContactsSelect mode = 'input_search' onChange={this._onClickExternalPhone.bind(this)} />
-                                }
+                            switch (this.state.targetType) {
+                                case 'agent':
+                                    return <AgentSelect onChange={this._selectAgent}/>;
+                                case 'group':
+                                    return <GroupSelect onChange={this._selectGroup.bind(this)}/>;
+                                case 'externalPhone':
+                                    return <ExternalContactsSelect mode='input_search' onChange={this._onClickExternalPhone.bind(this)}/>;
                             }
                         })()}
                     </div>;
@@ -131,6 +130,21 @@ export default class TalkingPanelComponent extends React.Component {
                                      className={this.state.can_three_party ? '' : 'hide'}
                                      state={this.state.type !== 'threeWay' ? 'normal' : 'cancel'}
                                      cancelHandler={this.hideTargetSelect.bind(this)}/>
+                    {can_transfer_after_consult &&
+                     <ButtonWithImage image={images.transfer}
+                                      normalHandler={this._transferAfterConsult}
+                                      content="咨询后转接"
+                                      state='normal'/>}
+                    {can_party_after_consult &&
+                     <ButtonWithImage image={images.threeWayCalling}
+                                      normalHandler={this._threeWayCallingAfterConsult}
+                                      content="咨询后三方"
+                                      state='normal'/>}
+                    {call_transfer_after_party &&
+                     <ButtonWithImage image={images.transfer}
+                                      normalHandler={this._transferAfterThreeWayCalling}
+                                      content="三方后转接"
+                                      state='normal'/>}
                 </div>
             </div>
             {(() => {
@@ -150,7 +164,7 @@ export default class TalkingPanelComponent extends React.Component {
         });
     }
 
-    _selectAgent(agent) {
+    _selectAgent = (agent) => {
         if (this.state.type === 'transfer') {
             transfer(agent.id, function() {
                 Alert.success('转移的请求已经发送！');
@@ -172,7 +186,8 @@ export default class TalkingPanelComponent extends React.Component {
         } else if (this.state.type === 'ivr_node') {
 
         }
-    }
+        this._lastSelectedAgentId = agent.id;
+    };
 
     _selectGroup(group) {
         if (this.state.type === 'transfer') {
@@ -191,11 +206,10 @@ export default class TalkingPanelComponent extends React.Component {
         }
     }
 
-
     _onClickExternalPhone(external) {
         if (external.cellphone) {
             this.transfer(this.state.type, external.cellphone);
-        }else {
+        } else {
             Alert.error('选择的外部联系人没有电话号码');
         }
     }
@@ -249,7 +263,8 @@ export default class TalkingPanelComponent extends React.Component {
             targetTypes: [
                 {name: '客服', value: 'agent'},
                 {name: '客服组', value: 'group'},
-                {name: '外线', value: 'externalPhone'}]
+                {name: '外线', value: 'externalPhone'}
+            ]
         });
     }
 
@@ -258,7 +273,8 @@ export default class TalkingPanelComponent extends React.Component {
             type: 'consult', showAgentSelect: true,
             targetTypes: [
                 {name: '客服', value: 'agent'},
-                {name: '外线', value: 'externalPhone'}]
+                {name: '外线', value: 'externalPhone'}
+            ]
         });
     }
 
@@ -267,7 +283,8 @@ export default class TalkingPanelComponent extends React.Component {
             type: 'threeWay', showAgentSelect: true,
             targetTypes: [
                 {name: '客服', value: 'agent'},
-                {name: '外线', value: 'externalPhone'}]
+                {name: '外线', value: 'externalPhone'}
+            ]
         });
     }
 
@@ -282,4 +299,22 @@ export default class TalkingPanelComponent extends React.Component {
     componentWillUnmount() {
         CallInfo.off('change', this.onCallInfoChange);
     }
+
+    _transferAfterConsult = () => {
+        if (this._lastSelectedAgentId) {
+            transferAfterConsult(this._lastSelectedAgentId);
+        }
+    };
+
+    _threeWayCallingAfterConsult = () => {
+        if (this._lastSelectedAgentId) {
+            threeWayCallingAfterConsult(this._lastSelectedAgentId);
+        }
+    };
+
+    _transferAfterThreeWayCalling = () => {
+        if (this._lastSelectedAgentId) {
+            transferAfterThreeWayCalling(this._lastSelectedAgentId);
+        }
+    };
 }

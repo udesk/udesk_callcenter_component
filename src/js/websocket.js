@@ -1,13 +1,28 @@
+import CallConfig from './CallConfig';
+import CallInfo from './CallInfo';
+import CallLog from './CallLog';
+import CallQueue from './CallQueue';
+import Alert from './component/Alert';
+import {VOIP_ONLINE} from './Const';
+import Eventable from './Eventable';
 import Socket from './socket';
 import softPhone from './soft-phone';
-import CallQueue from './CallQueue';
-import CallLog from './CallLog';
-import Alert from './component/Alert';
-import CallConfig from './CallConfig';
-import { VOIP_ONLINE } from './Const';
-import CallInfo from './CallInfo';
-import { isFunction } from './Tools';
-import Eventable from './Eventable';
+import {isFunction} from './Tools';
+
+function updateCallInfo(msg) {
+    CallInfo.set('can_consult', msg.can_consult === 'true');
+    CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
+    CallInfo.set('can_three_party', msg.can_three_party === 'true');
+    CallInfo.set('can_transfer', msg.can_transfer === 'true');
+    CallInfo.set('can_transfer_ivr', msg.can_transfer_ivr === 'true');
+
+    //可否咨询后转接
+    CallInfo.set('can_transfer_after_consult', msg.can_transfer_after_consult === 'true');
+    //可否咨询后三方
+    CallInfo.set('can_party_after_consult', msg.can_party_after_consult === 'true');
+    //可否三方后转接
+    CallInfo.set('call_transfer_after_party', msg.call_transfer_after_party === 'true');
+}
 
 class WebsocketConnection extends Eventable {
     init(tower_url, user_id) {
@@ -27,8 +42,8 @@ class WebsocketConnection extends Eventable {
 
     call_log(msg) {
 
-        if(msg.state === 'ringing' && msg.ad_task_id){
-            CallInfo.set('cc_ad_task',{ad_task_id:msg.ad_task_id,customer_id:msg.customer_id,numbers:msg.ad_task_numbers.split(",")});
+        if (msg.state === 'ringing' && msg.ad_task_id) {
+            CallInfo.set('cc_ad_task', {ad_task_id: msg.ad_task_id, customer_id: msg.customer_id, numbers: msg.ad_task_numbers.split(',')});
         }
 
         CallQueue.put(new CallLog(msg));
@@ -51,19 +66,13 @@ class WebsocketConnection extends Eventable {
     }
 
     consult_result(msg) {
-        CallInfo.set('can_consult', msg.can_consult === 'true');
-        CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
-        CallInfo.set('can_three_party', msg.can_three_party === 'true');
-        CallInfo.set('can_transfer', msg.can_transfer === 'true');
+        updateCallInfo(msg);
 
         this.trigger('consultResult', msg);
     }
 
     three_party(msg) {
-        CallInfo.set('can_consult', msg.can_consult === 'true');
-        CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
-        CallInfo.set('can_three_party', msg.can_three_party === 'true');
-        CallInfo.set('can_transfer', msg.can_transfer === 'true');
+        updateCallInfo(msg);
 
         this.trigger('threeWayCallingResult', msg);
     }
@@ -77,21 +86,12 @@ class WebsocketConnection extends Eventable {
     }
 
     transfer_ivr_result(msg) {
-        CallInfo.set('can_consult', msg.can_consult === 'true');
-        CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
-        CallInfo.set('can_three_party', msg.can_three_party === 'true');
-        CallInfo.set('can_transfer', msg.can_transfer === 'true');
-        CallInfo.set('can_transfer_ivr', msg.can_transfer_ivr === 'true');
-
+        updateCallInfo(msg);
         this.trigger('ivrCallResult', msg);
     }
 
     resume_agent_result(msg) {
-        CallInfo.set('can_consult', msg.can_consult === 'true');
-        CallInfo.set('can_end_consult', msg.can_end_consult === 'true');
-        CallInfo.set('can_three_party', msg.can_three_party === 'true');
-        CallInfo.set('can_transfer', msg.can_transfer === 'true');
-        CallInfo.set('can_transfer_ivr', msg.can_transfer_ivr === 'true');
+        updateCallInfo(msg);
 
         this.trigger('resumeAgentResult', msg);
     }
@@ -105,6 +105,7 @@ class WebsocketConnection extends Eventable {
         CallInfo.set('can_retrieval', msg.can_retrieval === 'true');
         CallInfo.set('can_hold', msg.can_hold === 'true');
     }
+
     barge_in(data) {
         switch (data.code) {
             case '1000':
@@ -114,6 +115,7 @@ class WebsocketConnection extends Eventable {
                 Alert.error('强插失败');
         }
     }
+
     listening_result(data) {
         switch (data.code) {
             case '1000':
@@ -123,6 +125,7 @@ class WebsocketConnection extends Eventable {
                 Alert.error('监听失败');
         }
     }
+
     substitute_result(data) {
 
         switch (data.code) {

@@ -49,7 +49,7 @@ class CallAPI {
             failureCallback(res);
         });
     }
-    monitorAgentListeing(agent_no,successCallback = emptyFunction, failureCallback = emptyFunction){
+    monitorAgentListening(agent_no,successCallback = emptyFunction, failureCallback = emptyFunction){
         AjaxUtils.post('/agent_api/v1/callcenter/desktop/listeing', {agent_no:agent_no}, function(res) {
             switch (res.code) {
                 case 1001:
