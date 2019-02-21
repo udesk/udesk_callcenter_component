@@ -14,14 +14,27 @@ const emptyFunction = function() {
 };
 let lastConsultType = 'agent';
 
-export function makeCall(callNumber, successCallback, failureCallback) {
-
-    //
-
+/**
+ * 外呼
+ * @param callNumber
+ */
+export function makeCall(callNumber) {
     if (calling) {
         return;
     }
     calling = true;
+
+    let options;
+    let successCallback;
+    let failureCallback;
+    if (typeof arguments[1] === 'object') {
+        options = arguments[1];
+        successCallback = arguments[2];
+        failureCallback = arguments[3];
+    } else if (typeof arguments[1] === 'function') {
+        successCallback = arguments[1];
+        failureCallback = arguments[2];
+    }
 
     setTimeout(() => {
         calling = false;
@@ -43,7 +56,11 @@ export function makeCall(callNumber, successCallback, failureCallback) {
         return;
     }
 
-    AjaxUtils.post('/agent_api/v1/callcenter/desktop/make_call', {number: callNumber}, function(res) {
+    let params = {number: callNumber};
+    if (options && options.biz_id) {
+        params.biz_id = options.biz_id;
+    }
+    AjaxUtils.post('/agent_api/v1/callcenter/desktop/make_call', params, function(res) {
         switch (res.code) {
             case 1000:
                 Alert.success('已发起外呼请求');
@@ -81,7 +98,7 @@ export function setWorkStatus(workStatus, successCallback, failureCallback) {
 
 export function setCustomWorkStatus(originalWorkStatus, customStateId, successCallback, failureCallback) {
     AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_state', {
-        agent_work_state: originalWorkStatus, cc_custom_state_id: customStateId,
+        agent_work_state: originalWorkStatus, cc_custom_state_id: customStateId
     }, function() {
         utils.isFunction(successCallback) && successCallback(...arguments);
     }, function() {
@@ -222,7 +239,7 @@ export function startThreeWayCalling(targetId, successCallback = emptyFunction, 
 
 export function startIvrCalling(node, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_ivr', {
-        node_id: node.id, transfer_mode: node.transfer_mode,
+        node_id: node.id, transfer_mode: node.transfer_mode
     }, function(res) {
         switch (res.code) {
             case 1001:
@@ -444,7 +461,7 @@ export function transferAfterConsult(agent_no, successCallback = emptyFunction, 
             }
         }, function(error) {
             failureCallback(error);
-        },
+        }
     );
 }
 
@@ -460,7 +477,7 @@ export function threeWayCallingAfterConsult(agent_no, successCallback = emptyFun
             }
         }, function(error) {
             failureCallback(error);
-        },
+        }
     );
 }
 
@@ -476,6 +493,6 @@ export function transferAfterThreeWayCalling(agent_no, successCallback = emptyFu
             }
         }, function(error) {
             failureCallback(error);
-        },
+        }
     );
 }

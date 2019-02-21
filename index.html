@@ -78,6 +78,15 @@
     <button onclick="holdCallSelect();">保持通话</button>
     <button onclick="recoveryCallSelect();">取回通话</button>
 </div>
+<h3>测试外呼接口</h3>
+<div>
+    <input placeholder="请输入号码" id="phone-number-input"/>
+    <input placeholder="请输入业务id" id="biz_id"/>
+    <button
+        onclick="makeCall(document.getElementById('phone-number-input').value, document.getElementById('biz_id').value);">
+        拨打
+    </button>
+</div>
 <h3>挂断</h3>
 <div>
     <button onclick="callComp.hangup();">挂断</button>
@@ -136,7 +145,7 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    var token = 'ec02e85e80ae6734d3dd87f5504941f1e16e2f655b35a636ffcb84c67ff025c99efec906c9c4df69a3ffdf847c9b37b0f6e545aeab1cbc0901604ba8c4714fa65b59a484';
+    var token = '7719bc8d6e84d158f90875ef59c05e2f93089e6743f2d3819b1c55632bfcb65429d503194ab01b807d9e52a3b20118062d15a3af8bd8a21ec4d9fe8f795722265a1673af';
     var subDomain = 'linapp';
     var onTokenExpired = function(callback) {
         setTimeout(function() {
@@ -214,8 +223,8 @@
         });
     }
 
-    function makeCall(phone_number) {
-        callComp.makeCall(phone_number, function() {
+    function makeCall(phone_number, biz_id) {
+        callComp.makeCall(phone_number, {biz_id: biz_id}, function() {
             console.log('外呼成功');
         }, function() {
             console.log('外呼失败');
