@@ -39,6 +39,7 @@
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "watch:dev": "webpack -w --config ./build/webpack.dev.conf.js --progress --colors",
+    "watch:prod": "webpack -w --config ./build/webpack.prod.conf.js --progress --colors",
     "build": "webpack --config ./build/webpack.base.conf.js --progress --colors",
     "build:dev": "NODE_ENV=dev webpack --config ./build/webpack.dev.conf.js --progress --colors",
     "build:prod": "NODE_ENV=prod webpack --config ./build/webpack.prod.conf.js --progress --colors"
