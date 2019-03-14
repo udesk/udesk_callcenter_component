@@ -1,5 +1,6 @@
 import JsSIP from 'jssip';
 import _ from 'lodash';
+
 require.context('../assets/sounds', true, /\.mp3$/);
 
 class SoftPhone {
@@ -92,14 +93,14 @@ class SoftPhone {
     }
 
     start() {
-        if(!this._ua){
+        if (!this._ua) {
             return;
         }
         this._ua.start();
     }
 
     stop() {
-        if(!this._ua){
+        if (!this._ua) {
             return;
         }
         this._ua.stop();
@@ -218,6 +219,10 @@ class SoftPhone {
             // unable to establish the call
             this.stopRinging();
             this.trigger('sessionFailed', cause);
+        });
+
+        session.on('icecandidate', ({candidate, ready}) => {
+            ready();
         });
 
         if (session.direction !== 'incoming') {

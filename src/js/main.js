@@ -3,7 +3,7 @@ import _ from 'lodash';
 import React from 'react';
 import {
     render,
-    unmountComponentAtNode,
+    unmountComponentAtNode
 } from 'react-dom';
 import '../css/callcenter-component.scss';
 import Agent from './Agent';
@@ -24,16 +24,62 @@ import websocket from './websocket';
 require.context('../assets/images', true, /\.(png|jpg|gif)$/);
 
 class UdeskCallCenterComponent extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             expand: false,
             customStates: [],
             callout_numbers: [{id: null, name: '--', option: '--'}],
+            userDeleted: false
         };
+    }
 
-        let self = this;
-        AjaxUtils.get('/agent_api/v1/callcenter/init_data', null, function(res) {
+    render() {
+        let {
+            userDeleted
+        } = this.state;
+        return <div ref={(ele) => ele && (this.container = ele.parentElement)}>
+            <Header onMinimize={this.collapse.bind(this)} onMaximize={this.expand.bind(this)}
+                    onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}
+                    onDrop={this.drop.bind(this)}/>
+            <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}
+                             customStates={this.state.customStates}
+                             callout_numbers={this.state.callout_numbers}/>
+            <MainContent className={this.state.expand ? '' : 'hide'}
+                         showManualScreenPop={this.props.showManualScreenPop}/>
+            {(() => {
+                if (userDeleted) {
+                    return <div className='mask'>
+                        <span>该坐席账号已删除，请联系系统管理员。</span>
+                    </div>;
+                }
+                return null;
+            })()}
+        </div>;
+    }
+
+    collapse() {
+        this.setState({expand: false});
+    }
+
+    expand() {
+        this.setState({expand: true});
+    }
+
+    drag(offsetX, offsetY) {
+
+    }
+
+    drop() {
+        this.dragging = false;
+    }
+
+    componentDidMount() {
+        AjaxUtils.get('/agent_api/v1/callcenter/init_data', null, (res) => {
+            if (res.code === 15000) {
+                this.setState({userDeleted: true});
+                return;
+            }
             if (res.cc_custom_state_id) {
                 CallConfig.set('agent_work_state', res.agent_work_state + '_' + res.cc_custom_state_id);
             } else {
@@ -62,7 +108,7 @@ class UdeskCallCenterComponent extends React.Component {
                         'state': 'ringing',
                         'call_type': originator === 'local' ? '呼入' : '呼出',
                         'can_accept': originator === 'local' ? 'in' : 'out',
-                        'agent_work_way': VOIP_ONLINE,
+                        'agent_work_way': VOIP_ONLINE
                     });
                 });
 
@@ -81,7 +127,7 @@ class UdeskCallCenterComponent extends React.Component {
                         host: res.web_voip_host,
                         port: res.web_voip_port_num,
                         username: res.web_voip_id,
-                        password: res.web_voip_password,
+                        password: res.web_voip_password
                     });
                     if (res.agent_work_way === VOIP_ONLINE) {
                         softPhone.start();
@@ -104,54 +150,25 @@ class UdeskCallCenterComponent extends React.Component {
                 return {
                     id: item.id,
                     name: item.name || item.number,
-                    option: item.name ? item.name + '-' + item.number : item.number,
+                    option: item.name ? item.name + '-' + item.number : item.number
                 };
             });
 
-            self.setState({
+            this.setState({
                 'customStates': _.map(res.cc_custom_states || [], function(item) {
                     item.customStateId = item.id;
                     item.originalStateId = 'resting';
                     item.id = item.originalStateId + '_' + item.id;
                     return item;
                 }),
-                'callout_numbers': [{id: null, name: '--', option: '--'}].concat(callout_numbers),
+                'callout_numbers': [{id: null, name: '--', option: '--'}].concat(callout_numbers)
             });
 
-            self.props.onInitSuccess();
+            this.props.onInitSuccess();
             websocket.init(res.tower_host, res.user_id);
-        }, function() {
-            self.props.onInitFailure();
+        }, () => {
+            this.props.onInitFailure();
         });
-    }
-
-    render() {
-        return <div ref={(ele) => ele && (this.container = ele.parentElement)}>
-            <Header onMinimize={this.collapse.bind(this)} onMaximize={this.expand.bind(this)}
-                    onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}
-                    onDrop={this.drop.bind(this)}/>
-            <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}
-                             customStates={this.state.customStates}
-                             callout_numbers={this.state.callout_numbers}/>
-            <MainContent className={this.state.expand ? '' : 'hide'}
-                         showManualScreenPop={this.props.showManualScreenPop}/>
-        </div>;
-    }
-
-    collapse() {
-        this.setState({expand: false});
-    }
-
-    expand() {
-        this.setState({expand: true});
-    }
-
-    drag(offsetX, offsetY) {
-
-    }
-
-    drop() {
-        this.dragging = false;
     }
 
     componentWillUnmount() {
@@ -208,7 +225,7 @@ class CallcenterComponent {
         onInitFailure = function() {
             Alert.error('获取初始化数据失败!');
         },
-        onTokenExpired,
+        onTokenExpired
     }) {
         AjaxUtils.token = token;
         AjaxUtils.host = __protocol__ + '://' + subDomain + __server__;
@@ -243,7 +260,7 @@ class CallcenterComponent {
                 customer_phone_location: callLog.phone_location,  //归属地
                 agent_id: Agent.id,
                 agent_name: Agent.name,
-                ring_time: callLog.ring_at,
+                ring_time: callLog.ring_at
             };
         };
 
