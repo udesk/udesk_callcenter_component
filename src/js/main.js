@@ -348,11 +348,8 @@ class CallcenterComponent {
         }
         this.wrapper.parentNode.removeChild(this.wrapper);
         Alert.destroy();
-        CallInfo.off('screenPop', this.onScreenPop);
-        CallInfo.off('ringing', this.onRinging);
-        CallInfo.off('talking', this.onTalking);
-        CallInfo.off('hangup', this.onHangup);
-        CallConfig.off('change', this.onCallConfigChange);
+        CallInfo.off();
+        CallConfig.off();
         CallConfig.reset();
         websocket.destroy();
         unmountComponentAtNode(this.wrapper);
