@@ -329,7 +329,6 @@ class CallcenterComponent {
         if (this.isDestroyed) {
             return;
         }
-        unmountComponentAtNode(this.wrapper);
         this.wrapper.parentNode.removeChild(this.wrapper);
         Alert.destroy();
         CallInfo.off('screenPop', this.onScreenPop);
@@ -338,6 +337,8 @@ class CallcenterComponent {
         CallInfo.off('hangup', this.onHangup);
         CallConfig.off('change', this.onCallConfigChange);
         CallConfig.reset();
+        websocket.destroy();
+        unmountComponentAtNode(this.wrapper);
         this.isDestroyed = true;
     }
 
