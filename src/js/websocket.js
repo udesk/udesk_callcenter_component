@@ -136,6 +136,13 @@ class WebsocketConnection extends Eventable {
                 Alert.error('拦截失败');
         }
     }
+
+    destroy() {
+        if (this._socket) {
+            this._socket.destroy();
+            this._socket = null;
+        }
+    }
 }
 
 export default new WebsocketConnection();

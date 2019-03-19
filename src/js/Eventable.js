@@ -1,11 +1,9 @@
-import Utils from './Tools';
 import _ from 'lodash';
+import Utils from './Tools';
 
 export default class Eventable {
     constructor() {
-        this.eventMap = {
-            'change': []
-        };
+        this.eventMap = {};
     }
 
     set(k, v) {
@@ -49,9 +47,24 @@ export default class Eventable {
         return events;
     }
 
-    off(eventName, callback) {
-        if (this.eventMap[eventName]) {
-            _.remove(this.eventMap[eventName], (i) => i === callback);
+    off() {
+        let eventName;
+        let callback;
+        if (arguments.length > 1) {
+            eventName = arguments[0];
+            callback = arguments[1];
+        } else if (arguments.length > 0) {
+            eventName = arguments[0];
+        }
+
+        if (eventName && callback) {
+            if (this.eventMap[eventName]) {
+                _.remove(this.eventMap[eventName], (i) => i === callback);
+            }
+        } else if (eventName) {
+            delete this.eventMap[eventName];
+        } else {
+            this.eventMap = {};
         }
     }
 }

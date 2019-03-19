@@ -43,6 +43,13 @@ class Socket {
     close(){
         this.socket.close();
     }
+
+    destroy(){
+        this.socket.off('notice');
+        this.socket.off('exception');
+        this.socket.off('reconnect');
+        this.close();
+    }
 }
 
 export default Socket;
