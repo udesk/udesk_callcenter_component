@@ -3825,10 +3825,10 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-jssip@^3.3.4:
-  version "3.3.4"
-  resolved "http://npm.udeskb3.com/jssip/-/jssip-3.3.4.tgz#0c719432e4bd1e8f3f8a8d324d42c2284bb103cc"
-  integrity sha1-DHGUMuS9Ho8/io0yTULCKEuxA8w=
+jssip@^3.3.5:
+  version "3.3.5"
+  resolved "http://npm.udeskb3.com/jssip/-/jssip-3.3.5.tgz#837296ec68a0cec929c13ccf0f2b26a212a81b94"
+  integrity sha1-g3KW7GigzskpwTzPDysmohKoG5Q=
   dependencies:
     debug "^4.1.1"
     events "^3.0.0"
@@ -5765,6 +5765,13 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+rtcpeerconnection-shim@^1.2.14:
+  version "1.2.15"
+  resolved "http://npm.udeskb3.com/rtcpeerconnection-shim/-/rtcpeerconnection-shim-1.2.15.tgz#e7cc189a81b435324c4949aa3dfb51888684b243"
+  integrity sha1-58wYmoG0NTJMSUmqPftRiIaEskM=
+  dependencies:
+    sdp "^2.6.0"
+
 run-queue@^1.0.0, run-queue@^1.0.3:
   version "1.0.3"
   resolved "http://npm.udeskb3.com/run-queue/-/run-queue-1.0.3.tgz#e848396f057d223f24386924618e25694161ec47"
@@ -5845,6 +5852,11 @@ sdp-transform@^2.7.0:
   version "2.7.0"
   resolved "http://npm.udeskb3.com/sdp-transform/-/sdp-transform-2.7.0.tgz#dec4d282c2538ef269cf3372a69b195c7862bcb5"
   integrity sha1-3sTSgsJTjvJpzzNyppsZXHhivLU=
+
+sdp@^2.6.0, sdp@^2.9.0:
+  version "2.9.0"
+  resolved "http://npm.udeskb3.com/sdp/-/sdp-2.9.0.tgz#2eed2d9c0b26c81ff87593107895c68d6fb9a0a6"
+  integrity sha1-Lu0tnAsmyB/4dZMQeJXGjW+5oKY=
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -6933,6 +6945,14 @@ webpack@^4.29.0:
     terser-webpack-plugin "^1.1.0"
     watchpack "^1.5.0"
     webpack-sources "^1.3.0"
+
+webrtc-adapter@6.4.8:
+  version "6.4.8"
+  resolved "http://npm.udeskb3.com/webrtc-adapter/-/webrtc-adapter-6.4.8.tgz#eeca3f0d5b40c0e629b865ef2a936a0b658274de"
+  integrity sha1-7so/DVtAwOYpuGXvKpNqC2WCdN4=
+  dependencies:
+    rtcpeerconnection-shim "^1.2.14"
+    sdp "^2.9.0"
 
 websocket-driver@>=0.5.1:
   version "0.7.0"

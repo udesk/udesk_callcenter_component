@@ -222,7 +222,14 @@ class SoftPhone {
         });
 
         session.on('icecandidate', ({candidate, ready}) => {
-            ready();
+            if (!this._iceCheckingTimer) {
+                this._iceCheckingTimer = setTimeout(ready, 5000);
+            }
+        });
+
+        session.on('sdp', () => {
+            clearTimeout(this._iceCheckingTimer);
+            this._iceCheckingTimer = null;
         });
 
         if (session.direction !== 'incoming') {

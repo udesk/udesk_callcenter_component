@@ -9,12 +9,13 @@
   "dependencies": {
     "debug": "^4.1.1",
     "font-awesome": "^4.7.0",
-    "jssip": "^3.3.4",
+    "jssip": "^3.3.5",
     "lodash": "^4.17.3",
     "prop-types": "^15.6.0",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
-    "socket.io": "^1.7.1"
+    "socket.io": "^1.7.1",
+    "webrtc-adapter": "6.4.8"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
