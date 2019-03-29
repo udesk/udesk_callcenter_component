@@ -185,7 +185,11 @@
                     '<td>' + conversation.ivr_variables + '</td>' +   //ivr_variables
                     '<td id="' + conversation.conversation_id + '"></td>';
 
-                tbody.appendChild(tr);
+                if (tbody.hasChildNodes()) {
+                    tbody.insertBefore(tr, tbody.childNodes[0]);
+                } else {
+                    tbody.append(tr);
+                }
             },
             onHangup: function(conversation) {
                 document.getElementById(conversation.conversation_id).innerText = '已挂断';
