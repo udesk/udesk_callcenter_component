@@ -260,7 +260,8 @@ class CallcenterComponent {
                 customer_phone_location: callLog.phone_location,  //归属地
                 agent_id: Agent.id,
                 agent_name: Agent.name,
-                ring_time: callLog.ring_at
+                ring_time: callLog.ring_at,
+                ivr_variables: callLog.ivr_variables
             };
         };
 
