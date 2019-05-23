@@ -42,6 +42,7 @@
         <th>归属地</th>
         <th>振铃时间</th>
         <th>Call ID</th>
+        <th>IVR变量</th>
         <th>是否挂断</th>
     </tr>
     </thead>
@@ -181,6 +182,7 @@
                     '<td>' + conversation.customer_phone_location + '</td>' + //客户手机号归属地
                     '<td>' + conversation.ring_time + '</td>' + //振铃时间
                     '<td>' + conversation.call_id + '</td>' +   //call_id
+                    '<td>' + conversation.ivr_variables + '</td>' +   //ivr_variables
                     '<td id="' + conversation.conversation_id + '"></td>';
 
                 tbody.prepend(tr);
