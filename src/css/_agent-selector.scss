@@ -1,0 +1,70 @@
+$searchHeight: 32px;
+$dropdownMenuHeight: 240px;
+
+.agent-select {
+    position: relative;
+    padding-bottom: $searchHeight;
+
+    .dropdown {
+        height: $dropdownMenuHeight;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 100%;
+        border: 1px solid #c3c3c3;
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+
+        &.show-search {
+            ul {
+                height: $dropdownMenuHeight - $searchHeight;
+            }
+        }
+
+        ul {
+            padding: 0;
+            margin: 0;
+            overflow: auto;
+            height: 100%;
+        }
+
+        li {
+            list-style-type: none;
+            text-align: left;
+            padding: 5px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #e0e0e0;
+            }
+
+            &.text-center {
+                text-align: center;
+            }
+        }
+
+        ul + div {
+            padding: 5px;
+
+            input {
+                height: $searchHeight - 10px;
+                box-sizing: border-box;
+                width: 100%;
+            }
+        }
+    }
+
+    .display-frame {
+        border: 1px solid #c3c3c3;
+        padding: 5px;
+        font-size: 12px;
+        text-align: left;
+        cursor: pointer;
+
+        img {
+            float: right;
+            margin-top: 3px;
+        }
+    }
+}

@@ -13,6 +13,8 @@
     color: #fff;
 }
 
+
+
 .udesk-callcenter-component {
     background-color: #fff;
     width: 400px;
@@ -185,50 +187,7 @@
         }
     }
 
-    .agent-select {
-        position: relative;
-
-        .dropdown {
-            height: 240px;
-            overflow: auto;
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 100%;
-            border: 1px solid #c3c3c3;
-            background-color: #fff;
-            margin: 0;
-            padding: 0;
-
-            li {
-                list-style-type: none;
-                text-align: left;
-                padding: 5px;
-                cursor: pointer;
-
-                &:hover {
-                    background-color: #e0e0e0;
-                }
-
-                &.text-center {
-                    text-align: center;
-                }
-            }
-        }
-
-        .display-frame {
-            border: 1px solid #c3c3c3;
-            padding: 5px;
-            font-size: 12px;
-            text-align: left;
-            cursor: pointer;
-
-            img {
-                float: right;
-                margin-top: 3px;
-            }
-        }
-    }
+    @import "agent-selector";
 
     .cursor-pointer {
         cursor: pointer;
@@ -375,12 +334,12 @@
                 width: 100%;
             }
 
-            > .external-phone {
+            .external-phone {
                 > input {
-                    height: 23px;
-                    line-height: 23px;
-                    margin-right: 7px;
-                    width: 126px;
+                    height: 29px;
+                    line-height: 29px;
+                    width: 100%;
+                    box-sizing: border-box;
                 }
 
                 > button {

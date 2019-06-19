@@ -85,7 +85,7 @@ export default class TalkingPanelComponent extends React.Component {
                         {(() => {
                             switch (this.state.targetType) {
                                 case 'agent':
-                                    return <AgentSelect onChange={this._selectAgent}/>;
+                                    return <AgentSelect onChange={this._selectAgent} showSearch={true}/>;
                                 case 'group':
                                     return <GroupSelect onChange={this._selectGroup.bind(this)}/>;
                                 case 'externalPhone':

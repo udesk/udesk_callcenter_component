@@ -5,8 +5,8 @@ import TalkingPanel from './TalkingPanel';
 import RingingPanel from './RingingPanel';
 
 class MainContent extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             callState: 'hangup'

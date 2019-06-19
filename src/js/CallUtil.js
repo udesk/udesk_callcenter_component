@@ -280,8 +280,12 @@ export function phoneNumberCheck(phoneNumber) {
     return /^[\d*#+]{4,}$/.test(phoneNumber);
 }
 
-export function getAgents({workState, page}, successCallback, failureCallback) {
-    AjaxUtils.get('/agent_api/v1/callcenter/agents', {page: page, callcenter_work_state: workState}, function(res) {
+export function getAgents({workState, page, query}, successCallback, failureCallback) {
+    let params = {page, callcenter_work_state: workState};
+    if (query) {
+        params.query = query;
+    }
+    AjaxUtils.get('/agent_api/v1/callcenter/agents', params, function(res) {
         successCallback(res);
     }, function(error) {
         failureCallback(error);

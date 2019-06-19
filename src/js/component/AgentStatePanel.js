@@ -1,10 +1,10 @@
-import * as Const from '../Const';
-import Alert from './Alert';
-import CallConfig from '../CallConfig';
 import React from 'react';
-import Dropdown from './Dropdown';
+import CallConfig from '../CallConfig';
 import CallInfo from '../CallInfo';
 import * as callUtil from '../CallUtil';
+import * as Const from '../Const';
+import Alert from './Alert';
+import Dropdown from './Dropdown';
 
 var doc = document;
 var agentStateMap = {};
@@ -32,23 +32,18 @@ export default class AgentStatePanelComponent extends React.Component {
         };
         let self = this;
         CallConfig.on('change', this.callConfigChangCb = function(k, v) {
-            if (k === 'agent_work_state') {
-                self.setState({
-                    agent_work_state: v
-                });
-            } else if (k === 'agent_work_way') {
-                self.setState({
-                    agent_work_way: v
-                });
-            } else if (k === 'default_callout_number') {
-                self.setState({
-                    default_callout_number: v
-                });
-            }else if (k === 'enableVoipOnline') {
-                if(v) {
-                    self.agentWayMap.push({id: Const.VOIP_ONLINE, name: '网页电话'});
-                    self.forceUpdate();
-                }
+            switch (k) {
+                case 'agent_work_state':
+                case 'agent_work_way':
+                case 'default_callout_number':
+                    self.setState({[k]: v});
+                    break;
+                case 'enableVoipOnline':
+                    if (v) {
+                        self.agentWayMap.push({id: Const.VOIP_ONLINE, name: '网页电话'});
+                        self.forceUpdate();
+                    }
+                    break;
             }
         });
         CallInfo.on('change', this.callInfoChangeCb = function(k, v) {
