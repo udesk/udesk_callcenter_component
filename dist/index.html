@@ -146,8 +146,8 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    var token = 'xxxxxx';
-    var subDomain = 'xxxxxx';
+    var token = '26114f7d1b8338365650ea97eb7111fd71ec51f23f0d0f7dd14bd5b9fe88de1688b6f23df5182514082c36f9166e27ac78d32a1e086b1205701cb8e7f2a69df85a5f1479';
+    var subDomain = 'linapp';
     var onTokenExpired = function(callback) {
         setTimeout(function() {
             callback('xxxx');
@@ -185,7 +185,7 @@
                     '<td>' + conversation.ivr_variables + '</td>' +   //ivr_variables
                     '<td id="' + conversation.conversation_id + '"></td>';
 
-                tbody.prepend(tr);
+                tbody.appendChild(tr);
             },
             onHangup: function(conversation) {
                 document.getElementById(conversation.conversation_id).innerText = '已挂断';
