@@ -38,10 +38,12 @@ class UdeskCallCenterComponent extends React.Component {
         let {
             userDeleted
         } = this.state;
-        return <div ref={(ele) => ele && (this.container = ele.parentElement)}>
-            <Header onMinimize={this.collapse.bind(this)} onMaximize={this.expand.bind(this)}
-                    onDrag={this.drag.bind(this)} ref={(ele) => ele && (this.headerComponent = ele)}
-                    onDrop={this.drop.bind(this)}/>
+        let {movable} = this.props;
+        return <div ref={(ele) => this.ele = ele}>
+            <Header onMinimize={this.collapse} onMaximize={this.expand}
+                    movable={movable}
+                    onDrag={this.drag} ref={(ele) => ele && (this.headerComponent = ele)}
+                    onDrop={this.drop}/>
             <AgentStatePanel dropdownDirection={this.state.expand ? 'down' : 'up'}
                              customStates={this.state.customStates}
                              callout_numbers={this.state.callout_numbers}/>
@@ -58,21 +60,29 @@ class UdeskCallCenterComponent extends React.Component {
         </div>;
     }
 
-    collapse() {
+    collapse = () => {
         this.setState({expand: false});
-    }
+    };
 
-    expand() {
+    expand = () => {
         this.setState({expand: true});
-    }
+    };
 
-    drag(offsetX, offsetY) {
+    drag = (offsetX, offsetY) => {
+        if (this.props.movable) {
+            this.dragging = true;
+            let containerStyle = window.getComputedStyle(this.container);
+            let containerRight = parseInt(containerStyle.right);
+            let containerBottom = parseInt(containerStyle.bottom);
 
-    }
+            this.container.style.right = (containerRight - offsetX) + 'px';
+            this.container.style.bottom = (containerBottom - offsetY) + 'px';
+        }
+    };
 
-    drop() {
+    drop = () => {
         this.dragging = false;
-    }
+    };
 
     componentDidMount() {
         AjaxUtils.get('/agent_api/v1/callcenter/init_data', null, (res) => {
@@ -169,10 +179,36 @@ class UdeskCallCenterComponent extends React.Component {
         }, () => {
             this.props.onInitFailure();
         });
+
+        //每秒检查是否超出边界
+        if (this.props.movable) {
+            this.container = this.ele.parentNode;
+            clearInterval(this.intervaleId);
+            this.intervaleId = setInterval(() => {
+                if (this.dragging) {
+                    return;
+                }
+                let {top, bottom, left, right, height, width} = this.container.getBoundingClientRect();
+                if (top < 0) {
+                    this.container.style.bottom = (window.innerHeight - height) + 'px';
+                    this.headerComponent.mouseDown = false;
+                }
+                if (bottom > window.innerHeight) {
+                    this.container.style.bottom = '0';
+                }
+                if (left < 0) {
+                    this.container.style.right = (document.documentElement.offsetWidth - width) + 'px';
+                }
+                if (right > document.documentElement.offsetWidth) {
+                    this.container.style.right = '0';
+                }
+            }, 1000);
+        }
     }
 
     componentWillUnmount() {
         this.socket && this.socket.close();
+        clearInterval(this.intervaleId);
     }
 }
 
@@ -222,6 +258,7 @@ class CallcenterComponent {
      * @param {string} subDomain
      * @param {string} token
      * @param {boolean} showManualScreenPop
+     * @param {boolean} movable
      * @param {function} onScreenPop
      * @param {function} onRinging
      * @param {function} onTalking
@@ -241,6 +278,7 @@ class CallcenterComponent {
     constructor({
         container, subDomain, token,
         showManualScreenPop = false,
+        movable = false,
         onScreenPop = emptyFunction,
         onRinging = emptyFunction,
         onTalking = emptyFunction,
@@ -280,6 +318,7 @@ class CallcenterComponent {
                                          showManualScreenPop={showManualScreenPop}
                                          onInitSuccess={onInitSuccess}
                                          onResumeAgentResult={onResumeAgentResult}
+                                         movable={movable}
                                          onInitFailure={onInitFailure}/>, wrapper);
 
         websocket.on('consultResult', onConsultResult);

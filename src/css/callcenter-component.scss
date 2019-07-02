@@ -14,7 +14,6 @@
 }
 
 
-
 .udesk-callcenter-component {
     background-color: #fff;
     width: 400px;
@@ -29,12 +28,15 @@
         padding-left: 11px;
         padding-right: 11px;
         background-color: #333;
-        //cursor: move;
         -moz-user-select: none;
         -webkit-user-select: none;
         -ms-user-select: none;
         user-select: none;
         -o-user-select: none;
+
+        &.movable {
+            cursor: move;
+        }
 
         .title {
             color: #fff;

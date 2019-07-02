@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import images from './images';
 
 class Header extends Component {
@@ -11,6 +11,7 @@ class Header extends Component {
     }
 
     render() {
+        let {movable} = this.props;
         let resizeBtn;
         if (this.state.expand) {
             resizeBtn = <div className="resize-btn" onClick={this.minimize.bind(this)}>
@@ -22,9 +23,9 @@ class Header extends Component {
             </div>;
         }
         return (
-            <div className="top-bar" onDragStart={() => false} onDrop={() => false}
+            <div className={`top-bar ${movable ? 'movable' : ''}`} onDragStart={() => false} onDrop={() => false}
                  unselectable="on"
-                 onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)}>
+                 onMouseDown={this.onMouseDown} onMouseUp={this.onMouseUp}>
                 <div className="buttons">
                     {resizeBtn}
                 </div>
@@ -35,19 +36,22 @@ class Header extends Component {
 
     componentDidMount() {
         let self = this;
-        document.addEventListener('mousemove', this.onMouseMove = function(e) {
-            if (self.MouseDown === true) {
-                let offsetX = e.screenX - self.screenX;
-                let offsetY = e.screenY - self.screenY;
-                self.screenX = e.screenX;
-                self.screenY = e.screenY;
-                self.props.onDrag(offsetX, offsetY);
-            }
-        });
-        document.addEventListener('mouseup', this.onMouseUp = function(e) {
-            self.MouseDown = false;
-            self.props.onDrop();
-        });
+        let {movable, onDrag, onDrop} = this.props;
+        if (movable) {
+            document.addEventListener('mousemove', this.onMouseMove = function(e) {
+                if (self.MouseDown === true) {
+                    let offsetX = e.screenX - self.screenX;
+                    let offsetY = e.screenY - self.screenY;
+                    self.screenX = e.screenX;
+                    self.screenY = e.screenY;
+                    onDrag(offsetX, offsetY);
+                }
+            });
+            document.addEventListener('mouseup', this.onMouseUp = function(e) {
+                self.MouseDown = false;
+                onDrop();
+            });
+        }
     }
 
     componentWillUnmount() {
@@ -69,15 +73,15 @@ class Header extends Component {
         }
     }
 
-    onMouseDown(e) {
+    onMouseDown = (e) => {
         this.MouseDown = true;
         this.screenX = e.screenX;
         this.screenY = e.screenY;
-    }
+    };
 
-    onMouseUp() {
+    onMouseUp = () => {
         this.MouseDown = false;
-    }
+    };
 
     onMouseMove(e) {
 
