@@ -38,6 +38,7 @@
   },
   "scripts": {
     "start:dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "start:prod": "webpack-dev-server --inline --progress --config build/webpack.prod.conf.js",
     "watch:dev": "webpack -w --config ./build/webpack.dev.conf.js --progress --colors",
     "watch:prod": "webpack -w --config ./build/webpack.prod.conf.js --progress --colors",
     "build": "webpack --config ./build/webpack.base.conf.js --progress --colors",
