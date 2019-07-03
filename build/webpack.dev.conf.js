@@ -8,7 +8,7 @@ module.exports = merge(baseWebpackConfig, {
     mode: 'development',
     plugins: [
         new webpack.DefinePlugin({
-            __server__: '\'.udeskt3.com\'',
+            __server__: '\'.udesk.cn\'',
             __protocol__: '\'https\''
         })
     ]
