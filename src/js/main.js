@@ -179,7 +179,43 @@ class UdeskCallCenterComponent extends React.Component {
 const emptyFunction = function() {
 };
 
+function converter(callLog) {
+    return {
+        call_id: callLog.call_id,
+        conversation_id: callLog.conversation_id || callLog.conversation_log_id,  //通话记录ID
+        call_type: callLog.call_type,  //呼入呼出
+        customer_phone_number: callLog.customer_phone, //客户号码
+        queue_name: callLog.queue_desc,  //来源队列
+        customer_phone_location: callLog.phone_location,  //归属地
+        agent_id: Agent.id,
+        agent_name: Agent.name,
+        ring_time: callLog.ring_at,
+        ivr_variables: callLog.ivr_variables
+    };
+}
+
 class CallcenterComponent {
+    isDestroyed = false;
+    transfer = callUtil.transfer;
+    startConsult = callUtil.startConsult;
+    startThreeWayCalling = callUtil.startThreeWayCalling;
+    stopConsult = callUtil.stopConsult;
+    holdCallSelect = callUtil.holdCallSelect;
+    recoveryCallSelect = callUtil.recoveryCallSelect;
+    makeCall = callUtil.makeCall;
+    setWorkingWay = callUtil.setWorkingWay;
+    startIvrCalling = callUtil.startIvrCalling;
+    transferToGroup = callUtil.transferToGroup;
+    transferToExternalPhone = callUtil.transferToExternalPhone;
+    startConsultingToExternalPhone = callUtil.startConsultingToExternalPhone;
+    startThreeWayCallingToExternalPhone = callUtil.startThreeWayCallingToExternalPhone;
+    getAutomaticCallNumGroup = callUtil.getAutomaticCallNumGroup;
+    setupDefaultNumber = callUtil.setupDefaultNumber;
+    getCallNumbers = callUtil.getCalloutNumbers;
+    transferAfterConsult = callUtil.transferAfterConsult;
+    threeWayCallingAfterConsult = callUtil.threeWayCallingAfterConsult;
+    transferAfterThreeWayCalling = callUtil.transferAfterThreeWayCalling;
+
     /**
      *
      * @param {document} container
@@ -230,11 +266,16 @@ class CallcenterComponent {
         AjaxUtils.token = token;
         AjaxUtils.host = __protocol__ + '://' + subDomain + __server__;
         AjaxUtils.refreshToken = onTokenExpired;
-        //AjaxUtils.host = 'http://' + subDomain + '.udesktiger.com';
+
+        this.onTalking = onTalking;
+        this.onHangup = onHangup;
+        this.onRinging = onRinging;
+        this.onScreenPop = onScreenPop;
 
         let wrapper = this.wrapper = document.createElement('div');
         wrapper.className = 'udesk-callcenter-component';
         container.appendChild(wrapper);
+
         render(<UdeskCallCenterComponent callConfig={CallConfig}
                                          showManualScreenPop={showManualScreenPop}
                                          onInitSuccess={onInitSuccess}
@@ -247,88 +288,17 @@ class CallcenterComponent {
         websocket.on('dropCall', onDropCall);
         websocket.on('ivrCallResult', onIvrCallResult);
         websocket.on('resumeAgentResult', onResumeAgentResult);
-
-        this.isDestroyed = false;
-
-        let converter = (callLog) => {
-            return {
-                call_id: callLog.call_id,
-                conversation_id: callLog.conversation_id || callLog.conversation_log_id,  //通话记录ID
-                call_type: callLog.call_type,  //呼入呼出
-                customer_phone_number: callLog.customer_phone, //客户号码
-                queue_name: callLog.queue_desc,  //来源队列
-                customer_phone_location: callLog.phone_location,  //归属地
-                agent_id: Agent.id,
-                agent_name: Agent.name,
-                ring_time: callLog.ring_at,
-                ivr_variables: callLog.ivr_variables
-            };
-        };
-
-        this.onScreenPop = function(callLog) {
-            try {
-                onScreenPop(converter(callLog));
-            } catch (e) {
-                console.error(e);
-            }
-        };
-        this.onRinging = function(callLog) {
-            try {
-                onRinging(converter(callLog));
-            } catch (e) {
-                console.error(e);
-            }
-        };
-        this.onTalking = function(callLog) {
-            try {
-                onTalking(converter(callLog));
-            } catch (e) {
-                console.error(e);
-            }
-        };
-        this.onHangup = function(callLog) {
-            let result = converter(callLog);
-            result.hangup_time = new Date().toISOString();
-            delete result.ring_time;
-            try {
-                onHangup(result);
-            } catch (e) {
-                console.error(e);
-            }
-        };
-
-        CallInfo.on('screenPop', this.onScreenPop);
-        CallInfo.on('ringing', this.onRinging);
-        CallInfo.on('talking', this.onTalking);
-        CallInfo.on('hangup', this.onHangup);
-
-        CallConfig.on('change', this.onCallConfigChange = function(k, v) {
+        CallInfo.on('screenPop', this._onScreenPop);
+        CallInfo.on('ringing', this._onRinging);
+        CallInfo.on('talking', this._onTalking);
+        CallInfo.on('hangup', this._onHangup);
+        CallConfig.on('change', function(k, v) {
             if (k === 'agent_work_state') {
                 onWorkStatusChange(v);
             } else if (k === 'agent_work_way') {
                 onWorkWayChange(v);
             }
         });
-
-        this.transfer = callUtil.transfer;
-        this.startConsult = callUtil.startConsult;
-        this.startThreeWayCalling = callUtil.startThreeWayCalling;
-        this.stopConsult = callUtil.stopConsult;
-        this.holdCallSelect = callUtil.holdCallSelect;
-        this.recoveryCallSelect = callUtil.recoveryCallSelect;
-        this.makeCall = callUtil.makeCall;
-        this.setWorkingWay = callUtil.setWorkingWay;
-        this.startIvrCalling = callUtil.startIvrCalling;
-        this.transferToGroup = callUtil.transferToGroup;
-        this.transferToExternalPhone = callUtil.transferToExternalPhone;
-        this.startConsultingToExternalPhone = callUtil.startConsultingToExternalPhone;
-        this.startThreeWayCallingToExternalPhone = callUtil.startThreeWayCallingToExternalPhone;
-        this.getAutomaticCallNumGroup = callUtil.getAutomaticCallNumGroup;
-        this.setupDefaultNumber = callUtil.setupDefaultNumber;
-        this.getCallNumbers = callUtil.getCalloutNumbers;
-        this.transferAfterConsult = callUtil.transferAfterConsult;
-        this.threeWayCallingAfterConsult = callUtil.threeWayCallingAfterConsult;
-        this.transferAfterThreeWayCalling = callUtil.transferAfterThreeWayCalling;
     }
 
     setWorkStatus(workStatus, onSuccess, onFailure) {
@@ -338,6 +308,51 @@ class CallcenterComponent {
         }
         callUtil.setWorkStatus(workStatus, onSuccess, onFailure);
     }
+
+    _onTalking = (callLog) => {
+        try {
+            this.onTalking(converter(callLog));
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    _onHangup = (callLog) => {
+        window.removeEventListener('beforeunload', this._onBeforeUnload);
+        window.removeEventListener('unload', this._onUnload);
+        let result = converter(callLog);
+        result.hangup_time = new Date().toISOString();
+        delete result.ring_time;
+        try {
+            this.onHangup(result);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    _onScreenPop = (callLog) => {
+        try {
+            window.addEventListener('beforeunload', this._onBeforeUnload = function(e) {
+                let confirmationMessage = '如果刷新页面当前电话将挂断，是否刷新';
+
+                (e || window.event).returnValue = confirmationMessage;     // Gecko and Trident
+                return confirmationMessage;                                // Gecko and WebKit
+            });
+            window.addEventListener('unload', this._onUnload = () => {
+                this.hangup();
+            });
+            this.onScreenPop(converter(callLog));
+        } catch (e) {
+            console.error(e);
+        }
+    };
+    _onRinging = (callLog) => {
+        try {
+            this.onRinging(converter(callLog));
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
     hangup(onSuccess, onFailure) {
         callUtil.hangup(onSuccess, onFailure);
@@ -353,6 +368,8 @@ class CallcenterComponent {
         CallConfig.off();
         CallConfig.reset();
         websocket.destroy();
+        window.removeEventListener('beforeunload', this._onBeforeUnload);
+        window.removeEventListener('unload', this._onUnload);
         unmountComponentAtNode(this.wrapper);
         this.isDestroyed = true;
     }
