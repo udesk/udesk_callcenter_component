@@ -146,8 +146,8 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    var token = 'f56cb09d11fcd6ad5486bb5b113755a6dbd0121d54770189d4c0d4972a8cd213d10cfca191d5c4aa6d9091741f39f87553149d614874da606838a824042b4b345a9e46ad';
-    var subDomain = 'brazil0326';
+    var token = 'xxxx';
+    var subDomain = 'xxxx';
     var onTokenExpired = function(callback) {
         setTimeout(function() {
             callback('xxxx');
@@ -216,6 +216,15 @@
             },
             onResumeAgentResult: function(res) {
                 console.log('ivr转回结果', JSON.stringify(res));
+<<<<<<< HEAD
+=======
+            },
+            onTalking: function(conversation) {
+                console.log('talking', conversation);
+            },
+            onRinging: function(conversation) {
+                console.log('ringing', conversation);
+>>>>>>> 0fa31f6... CCL-2148 {前端}通话组件conversation字段补充
             }
             //            onInitSuccess: function() {
             //                console.log('初始化成功');

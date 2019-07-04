@@ -23,6 +23,32 @@ import websocket from './websocket';
 
 require.context('../assets/images', true, /\.(png|jpg|gif)$/);
 
+function converter(callLog) {
+    return {
+        display_name: callLog.access_number, //中继号
+        agent_id: Agent.id,
+        agent_name: Agent.name,
+        agent_email: callLog.agent_email,
+        device_info: callLog.agent_work_way, //在线方式
+        call_id: callLog.call_id,
+        call_type: callLog.call_type,  //呼入呼出
+        category: callLog.category, //通话类型
+        conversation_id: callLog.conversation_id || callLog.conversation_log_id,  //通话记录ID
+        customer_phone_location: callLog.phone_location,  //归属地
+        customer_phone_number: callLog.customer_phone, //客户号码
+        dtmf: callLog.dtmf_numbers, //dtmf
+        ivr_variables: callLog.ivr_variables,
+        phone_location: callLog.phone_location, //号码归属地
+        queue_name: callLog.queue_desc,  //来源队列
+        queue_overflow: callLog.queue_overflow, //溢出队列
+        queue_status: callLog.queue_status, // 排队状态
+        queue_time: callLog.queue_time,//排队时长（秒）
+        ring_time: callLog.ring_at,
+        multi_ring_count: callLog.multi_ring_count,
+        relevant_agent: callLog.relevant_agent
+    };
+}
+
 class UdeskCallCenterComponent extends React.Component {
     constructor(props) {
         super(props);
@@ -215,21 +241,6 @@ class UdeskCallCenterComponent extends React.Component {
 const emptyFunction = function() {
 };
 
-function converter(callLog) {
-    return {
-        call_id: callLog.call_id,
-        conversation_id: callLog.conversation_id || callLog.conversation_log_id,  //通话记录ID
-        call_type: callLog.call_type,  //呼入呼出
-        customer_phone_number: callLog.customer_phone, //客户号码
-        queue_name: callLog.queue_desc,  //来源队列
-        customer_phone_location: callLog.phone_location,  //归属地
-        agent_id: Agent.id,
-        agent_name: Agent.name,
-        ring_time: callLog.ring_at,
-        ivr_variables: callLog.ivr_variables
-    };
-}
-
 class CallcenterComponent {
     isDestroyed = false;
     transfer = callUtil.transfer;
@@ -338,6 +349,8 @@ class CallcenterComponent {
                 onWorkWayChange(v);
             }
         });
+
+        this.isDestroyed = false;
     }
 
     setWorkStatus(workStatus, onSuccess, onFailure) {
