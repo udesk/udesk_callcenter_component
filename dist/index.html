@@ -146,7 +146,7 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    var token = '26114f7d1b8338365650ea97eb7111fd71ec51f23f0d0f7dd14bd5b9fe88de1688b6f23df5182514082c36f9166e27ac78d32a1e086b1205701cb8e7f2a69df85a5f1479';
+    var token = '687b070e2c69ca06cccc1ed8532415dcff315dc8671736f87b5e11b2c8c369880a83cbee66066205a7cb079e01f9b85575061eb45bb523778f2591027512c3585bd6ab41';
     var subDomain = 'linapp';
     var onTokenExpired = function(callback) {
         setTimeout(function() {
@@ -215,6 +215,12 @@
             },
             onResumeAgentResult: function(res) {
                 console.log('ivr转回结果', JSON.stringify(res));
+            },
+            onTalking: function(conversation) {
+                console.log('talking', conversation);
+            },
+            onRinging: function(conversation) {
+                console.log('ringing', conversation);
             }
             //            onInitSuccess: function() {
             //                console.log('初始化成功');

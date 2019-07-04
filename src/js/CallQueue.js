@@ -1,9 +1,8 @@
 //["notice",{"type":"call_log","state":"ringing","call_id":"161205154856651300010177000a1772","conversation_id":"3274167","agent_work_way":"phone_online","direction":"in","can_transfer":"true"}]
-import * as Const from './Const';
-import Eventable from './Eventable';
 import _ from 'lodash';
 import AjaxUtils from './AjaxUtils';
-import Agent from './Agent';
+import * as Const from './Const';
+import Eventable from './Eventable';
 
 class CallQueue extends Eventable {
     constructor() {
@@ -18,24 +17,23 @@ class CallQueue extends Eventable {
     put(callLog) {
         let existingCallLog = _.find(this.queue, ['conversation_id', callLog.conversation_id]);
         let self = this;
-        if (existingCallLog) {
-            //如果通话已经挂断了，忽略所有的callLog
-            // if (existingCallLog.state === Const.HANGUP) {
-            //     return;
-            // }
-            //如果通话是talking，忽略ringing或者talking的callLog
-            if (_.some([Const.RINGING, Const.TALKING], callLog.state) && existingCallLog.state === Const.TALKING) {
-                return;
-            }
-
-            existingCallLog.update(callLog);
-            this.trigger('change', existingCallLog);
-            return;
-        }
-        self.queue.push(callLog);
         this.fetchConversation(callLog.conversation_id, function(res) {
-            let conversation = _.assign(callLog, res);
-            self.trigger('add', conversation);
+            if (existingCallLog) {
+                //忽略错过的通知
+                if (_.some([Const.RINGING], callLog.state) && existingCallLog.state === Const.TALKING) {
+                    return;
+                }
+                if (_.some([Const.HANGUP], callLog.state) && (existingCallLog.state === Const.TALKING || existingCallLog.state === Const.RINGING)) {
+                    return;
+                }
+
+                existingCallLog.update(_.assign(res, callLog));
+                self.trigger('change', existingCallLog);
+            } else {
+                self.queue.push(callLog);
+                let conversation = _.assign(callLog, res);
+                self.trigger('add', conversation);
+            }
         });
         return this;
     }
@@ -45,7 +43,7 @@ class CallQueue extends Eventable {
     }
 
     fetchConversation(conversationId, callback) {
-        AjaxUtils.get("/agent_api/v1/callcenter/desktop/conversation", { conversation_id: conversationId }, callback);
+        AjaxUtils.get('/agent_api/v1/callcenter/desktop/conversation', {conversation_id: conversationId}, callback);
     }
 }
 

@@ -8,7 +8,11 @@ module.exports = merge(baseWebpackConfig, {
     mode: 'development',
     plugins: [
         new webpack.DefinePlugin({
+<<<<<<< HEAD
             __server__: '\'.udesk.cn\'',
+=======
+            __server__: '\'.udeskcat.com\'',
+>>>>>>> CCL-2148 {前端}通话组件conversation字段补充
             __protocol__: '\'https\''
         })
     ]
