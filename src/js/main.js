@@ -141,7 +141,7 @@ class UdeskCallCenterComponent extends React.Component {
                 });
                 softPhone.on('sessionProcess', function(originator) {
                     CallInfo.setProperties({
-                        'state': 'ringing',
+                        //'state': 'ringing',
                         'call_type': originator === 'local' ? '呼入' : '呼出',
                         'can_accept': originator === 'local' ? 'in' : 'out',
                         'agent_work_way': VOIP_ONLINE

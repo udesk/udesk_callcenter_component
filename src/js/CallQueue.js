@@ -30,8 +30,8 @@ class CallQueue extends Eventable {
                 existingCallLog.update(_.assign(res, callLog));
                 self.trigger('change', existingCallLog);
             } else {
-                self.queue.push(callLog);
                 let conversation = _.assign(callLog, res);
+                self.queue.push(conversation);
                 self.trigger('add', conversation);
             }
         });
