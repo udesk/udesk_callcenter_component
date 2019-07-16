@@ -50,11 +50,12 @@ export function makeCall(callNumber) {
         return;
     }
 
-    if (CallConfig.agent_work_way === VOIP_ONLINE) {
-        CallInfo.set('can_accept', 'out');
-        softPhone.call(callNumber);
-        return;
-    }
+    //通话组件的网页电话外呼改为双向回拨
+    //if (CallConfig.agent_work_way === VOIP_ONLINE) {
+    //    CallInfo.set('can_accept', 'out');
+    //    softPhone.call(callNumber);
+    //    return;
+    //}
 
     let params = {number: callNumber};
     if (options && options.biz_id) {

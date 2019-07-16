@@ -126,7 +126,6 @@ export default class AgentStatePanelComponent extends React.Component {
             return;
         }
         callUtil.setWorkingWay(way.id, ()=>{
-
         }, () => {
             Alert.error('切换在线方式失败');
         });

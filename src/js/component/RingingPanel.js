@@ -1,3 +1,4 @@
+import CallConfig from '../CallConfig';
 import CallInfo from '../CallInfo';
 import { RINGING, VOIP_ONLINE } from '../Const';
 import utils from '../Tools';
@@ -37,7 +38,7 @@ export default class RingingPanelComponent extends React.Component {
                 {utils.humanizeTime(this.state.ringingTime)}
             </div>
             {(() => {
-                if (CallInfo.can_accept === 'in') {
+                if (CallInfo.can_accept === 'in' && CallConfig.agent_work_way === VOIP_ONLINE) {
                     return <div><AcceptButton/></div>;
                 }
             })()}
