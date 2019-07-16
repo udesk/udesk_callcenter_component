@@ -27,7 +27,7 @@ class CallQueue extends Eventable {
                     return;
                 }
 
-                existingCallLog.update(_.assign(res, callLog));
+                existingCallLog.update(_.assign(callLog, res));
                 self.trigger('change', existingCallLog);
             } else {
                 let conversation = _.assign(callLog, res);
