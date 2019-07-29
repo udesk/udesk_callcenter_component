@@ -263,6 +263,7 @@ class CallcenterComponent {
     transferAfterConsult = callUtil.transferAfterConsult;
     threeWayCallingAfterConsult = callUtil.threeWayCallingAfterConsult;
     transferAfterThreeWayCalling = callUtil.transferAfterThreeWayCalling;
+    answer = callUtil.answer;
 
     /**
      *

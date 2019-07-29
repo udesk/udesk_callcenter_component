@@ -29,6 +29,10 @@ class SoftPhone {
         this._audioElement = document.createElement('audio');
         this._audioElement.autoplay = true;
 
+        if (!__PRODUCTION__) {
+            JsSIP.debug.enable('JsSIP:*');
+        }
+
         let websocketUrl = 'wss://' + host + ':' + port;
         this._socket = new JsSIP.WebSocketInterface(websocketUrl);
         this._sipUri = 'sip:' + username + '@' + host;
