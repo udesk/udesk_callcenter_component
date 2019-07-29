@@ -13,6 +13,7 @@ module.exports = merge(baseWebpackConfig, {
             'process.env': {
                 NODE_ENV: JSON.stringify('production'),
             },
+            '__PRODUCTION__': JSON.stringify(true)
         }),
         new OptimizeCssAssetsPlugin(),
     ],

@@ -88,8 +88,9 @@
         拨打
     </button>
 </div>
-<h3>挂断</h3>
+<h3>接听与挂断</h3>
 <div>
+    <button onclick="callComp.answer();">接听</button>&nbsp;
     <button onclick="callComp.hangup();">挂断</button>
 </div>
 <h3>高级通话</h3>
@@ -146,8 +147,8 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    var token = 'xxxx';
-    var subDomain = 'xxxx';
+    var token = 'f56cb09d11fcd6ad5486bb5b113755a6dbd0121d54770189d4c0d4972a8cd213d10cfca191d5c4aa6d9091741f39f87553149d614874da606838a824042b4b345a9e46ad';
+    var subDomain = 'brazil0326';
     var onTokenExpired = function(callback) {
         setTimeout(function() {
             callback('xxxx');
