@@ -1,3 +1,5 @@
+import {decrypt} from './aes-256-cbc';
+import CallConfig from './CallConfig';
 import Eventable from './Eventable';
 import CallQueue from './CallQueue';
 import _ from 'lodash';
@@ -5,6 +7,10 @@ import * as Const from './Const';
 import Alert from './component/Alert';
 import AjaxUtils from './AjaxUtils';
 
+
+function fetchCurrentConversation(callback) {
+    AjaxUtils.get('/agent_api/v1/callcenter/desktop/current_conversation', null, callback);
+}
 class CallInfo extends Eventable {
     constructor() {
         super();
@@ -129,8 +135,11 @@ class CallInfo extends Eventable {
     }
 
     manualScreenPop() {
-        this.fetchCurrentConversation((res) => {
+        fetchCurrentConversation((res) => {
             if (res.code === 1000) {
+                if (CallConfig.encrypt_cellphone_number) {
+                    res.customer_phone = decrypt(res.customer_phone, res.key);
+                }
                 this.trigger('screenPop', res);
             } else {
                 Alert.error(res.code_message || '手动弹屏失败');
@@ -138,9 +147,6 @@ class CallInfo extends Eventable {
         });
     }
 
-    fetchCurrentConversation(callback) {
-        AjaxUtils.get('/agent_api/v1/callcenter/desktop/current_conversation', null, callback);
-    }
 
     //fetchConversation() {
     //    let self = this;

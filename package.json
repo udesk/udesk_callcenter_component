@@ -7,6 +7,7 @@
     "doc": "doc"
   },
   "dependencies": {
+    "crypto-js": "^3.1.9-1",
     "debug": "^4.1.1",
     "font-awesome": "^4.7.0",
     "jssip": "^3.3.5",

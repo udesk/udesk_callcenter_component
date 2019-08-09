@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import Utils from './Tools';
+import * as Utils from './Tools';
 
 export default class Eventable {
     constructor() {

@@ -1,8 +1,8 @@
 import React from 'react';
 import CallInfo from '../CallInfo';
 import HangupPanel from './HangupPanel';
-import TalkingPanel from './TalkingPanel';
 import RingingPanel from './RingingPanel';
+import TalkingPanel from './TalkingPanel';
 
 class MainContent extends React.Component {
     constructor(props) {
@@ -22,16 +22,11 @@ class MainContent extends React.Component {
 
     render() {
         let className = this.props.className + ' content-wrapper';
-        let content;
-        if (this.state.callState === 'hangup') {
-            content = <HangupPanel showManualScreenPop={this.props.showManualScreenPop}/>;
-        } else if (this.state.callState === 'talking') {
-            content = <TalkingPanel/>;
-        } else if (this.state.callState === 'ringing') {
-            content = <RingingPanel/>;
-        }
+        let {callState} = this.state;
         return <div className={className}>
-            {content}
+            <RingingPanel isShow={callState === 'ringing'}/>
+            <TalkingPanel isShow={callState === 'talking'}/>
+            <HangupPanel isShow={callState === 'hangup'} showManualScreenPop={this.props.showManualScreenPop}/>
         </div>;
     }
 
