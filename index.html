@@ -227,13 +227,16 @@
             },
             onRinging: function(conversation) {
                 console.log('ringing', conversation);
+            },
+            onSoftPhoneRegistered: function() {
+                console.log('soft phone registered');
+            },
+            onInitSuccess: function() {
+                console.log('初始化成功');
+            },
+            onInitFailure: function() {
+                console.log('初始化失败');
             }
-            //            onInitSuccess: function() {
-            //                console.log('初始化成功');
-            //            },
-            //            onInitFailure: function() {
-            //                console.log('初始化失败');
-            //            }
         });
     }
 
