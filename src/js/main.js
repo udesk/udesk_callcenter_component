@@ -1,11 +1,11 @@
 import 'font-awesome/scss/font-awesome.scss';
-import 'webrtc-adapter';
 import _ from 'lodash';
 import React from 'react';
 import {
     render,
     unmountComponentAtNode
 } from 'react-dom';
+import 'webrtc-adapter';
 import '../css/callcenter-component.scss';
 import Agent from './Agent';
 import AjaxUtils from './AjaxUtils';
@@ -125,6 +125,9 @@ class UdeskCallCenterComponent extends React.Component {
             CallConfig.set('agent_work_way', res.agent_work_way);
             CallConfig.set('enableVoipOnline', res.is_web_voip_open);
             if (res.is_web_voip_open) {
+                softPhone.on('registered', () => {
+                    this.props.onSoftPhoneRegistered();
+                });
                 softPhone.on('registrationFailed', function() {
                     Alert.error('软电话注册失败');
                 });
@@ -201,8 +204,8 @@ class UdeskCallCenterComponent extends React.Component {
                 'callout_numbers': [{id: null, name: '--', option: '--'}].concat(callout_numbers)
             });
 
-            this.props.onInitSuccess();
             websocket.init(res.tower_host, res.user_id);
+            this.props.onInitSuccess();
         }, () => {
             this.props.onInitFailure();
         });
@@ -283,6 +286,7 @@ class CallcenterComponent {
      * @param {function} onInitSuccess
      * @param {function} onIvrCallResult
      * @param {function} onResumeAgentResult
+     * @param {function} onSoftPhoneRegistered
      * @param {function} onConsultResult
      * @param {function} onThreeWayCallingResult
      * @param {function} onInitFailure
@@ -303,6 +307,7 @@ class CallcenterComponent {
         onInitSuccess = emptyFunction,
         onIvrCallResult = emptyFunction,
         onResumeAgentResult = emptyFunction,
+        onSoftPhoneRegistered = emptyFunction,
         onConsultResult = function(msg) {
             if (msg.code === '6005') Alert.success('成功从咨询中恢复!');
         },
@@ -312,7 +317,7 @@ class CallcenterComponent {
         onInitFailure = function() {
             Alert.error('获取初始化数据失败!');
         },
-        onTokenExpired
+        onTokenExpired,
     }) {
         AjaxUtils.token = token;
         AjaxUtils.host = __protocol__ + '://' + subDomain + __server__;
@@ -330,6 +335,7 @@ class CallcenterComponent {
         render(<UdeskCallCenterComponent callConfig={CallConfig}
                                          showManualScreenPop={showManualScreenPop}
                                          onInitSuccess={onInitSuccess}
+                                         onSoftPhoneRegistered={onSoftPhoneRegistered}
                                          onResumeAgentResult={onResumeAgentResult}
                                          movable={movable}
                                          onInitFailure={onInitFailure}/>, wrapper);
