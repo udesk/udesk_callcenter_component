@@ -43,7 +43,6 @@ function converter(callLog) {
         customer_phone_number: callLog.customer_phone, //客户号码
         dtmf: callLog.dtmf_numbers, //dtmf
         ivr_variables: callLog.ivr_variables,
-        phone_location: callLog.phone_location, //号码归属地
         queue_name: callLog.queue_desc,  //来源队列
         queue_overflow: callLog.queue_overflow, //溢出队列
         queue_status: callLog.queue_status, // 排队状态
