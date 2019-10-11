@@ -425,6 +425,7 @@ class CallcenterComponent {
         CallInfo.off();
         CallConfig.off();
         CallConfig.reset();
+        softPhone.stop();
         websocket.destroy();
         window.removeEventListener('beforeunload', this._onBeforeUnload);
         window.removeEventListener('unload', this._onUnload);
