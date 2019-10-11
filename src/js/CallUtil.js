@@ -136,15 +136,15 @@ export function setWorkingWay(workingWay, successCallback = emptyFunction, failu
 }
 
 export function hangup(successCallback = emptyFunction, failureCallback = emptyFunction) {
-    if (CallConfig.agent_work_way === VOIP_ONLINE) {
-        try {
-            softPhone.hangupAllSessions();
-            successCallback();
-        } catch (e) {
-            failureCallback(e);
-        }
-        return;
-    }
+    //if (CallConfig.agent_work_way === VOIP_ONLINE) {
+    //    try {
+    //        softPhone.hangupAllSessions();
+    //        successCallback();
+    //    } catch (e) {
+    //        failureCallback(e);
+    //    }
+    //    return;
+    //}
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/drop_call', null, function(res) {
         if (res.code === 2049) {
             _.forEach(CallQueue.queue, (i) => {
