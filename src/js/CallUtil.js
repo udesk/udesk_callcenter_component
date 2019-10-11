@@ -1,8 +1,4 @@
 import _ from 'lodash';
-import {
-    encrypt,
-    randomKey
-} from './aes-256-cbc';
 import AjaxUtils from './AjaxUtils';
 import CallConfig from './CallConfig';
 import CallInfo from './CallInfo';
@@ -11,7 +7,7 @@ import Alert from './component/Alert';
 import * as Const from './Const';
 import {VOIP_ONLINE} from './Const';
 import softPhone from './soft-phone';
-import * as utils from './Tools';
+import utils from './Tools';
 
 let calling = false;
 const emptyFunction = function() {
@@ -65,12 +61,6 @@ export function makeCall(callNumber) {
     if (options && options.biz_id) {
         params.biz_id = options.biz_id;
     }
-    if (CallConfig.encrypt_cellphone_number) {
-        let key = randomKey();
-        params.number = encrypt(callNumber, key);
-        params.key = key.toString();
-    }
-
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/make_call', params, function(res) {
         switch (res.code) {
             case 1000:

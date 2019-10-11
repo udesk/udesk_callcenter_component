@@ -1,12 +1,12 @@
-import React from 'react';
-import CallConfig from '../CallConfig';
-import CallInfo from '../CallInfo';
-import {makeCall} from '../CallUtil';
-import * as Const from '../Const';
 import Alert from './Alert';
-import CallButton from './CallButton';
-import Keyboard from './Keyboard';
+import CallConfig from '../CallConfig';
+import * as Const from '../Const';
+import React from 'react';
 import NumberInput from './NumberInput';
+import Keyboard from './Keyboard';
+import CallButton from './CallButton';
+import { makeCall } from '../CallUtil';
+import CallInfo from '../CallInfo';
 
 export default class HangupPanel extends React.Component {
     constructor() {
@@ -18,10 +18,6 @@ export default class HangupPanel extends React.Component {
     }
 
     render() {
-        let {isShow = false} = this.props;
-        if (!isShow) {
-            return null;
-        }
         return <div>
             <NumberInput onChange={this.getInputNumber.bind(this)} value={this.state.inputNumber}
                          onKeyboardBtnClick={this.toggleKeyboard.bind(this)}/>

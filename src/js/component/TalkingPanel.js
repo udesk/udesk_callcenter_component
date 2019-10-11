@@ -17,7 +17,7 @@ import {
     transferToExternalPhone,
     transferToGroup
 } from '../CallUtil';
-import * as utils from '../Tools';
+import utils from '../Tools';
 import AgentSelect from './AgentSelect';
 import Alert from './Alert';
 import ButtonWithImage from './ButtonWithImage';
@@ -53,10 +53,6 @@ export default class TalkingPanelComponent extends React.Component {
             can_party_after_consult,
             call_transfer_after_party
         } = this.state;
-        let {isShow = false} = this.props;
-        if (!isShow) {
-            return null;
-        }
 
         let agentSelectWrapperClass = 'agent-select-wrapper';
         let descInfoContent = '';
@@ -64,7 +60,7 @@ export default class TalkingPanelComponent extends React.Component {
             descInfoContent = '来源:' + this.state.queue_desc;
         }
 
-        return <div className='text-center talking-panel'>
+        return <div className="text-center talking-panel">
             <img src={images.customer_head}/>
             <CustomerInfo/>
             <hr/>
@@ -75,7 +71,7 @@ export default class TalkingPanelComponent extends React.Component {
                     return <div className={agentSelectWrapperClass}><IvrNodeSelect
                         onChange={this._selectAgent}/></div>;
                 } else {
-                    if (!this.state.showAgentSelect || this.state.can_end_consult ||
+                    if (!this.state.showAgentSelect || this.state.direction === 'out' || this.state.can_end_consult ||
                         (!this.state.can_consult && !this.state.can_transfer && !this.state.can_three_party &&
                          !this.state.can_transfer_ivr)) {
                         return null;
@@ -264,7 +260,6 @@ export default class TalkingPanelComponent extends React.Component {
     showTransferAgentSelect() {
         this.setState({
             type: 'transfer', showAgentSelect: true,
-            targetType: 'agent',
             targetTypes: [
                 {name: '客服', value: 'agent'},
                 {name: '客服组', value: 'group'},
@@ -276,7 +271,6 @@ export default class TalkingPanelComponent extends React.Component {
     showConsultAgentSelect() {
         this.setState({
             type: 'consult', showAgentSelect: true,
-            targetType: 'agent',
             targetTypes: [
                 {name: '客服', value: 'agent'},
                 {name: '外线', value: 'externalPhone'}
@@ -287,7 +281,6 @@ export default class TalkingPanelComponent extends React.Component {
     showThreeWayAgentSelect() {
         this.setState({
             type: 'threeWay', showAgentSelect: true,
-            targetType: 'agent',
             targetTypes: [
                 {name: '客服', value: 'agent'},
                 {name: '外线', value: 'externalPhone'}

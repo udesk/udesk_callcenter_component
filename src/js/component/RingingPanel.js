@@ -1,12 +1,12 @@
-import React from 'react';
 import CallConfig from '../CallConfig';
 import CallInfo from '../CallInfo';
-import {VOIP_ONLINE} from '../Const';
-import * as utils from '../Tools';
-import AcceptButton from './accept-button';
+import { RINGING, VOIP_ONLINE } from '../Const';
+import utils from '../Tools';
 import CustomerInfo from './CustomerInfo';
-import HangupButton from './HangupButton';
+import React from 'react';
 import images from './images';
+import HangupButton from './HangupButton';
+import AcceptButton from './accept-button';
 
 export default class RingingPanelComponent extends React.Component {
     constructor() {
@@ -24,14 +24,10 @@ export default class RingingPanelComponent extends React.Component {
 
     render() {
         let descInfoContent = '';
-        let {isShow = false} = this.props;
-        if (!isShow) {
-            return null;
-        }
         if (this.state.queue_desc) {
             descInfoContent = '来源:' + this.state.queue_desc;
         }
-        return <div className='text-center'>
+        return <div className="text-center">
             <img src={images.customer_head}/>
             <CustomerInfo/>
             <hr/>
