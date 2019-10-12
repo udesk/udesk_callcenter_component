@@ -126,6 +126,7 @@ class UdeskCallCenterComponent extends React.Component {
             }
             CallConfig.set('agent_work_way', res.agent_work_way);
             CallConfig.set('enableVoipOnline', res.is_web_voip_open);
+            CallConfig.set('encrypt_cellphone_number', res.encrypt_cellphone_number);
             if (res.is_web_voip_open) {
                 softPhone.on('registrationFailed', this._registrationFailedCb = function() {
                     Alert.error('软电话注册失败');

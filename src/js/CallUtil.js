@@ -47,9 +47,11 @@ export function makeCall(callNumber) {
         utils.isFunction(failureCallback) && failureCallback(new Error('离线不可以外呼'));
         return;
     }
-    if (!/^[\d*#+]{4,}$/.test(callNumber)) {
-        utils.isFunction(failureCallback) && failureCallback(new Error('电话号码格式不正确'));
-        return;
+    if (!CallConfig.encrypt_cellphone_number) {
+        if (!/^[\d*#+]{4,}$/.test(callNumber)) {
+            utils.isFunction(failureCallback) && failureCallback(new Error('电话号码格式不正确'));
+            return;
+        }
     }
 
     //通话组件的网页电话外呼改为双向回拨
