@@ -1,12 +1,14 @@
 import 'font-awesome/scss/font-awesome.scss';
-import 'webrtc-adapter';
-import map from 'lodash/map';
 import includes from 'lodash/includes';
+import isFunction from 'lodash/isFunction';
+import map from 'lodash/map';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {
     render,
     unmountComponentAtNode
 } from 'react-dom';
+import 'webrtc-adapter';
 import '../css/callcenter-component.scss';
 import Agent from './Agent';
 import AjaxUtils from './AjaxUtils';
@@ -130,11 +132,11 @@ class UdeskCallCenterComponent extends React.Component {
             CallConfig.set('enableVoipOnline', res.is_web_voip_open);
             CallConfig.set('encrypt_cellphone_number', res.encrypt_cellphone_number);
             if (res.is_web_voip_open) {
-                softPhone.on('registrationFailed', function() {
+                softPhone.on('registrationFailed', this._registrationFailedCb = function() {
                     Alert.error('软电话注册失败');
                 });
 
-                softPhone.on('callFailed', function(cause) {
+                softPhone.on('callFailed', this._callFailedCb = function(cause) {
                     if (cause === 'Canceled') {   //振铃时挂断，属于正常操作，不予提示
                         return;
                     }
@@ -145,7 +147,7 @@ class UdeskCallCenterComponent extends React.Component {
                     Alert.error(cause);
                     CallInfo.set('state', 'hangup');
                 });
-                softPhone.on('sessionProcess', function(originator) {
+                softPhone.on('sessionProcess', this._sessionProcessCb = function(originator) {
                     CallInfo.setProperties({
                         //'state': 'ringing',
                         'call_type': originator === 'local' ? '呼入' : '呼出',
@@ -154,20 +156,26 @@ class UdeskCallCenterComponent extends React.Component {
                     });
                 });
 
-                softPhone.on('sessionConfirmed', function() {
+                softPhone.on('sessionConfirmed', this._sessionConfirmedCb = function() {
                     CallInfo.set('state', 'talking');
                 });
-                softPhone.on('sessionEnded', function() {
+                softPhone.on('sessionEnded', this._sessionEndedCb = function() {
                     CallInfo.set('state', 'hangup');
                 });
-                softPhone.on('sessionFailed', function() {
+                softPhone.on('sessionFailed', this._sessionFailedCb = function() {
                     CallInfo.set('state', 'hangup');
                 });
-                softPhone.on('registered', ()=> {
-
+                softPhone.on('registered', this._registeredCb = () => {
+                    let onSoftPhoneRegistered = this.props.onSoftPhoneRegistered;
+                    if (isFunction(onSoftPhoneRegistered)) {
+                        onSoftPhoneRegistered();
+                    }
                 });
-                softPhone.on('unregistered', ()=> {
-
+                softPhone.on('unregistered', this._unregisteredCb = () => {
+                    let onSoftPhoneUnregistered = this.props.onSoftPhoneUnregistered;
+                    if (isFunction(onSoftPhoneUnregistered)) {
+                        onSoftPhoneUnregistered();
+                    }
                 });
 
                 try {
@@ -247,7 +255,39 @@ class UdeskCallCenterComponent extends React.Component {
     componentWillUnmount() {
         this.socket && this.socket.close();
         clearInterval(this.intervaleId);
+
+        softPhone.stop();
+
+        if (this._registrationFailedCb) {
+            softPhone.off('registrationFailed', this._registrationFailedCb);
+        }
+        if (this._callFailedCb) {
+            softPhone.off('callFailed', this._callFailedCb);
+        }
+        if (this._sessionProcessCb) {
+            softPhone.off('sessionProcess', this._sessionProcessCb);
+        }
+        if (this._sessionConfirmedCb) {
+            softPhone.off('sessionConfirmed', this._sessionConfirmedCb);
+        }
+        if (this._sessionEndedCb) {
+            softPhone.off('sessionEnded', this._sessionEndedCb);
+        }
+        if (this._sessionFailedCb) {
+            softPhone.off('sessionFailed', this._sessionFailedCb);
+        }
+        if (this._registeredCb) {
+            softPhone.off('registered', this._registeredCb);
+        }
+        if (this._unregisteredCb) {
+            softPhone.off('unregistered', this._unregisteredCb);
+        }
     }
+
+    static propTypes = {
+        onSoftPhoneRegistered: PropTypes.func,
+        onSoftPhoneUnregistered: PropTypes.func
+    };
 }
 
 const emptyFunction = function() {
@@ -294,6 +334,8 @@ class CallcenterComponent {
      * @param {function} onInitSuccess
      * @param {function} onIvrCallResult
      * @param {function} onResumeAgentResult
+     * @param {function} onSoftPhoneRegistered
+     * @param {function} onSoftPhoneUnregistered
      * @param {function} onConsultResult
      * @param {function} onThreeWayCallingResult
      * @param {function} onInitFailure
@@ -314,6 +356,8 @@ class CallcenterComponent {
         onInitSuccess = emptyFunction,
         onIvrCallResult = emptyFunction,
         onResumeAgentResult = emptyFunction,
+        onSoftPhoneRegistered = emptyFunction,
+        onSoftPhoneUnregistered = emptyFunction,
         onConsultResult = function(msg) {
             if (msg.code === '6005') Alert.success('成功从咨询中恢复!');
         },
@@ -343,7 +387,10 @@ class CallcenterComponent {
                                          onInitSuccess={onInitSuccess}
                                          onResumeAgentResult={onResumeAgentResult}
                                          movable={movable}
-                                         onInitFailure={onInitFailure}/>, wrapper);
+                                         onInitFailure={onInitFailure}
+                                         onSoftPhoneRegistered={onSoftPhoneRegistered}
+                                         onSoftPhoneUnregistered={onSoftPhoneUnregistered}
+        />, wrapper);
 
         websocket.on('consultResult', onConsultResult);
         websocket.on('threeWayCallingResult', onThreeWayCallingResult);
@@ -432,7 +479,6 @@ class CallcenterComponent {
         CallInfo.off();
         CallConfig.off();
         CallConfig.reset();
-        softPhone.stop();
         websocket.destroy();
         window.removeEventListener('beforeunload', this._onBeforeUnload);
         window.removeEventListener('unload', this._onUnload);
