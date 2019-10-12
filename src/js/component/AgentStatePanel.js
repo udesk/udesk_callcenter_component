@@ -1,3 +1,4 @@
+import map from 'lodash/map';
 import React from 'react';
 import CallConfig from '../CallConfig';
 import CallInfo from '../CallInfo';
@@ -6,16 +7,16 @@ import * as Const from '../Const';
 import Alert from './Alert';
 import Dropdown from './Dropdown';
 
-var doc = document;
-var agentStateMap = {};
-
-agentStateMap[Const.IDLE] = '空闲';
-agentStateMap[Const.BUSY] = '忙碌';
-agentStateMap[Const.RESTING] = '小休';
-agentStateMap[Const.OFFLINE] = '离线';
-agentStateMap[Const.NEATEN] = '整理中';
-agentStateMap[Const.TALKING] = '通话中';
-agentStateMap[Const.RINGING] = '振铃中';
+let doc = document;
+let agentStateMap = {
+    [Const.IDLE]: '空闲',
+    [Const.BUSY]: '忙碌',
+    [Const.RESTING]: '小休',
+    [Const.OFFLINE]: '离线',
+    [Const.NEATEN]: '整理中',
+    [Const.TALKING]: '通话中',
+    [Const.RINGING]: '振铃中'
+};
 
 export default class AgentStatePanelComponent extends React.Component {
     constructor(props) {
@@ -52,12 +53,13 @@ export default class AgentStatePanelComponent extends React.Component {
             }
         });
     }
+
     render() {
         this.agentStateMap = [
             {id: Const.IDLE, name: <div className={'work-state-' + Const.IDLE}><i></i>空闲</div>},
             {id: Const.BUSY, name: <div className={'work-state-' + Const.BUSY}><i></i>忙碌</div>},
             {id: Const.RESTING, name: <div className={'work-state-' + Const.RESTING}><i></i>小休</div>},
-            ..._.map(this.props.customStates, (item) => {
+            ...map(this.props.customStates, (item) => {
                 if (typeof item.name === 'string') {
                     item.name = <div className={'work-state-' + item.originalStateId}><i></i>{item.name}</div>;
                 }
@@ -108,24 +110,26 @@ export default class AgentStatePanelComponent extends React.Component {
             callUtil.setWorkStatus(state.id);
         }
     }
-    updateCalloutNumbers(number){
+
+    updateCalloutNumbers(number) {
         var id = number.id === null ? '' : number.id;
         if (this.state.callState !== Const.HANGUP) {
             Alert.error('只能在挂断的时候切换中继号');
             return;
         }
         callUtil.setupDefaultNumber(id, () => {
-            CallConfig.set('default_callout_number',number.id);
+            CallConfig.set('default_callout_number', number.id);
         }, () => {
             Alert.error('切换中继号失败');
         });
     }
+
     updateAgentWorkWay(way) {
         if (this.state.callState !== Const.HANGUP) {
             Alert.error('只能在挂断的时候切换在线方式');
             return;
         }
-        callUtil.setWorkingWay(way.id, ()=>{
+        callUtil.setWorkingWay(way.id, () => {
         }, () => {
             Alert.error('切换在线方式失败');
         });

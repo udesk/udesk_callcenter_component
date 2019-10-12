@@ -1,7 +1,7 @@
 import images from './images';
 import Alert from './Alert';
 import React from 'react';
-import _ from 'lodash';
+import map from 'lodash/map';
 import {getIvrNodes} from '../CallUtil';
 
 const DEFAULT_CONTENT = '-请选择节点-';
@@ -28,7 +28,7 @@ export default class AgentSelectComponent extends React.Component {
                 <img src={images.caret_down}/>
             </div>
             <ul  className={dropdownClass}>
-                {_.map(this.state.content, (item) => {
+                {map(this.state.content, (item) => {
 
                     let onClickFun = () => {
                         this.props.onChange(item);

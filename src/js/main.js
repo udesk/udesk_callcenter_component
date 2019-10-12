@@ -1,6 +1,7 @@
 import 'font-awesome/scss/font-awesome.scss';
 import 'webrtc-adapter';
-import _ from 'lodash';
+import map from 'lodash/map';
+import includes from 'lodash/includes';
 import React from 'react';
 import {
     render,
@@ -157,6 +158,12 @@ class UdeskCallCenterComponent extends React.Component {
                 softPhone.on('sessionFailed', function() {
                     CallInfo.set('state', 'hangup');
                 });
+                softPhone.on('registered', ()=> {
+
+                });
+                softPhone.on('unregistered', ()=> {
+
+                });
 
                 try {
                     softPhone.init({
@@ -182,7 +189,7 @@ class UdeskCallCenterComponent extends React.Component {
             Agent.group_id = res.group_id;
             Agent.permissions = res.permissions;
 
-            let callout_numbers = _.map(res.callout_numbers || [], (item) => {
+            let callout_numbers = map(res.callout_numbers || [], (item) => {
                 return {
                     id: item.id,
                     name: item.name || item.number,
@@ -191,7 +198,7 @@ class UdeskCallCenterComponent extends React.Component {
             });
 
             this.setState({
-                'customStates': _.map(res.cc_custom_states || [], function(item) {
+                'customStates': map(res.cc_custom_states || [], function(item) {
                     item.customStateId = item.id;
                     item.originalStateId = 'resting';
                     item.id = item.originalStateId + '_' + item.id;
@@ -356,7 +363,7 @@ class CallcenterComponent {
 
     setWorkStatus(workStatus, onSuccess, onFailure) {
         let allStatus = [CONSTANT.IDLE, CONSTANT.BUSY, CONSTANT.RESTING, CONSTANT.OFFLINE];
-        if (!_.includes(allStatus, workStatus)) {
+        if (!includes(allStatus, workStatus)) {
             throw new Error(`参数只能是以下四种:${allStatus.join(',')}`);
         }
         callUtil.setWorkStatus(workStatus, onSuccess, onFailure);

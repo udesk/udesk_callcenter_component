@@ -1,5 +1,6 @@
 import JsSIP from 'jssip';
-import _ from 'lodash';
+import remove from 'lodash/remove';
+import each from 'lodash/each';
 
 require.context('../assets/sounds', true, /\.mp3$/);
 
@@ -64,13 +65,13 @@ class SoftPhone {
         if (!callback) {
             this.events[eventName] = [];
         } else {
-            _.remove(this.events[eventName], (i) => i === callback);
+            remove(this.events[eventName], (i) => i === callback);
         }
     }
 
     trigger(eventName, ...args) {
         if (eventName in this.events) {
-            _.each(this.events[eventName], (i) => {
+            each(this.events[eventName], (i) => {
                 i(...args);
             });
         }

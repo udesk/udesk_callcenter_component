@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {map} from 'lodash/map';
 import React, {Component} from 'react';
 import images from './images';
 
@@ -98,7 +98,7 @@ export default class BaseSelect extends Component {
                         </ul>;
                     } else {
                         return <ul onScroll={this.onScroll}>
-                            {_.map(this.state.content, (item) => {
+                            {map(this.state.content, (item) => {
                                 let self = this;
                                 let onClickFun = function() {
                                     self.props.onChange(item);

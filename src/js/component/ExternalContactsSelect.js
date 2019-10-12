@@ -1,6 +1,7 @@
 import Alert from './Alert';
 import React from 'react';
-import _ from 'lodash';
+import merge from 'lodash/merge';
+import concat from 'lodash/concat';
 import {getExternalcontactsSearch} from '../CallUtil';
 import BaseSelect from './BaseSelect';
 
@@ -8,7 +9,7 @@ const DEFAULT_CONTENT = '-请输入搜索外部联系人-';
 export default class ExternalContactsSelect extends BaseSelect {
     constructor() {
         super(...arguments);
-        _.merge(this.state, {
+        merge(this.state, {
             placeholder: DEFAULT_CONTENT,
             customOptionDiv: true
         });
@@ -30,7 +31,7 @@ export default class ExternalContactsSelect extends BaseSelect {
                 this.maxPage = res.meta.page_count;
                 this.page = res.meta.current_page;
                 this.setState({
-                    content: _.concat(this.state.content, res.external_contacts),
+                    content: concat(this.state.content, res.external_contacts),
                     loading: false,
                     expand: true
                 });

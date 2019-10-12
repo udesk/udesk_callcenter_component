@@ -1,4 +1,6 @@
-import _ from 'lodash';
+import forIn from 'lodash/forIn';
+import remove from 'lodash/remove';
+import forEach from 'lodash/forEach';
 import Utils from './Tools';
 
 export default class Eventable {
@@ -16,13 +18,13 @@ export default class Eventable {
 
     setProperties(obj) {
         let changedFields = [];
-        _.forIn(obj, (v, k) => {
+        forIn(obj, (v, k) => {
             if (this[k] !== v) {
                 this[k] = v;
                 changedFields.push(k);
             }
         });
-        _.forEach(changedFields, (i) => this.trigger('change', i, this[i]));
+        forEach(changedFields, (i) => this.trigger('change', i, this[i]));
     }
 
     trigger() {
@@ -59,7 +61,7 @@ export default class Eventable {
 
         if (eventName && callback) {
             if (this.eventMap[eventName]) {
-                _.remove(this.eventMap[eventName], (i) => i === callback);
+                remove(this.eventMap[eventName], (i) => i === callback);
             }
         } else if (eventName) {
             delete this.eventMap[eventName];
