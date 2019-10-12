@@ -38,7 +38,7 @@ module.exports = {
             },
             {
                 test: /\.mp3$/,
-                loader: 'file-loader?name=sounds/[name].[ext]&publicPath=../'
+                loader: 'url-loader'
             }
         ]
     },

@@ -1,8 +1,7 @@
 import JsSIP from 'jssip';
 import remove from 'lodash/remove';
 import each from 'lodash/each';
-
-require.context('../assets/sounds', true, /\.mp3$/);
+import callCenterMp3 from '../assets/sounds/callcenter.mp3';
 
 class SoftPhone {
     constructor() {
@@ -311,7 +310,7 @@ class SoftPhone {
     playRinging() {
         if (!this._ringingElement) {
             this._ringingElement = document.createElement('audio');
-            this._ringingElement.src = 'sounds/callcenter.mp3';
+            this._ringingElement.src = callCenterMp3;
             this._ringingElement.loop = true;
         }
         this._ringingElement.play();
