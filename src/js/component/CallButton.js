@@ -1,5 +1,6 @@
 import images from  './images';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const style = {
     width: '100%',
@@ -8,13 +9,14 @@ const style = {
     height: '47px'
 };
 export default class CallButtonComponent extends React.Component {
-    constructor() {
-        super();
-    }
-
     render() {
         return <button onClick={this.props.onClick} style={style}>
             <img src={this.props.type === 'hangup' ? images.hangup : images.call_out}/>
-        </button>
+        </button>;
     }
-};
+
+    static propTypes = {
+        onClick: PropTypes.func,
+        type: PropTypes.string,
+    }
+}

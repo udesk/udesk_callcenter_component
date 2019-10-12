@@ -7,10 +7,11 @@ import Alert from './Alert';
 import CallButton from './CallButton';
 import Keyboard from './Keyboard';
 import NumberInput from './NumberInput';
+import PropTypes from 'prop-types';
 
 export default class HangupPanel extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             inputNumber: '',
             displayKeyboard: false
@@ -24,7 +25,7 @@ export default class HangupPanel extends React.Component {
         }
         return <div>
             <NumberInput onChange={this.getInputNumber.bind(this)} value={this.state.inputNumber}
-                         onKeyboardBtnClick={this.toggleKeyboard.bind(this)}/>
+                onKeyboardBtnClick={this.toggleKeyboard.bind(this)}/>
             <Keyboard className={this.state.displayKeyboard ? '' : 'hide'} onClick={(number) => {
                 this.setState({inputNumber: this.state.inputNumber + number});
             }}/>
@@ -62,5 +63,10 @@ export default class HangupPanel extends React.Component {
             displayKeyboard: !this.state.displayKeyboard
         });
     }
-};
+
+    static propTypes = {
+        isShow: PropTypes.bool,
+        showManualScreenPop: PropTypes.bool
+    }
+}
 

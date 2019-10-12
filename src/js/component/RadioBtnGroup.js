@@ -14,7 +14,7 @@ export default class RadioBtnGroup extends React.Component {
         let options = map(this.props.options, (item) => {
             let isActive = item.value === this.state.value;
             return <button onClick={() => this.setValue(item.value)}
-                           className={isActive ? 'active' : ''} key={item.value}>{item.name}</button>;
+                className={isActive ? 'active' : ''} key={item.value}>{item.name}</button>;
         });
         return <div className="radio-btn-group">{options}</div>;
     }

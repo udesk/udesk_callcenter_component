@@ -7,8 +7,8 @@ import BaseSelect from './BaseSelect';
 
 const DEFAULT_CONTENT = '-请输入搜索外部联系人-';
 export default class ExternalContactsSelect extends BaseSelect {
-    constructor() {
-        super(...arguments);
+    constructor(props) {
+        super(props);
         merge(this.state, {
             placeholder: DEFAULT_CONTENT,
             customOptionDiv: true
@@ -36,7 +36,7 @@ export default class ExternalContactsSelect extends BaseSelect {
                     expand: true
                 });
             }
-        }, (res) => {
+        }, () => {
             Alert.error('获取外部联系人列表失败！');
             this.setState({
                 loading: false
@@ -59,7 +59,7 @@ export default class ExternalContactsSelect extends BaseSelect {
         getExternalcontactsSearch(val, page, (res) => {
             res.external_contacts.push({
                 cellphone: val,
-                email: "",
+                email: '',
                 id: -1,
                 nick_name: `使用${val}`
             });
@@ -72,7 +72,7 @@ export default class ExternalContactsSelect extends BaseSelect {
                 expand: true
             });
 
-        }, (res) => {
+        }, () => {
             Alert.error('获取外部联系人列表失败！');
             this.setState({
                 loading: false

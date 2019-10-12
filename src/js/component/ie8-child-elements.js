@@ -9,7 +9,7 @@
  *     Element.previousElementSibling
  */
 (function(){
-    "use strict";
+    'use strict';
 
 
     var patches = {

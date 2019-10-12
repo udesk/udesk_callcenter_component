@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 let style = {
     outline: 'none',
@@ -21,11 +22,16 @@ class KeyButtonComponent extends Component {
     render() {
         return (
             <button style={style} onClick={this.onClick.bind(this)}>{this.props.number}</button>
-        )
+        );
     }
 
     onClick() {
         this.props.onClick(this.props.number);
+    }
+
+    static propTypes = {
+        number: PropTypes.string,
+        onClick: PropTypes.func,
     }
 }
 

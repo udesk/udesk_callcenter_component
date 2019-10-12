@@ -67,13 +67,13 @@ export function makeCall(callNumber) {
     }
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/make_call', params, function(res) {
         switch (res.code) {
-            case 1000:
-                Alert.success('已发起外呼请求');
-                utils.isFunction(successCallback) && successCallback();
-                break;
-            default:
-                Alert.error(res.message || '外呼失败');
-                utils.isFunction(failureCallback) && failureCallback(new Error('外呼失败'));
+        case 1000:
+            Alert.success('已发起外呼请求');
+            utils.isFunction(successCallback) && successCallback();
+            break;
+        default:
+            Alert.error(res.message || '外呼失败');
+            utils.isFunction(failureCallback) && failureCallback(new Error('外呼失败'));
         }
     }, function() {
         Alert.error('外呼失败');
@@ -82,7 +82,7 @@ export function makeCall(callNumber) {
 }
 
 export function answer() {
-    let ishttps = 'https:' == document.location.protocol ? true : false;
+    let ishttps = 'https:' === document.location.protocol;
     if (CallConfig.agent_work_way === VOIP_ONLINE && !ishttps) {
         alert('请在https://下登录使用网页电话');
         return;
@@ -113,7 +113,7 @@ export function setCustomWorkStatus(originalWorkStatus, customStateId, successCa
 }
 
 export function setWorkingWay(workingWay, successCallback = emptyFunction, failureCallback = emptyFunction) {
-    let ishttps = 'https:' == document.location.protocol ? true : false;
+    let ishttps = 'https:' === document.location.protocol;
     if (workingWay === 'voip_online' && !ishttps) {
         alert('请在https://下登录使用网页电话');
         return;
@@ -198,11 +198,11 @@ export function showPhoneNumber(customer, agent) {
 export function transfer(targetId, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_call', {agent_no: targetId}, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -213,11 +213,11 @@ export function startConsult(targetId, successCallback = emptyFunction, failureC
     lastConsultType = 'agent';
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/start_consult', {agent_no: targetId}, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -231,11 +231,11 @@ export function startConsult(targetId, successCallback = emptyFunction, failureC
 export function startThreeWayCalling(targetId, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/three_party', {agent_no: targetId}, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -247,11 +247,11 @@ export function startIvrCalling(node, successCallback = emptyFunction, failureCa
         node_id: node.id, transfer_mode: node.transfer_mode
     }, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -265,11 +265,11 @@ export function stopConsult(successCallback = emptyFunction, failureCallback = e
     }
     AjaxUtils.post(url, null, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -308,11 +308,11 @@ export function getGroups(params, successCallback, failureCallback) {
 export function getIvrNodes(successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.get('/agent_api/v1/callcenter/desktop/ivr_nodes', null, function(res) {
         switch (res.code) {
-            case 1000:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1000:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -322,11 +322,11 @@ export function getIvrNodes(successCallback = emptyFunction, failureCallback = e
 export function getExternalcontactsSearch(prefix_input = '', page = 1, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.get('/agent_api/v1/callcenter/desktop/external_contacts_prefix_search', {prefix_input: prefix_input, page: page}, function(res) {
         switch (res.code) {
-            case 1000:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1000:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -336,11 +336,11 @@ export function getExternalcontactsSearch(prefix_input = '', page = 1, successCa
 export function holdCallSelect(successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/hold_call', null, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -350,11 +350,11 @@ export function holdCallSelect(successCallback = emptyFunction, failureCallback 
 export function recoveryCallSelect(successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/retrieval_call', null, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -367,11 +367,11 @@ export function recoveryCallSelect(successCallback = emptyFunction, failureCallb
 export function transferToGroup(targetId, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_call', {queue_type: targetId}, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -384,11 +384,11 @@ export function transferToGroup(targetId, successCallback = emptyFunction, failu
 export function transferToExternalPhone(phoneNumber, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop//transfer_call_outline', {outline_phone_number: phoneNumber}, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -402,11 +402,11 @@ export function startConsultingToExternalPhone(phoneNumber, successCallback = em
     lastConsultType = 'outline';
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/start_consult_outline', {outline_phone_number: phoneNumber}, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -419,11 +419,11 @@ export function startConsultingToExternalPhone(phoneNumber, successCallback = em
 export function startThreeWayCallingToExternalPhone(phoneNumber, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/three_party_outline', {outline_phone_number: phoneNumber}, function(res) {
         switch (res.code) {
-            case 1001:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -443,11 +443,11 @@ export function getAutomaticCallNumGroup() {
 export function setupDefaultNumber(phoneNumber_id, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/agents/setup_default_number', {id: phoneNumber_id}, function(res) {
         switch (res.code) {
-            case 1000:
-                successCallback(res);
-                break;
-            default:
-                failureCallback(res);
+        case 1000:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
     }, function(error) {
         failureCallback(error);
@@ -461,47 +461,47 @@ export function getCalloutNumbers() {
 //咨询后转接
 export function transferAfterConsult(agent_no, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_after_consult', {agent_no}, function(res) {
-            switch (res.code) {
-                case 1001:
-                    successCallback(res);
-                    break;
-                default:
-                    failureCallback(res);
-            }
-        }, function(error) {
-            failureCallback(error);
+        switch (res.code) {
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
+    }, function(error) {
+        failureCallback(error);
+    }
     );
 }
 
 //咨询后三方
 export function threeWayCallingAfterConsult(agent_no, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/three_party_after_consult', {agent_no}, function(res) {
-            switch (res.code) {
-                case 1001:
-                    successCallback(res);
-                    break;
-                default:
-                    failureCallback(res);
-            }
-        }, function(error) {
-            failureCallback(error);
+        switch (res.code) {
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
+    }, function(error) {
+        failureCallback(error);
+    }
     );
 }
 
 //三方后转接
 export function transferAfterThreeWayCalling(agent_no, successCallback = emptyFunction, failureCallback = emptyFunction) {
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/transfer_after_three_party', {agent_no}, function(res) {
-            switch (res.code) {
-                case 1001:
-                    successCallback(res);
-                    break;
-                default:
-                    failureCallback(res);
-            }
-        }, function(error) {
-            failureCallback(error);
+        switch (res.code) {
+        case 1001:
+            successCallback(res);
+            break;
+        default:
+            failureCallback(res);
         }
+    }, function(error) {
+        failureCallback(error);
+    }
     );
 }

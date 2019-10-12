@@ -282,7 +282,11 @@ class UdeskCallCenterComponent extends React.Component {
 
     static propTypes = {
         onSoftPhoneRegistered: PropTypes.func,
-        onSoftPhoneUnregistered: PropTypes.func
+        onSoftPhoneUnregistered: PropTypes.func,
+        movable: PropTypes.bool,
+        showManualScreenPop: PropTypes.bool,
+        onInitSuccess: PropTypes.func,
+        onInitFailure: PropTypes.func
     };
 }
 

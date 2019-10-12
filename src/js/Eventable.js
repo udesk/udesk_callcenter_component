@@ -35,7 +35,7 @@ export default class Eventable {
         for (let i = 0, len = events.length; i < len; i++) {
             Utils.isFunction(events[i]) && events[i].apply(this, args);
         }
-    };
+    }
 
     on(eventName, callback) {
         this._getEvents(eventName).push(callback);

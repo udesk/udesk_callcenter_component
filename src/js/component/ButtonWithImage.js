@@ -1,9 +1,10 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import * as tools from '../Tools';
 
 export default class ButtonWithImageComponent extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             state: 'normal'
         };
@@ -34,4 +35,14 @@ export default class ButtonWithImageComponent extends React.Component {
             }
         }
     }
+
+    static propTypes = {
+        className: PropTypes.string,
+        image: PropTypes.string,
+        content: PropTypes.string,
+        state: PropTypes.string,
+        cancelText: PropTypes.string,
+        normalHandler: PropTypes.func,
+        cancelHandler: PropTypes.func
+    };
 }

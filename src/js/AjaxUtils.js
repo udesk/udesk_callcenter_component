@@ -188,7 +188,7 @@ var obj = {
     refreshToken: null
 };
 
-module.exports = obj;
+export default obj;
 
 function serializeParams(params) {
     var content = [];

@@ -1,4 +1,3 @@
-import React from 'react';
 import BaseSelect from './BaseSelect';
 import { getGroups } from '../CallUtil';
 import Alert from './Alert';
@@ -8,7 +7,7 @@ import filter from 'lodash/filter';
 
 export default class GroupSelectComponent extends BaseSelect {
     constructor(props) {
-        super(...arguments);
+        super(props);
         merge(this.state, {
             placeholder: '-请选择其他客服组-',
             optionLabelPath: 'name'

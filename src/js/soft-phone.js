@@ -152,12 +152,12 @@ class SoftPhone {
         this.trigger('callEnded');
     }
 
-    _onUaConnecting({socket, attempts}) {
+    _onUaConnecting() {
         // document.getElementById('connect-state').innerText = '正在连接....';
         console.log('正在连接...');
     }
 
-    _onUaConnected({socket}) {
+    _onUaConnected() {
         // document.getElementById('connect-state').innerText = '已连接';
         console.log('已连接');
     }
@@ -166,7 +166,7 @@ class SoftPhone {
         // document.getElementById('connect-state').innerText = '已断开连接';
         console.log('已断开连接');
         if (e) {
-            let {socket, error, code, reason} = e;
+            let {error} = e;
             console.error(error);
         }
     }
@@ -191,7 +191,7 @@ class SoftPhone {
         this.trigger('registrationFailed', {response, cause});
     }
 
-    _onUaNewRTCSession({originator, session, request}) {
+    _onUaNewRTCSession({session}) {
         this._session = session;
         session.addListener('muted', () => this.trigger('muted'));
         session.addListener('unmuted', () => this.trigger('unmuted'));
@@ -225,7 +225,7 @@ class SoftPhone {
             this.trigger('sessionFailed', cause);
         });
 
-        session.on('icecandidate', ({candidate, ready}) => {
+        session.on('icecandidate', ({ready}) => {
             if (!this._iceCheckingTimer) {
                 this._iceCheckingTimer = setTimeout(ready, 5000);
             }

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import CallInfo from '../CallInfo';
 import HangupPanel from './HangupPanel';
@@ -33,6 +34,11 @@ class MainContent extends React.Component {
     componentWillUnmount() {
         CallInfo.off('change', this.callInfoChangeCb);
     }
+
+    static propTypes = {
+        className: PropTypes.string,
+        showManualScreenPop: PropTypes.bool
+    };
 }
 
 export default MainContent;

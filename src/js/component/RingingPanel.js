@@ -7,6 +7,7 @@ import AcceptButton from './accept-button';
 import CustomerInfo from './CustomerInfo';
 import HangupButton from './HangupButton';
 import images from './images';
+import PropTypes from 'prop-types';
 
 export default class RingingPanelComponent extends React.Component {
     constructor() {
@@ -56,5 +57,9 @@ export default class RingingPanelComponent extends React.Component {
 
     componentWillUnmount() {
         CallInfo.off('change', this.onCallInfoChange);
+    }
+
+    static propTypes = {
+        isShow: PropTypes.bool
     }
 }

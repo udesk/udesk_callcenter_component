@@ -27,6 +27,7 @@ import GroupSelect from './GroupSelect';
 import HangupButton from './HangupButton';
 import images from './images';
 import IvrNodeSelect from './IvrNodeSelect';
+import PropTypes from 'prop-types';
 
 export default class TalkingPanelComponent extends React.Component {
     constructor(props) {
@@ -188,7 +189,7 @@ export default class TalkingPanelComponent extends React.Component {
                 Alert.error(res.message || '三方失败！');
             });
         } else if (this.state.type === 'ivr_node') {
-
+            // no empty block
         }
         this._lastSelectedAgentId = agent.id;
     };
@@ -324,4 +325,8 @@ export default class TalkingPanelComponent extends React.Component {
             transferAfterThreeWayCalling(this._lastSelectedAgentId);
         }
     };
+
+    static propTypes = {
+        isShow: PropTypes.bool
+    }
 }

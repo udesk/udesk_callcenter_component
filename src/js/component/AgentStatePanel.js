@@ -6,17 +6,7 @@ import * as callUtil from '../CallUtil';
 import * as Const from '../Const';
 import Alert from './Alert';
 import Dropdown from './Dropdown';
-
-let doc = document;
-let agentStateMap = {
-    [Const.IDLE]: '空闲',
-    [Const.BUSY]: '忙碌',
-    [Const.RESTING]: '小休',
-    [Const.OFFLINE]: '离线',
-    [Const.NEATEN]: '整理中',
-    [Const.TALKING]: '通话中',
-    [Const.RINGING]: '振铃中'
-};
+import PropTypes from 'prop-types';
 
 export default class AgentStatePanelComponent extends React.Component {
     constructor(props) {
@@ -94,11 +84,10 @@ export default class AgentStatePanelComponent extends React.Component {
                       disabled={this.state.callState !== Const.HANGUP}
             />
             <Dropdown direction={this.props.dropdownDirection} content={this.props.callout_numbers}
-                      value={this.state.default_callout_number} className="way-select"
+                      value={this.state.default_callout_number} className="way-select ucm-dropdown-long"
                       optionLabelPath={'option'}
                       onChange={this.updateCalloutNumbers.bind(this)}
                       disabled={this.state.callState !== Const.HANGUP}
-                      className={'ucm-dropdown-long'}
             />
         </div>;
     }
@@ -139,4 +128,10 @@ export default class AgentStatePanelComponent extends React.Component {
         CallConfig.off('change', this.callConfigChangCb);
         CallInfo.off('change', this.callInfoChangeCb);
     }
-};
+
+    static propTypes = {
+        customStates: PropTypes.array,
+        dropdownDirection: PropTypes.string,
+        callout_numbers: PropTypes.string
+    };
+}

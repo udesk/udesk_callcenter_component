@@ -31,8 +31,7 @@ class CallInfo extends Eventable {
         };
         this.cc_ad_task = null;  // { ad_task_id: 1, #任务ID, customer_id: 3, # 用户ID numbers: ["18812345678", "18712345678"] # 号码/号码组}
         let self = this;
-        this.on('change', function(k, v, callInfo) {
-            let state = self.state;
+        this.on('change', function(k, v) {
             if (k === 'state') {
                 if (v === 'ringing') {
                     self.set('ringingTime', 0);

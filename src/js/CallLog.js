@@ -5,7 +5,7 @@
 export default class CallLog {
     constructor(opt) {
         for (let i in opt) {
-            if (opt.hasOwnProperty(i)) {
+            if (Object.prototype.hasOwnProperty.call(opt, i)) {
                 this[i] = opt[i];
             }
         }
@@ -33,7 +33,7 @@ export default class CallLog {
             return;
         }
         for (let i in callLog) {
-            if (callLog.hasOwnProperty(i)) {
+            if (Object.prototype.hasOwnProperty.call(callLog, i)) {
                 this[i] = callLog[i];
             }
         }

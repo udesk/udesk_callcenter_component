@@ -23,7 +23,13 @@ module.exports = {
                     'sass-loader'
                 ]
             },
-            {test: /\.js|jsx$/, exclude: [/node_modules(?!\/debug)(?!\/webrtc-adapter)/, /static/], loader: 'babel-loader'},
+            {
+                test: /\.jsx?$/,
+                loader: 'eslint-loader',
+                enforce: 'pre',
+                include: [path.resolve(__dirname, '../src')]
+            },
+            {test: /\.jsx?$/, exclude: [/node_modules(?!\/debug)(?!\/webrtc-adapter)/, /static/], loader: 'babel-loader'},
             {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: 'url-loader?name=fonts/[name].[ext]&limit=10000&mimetype=application/font-woff&publicPath=../'

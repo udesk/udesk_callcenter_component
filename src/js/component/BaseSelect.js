@@ -1,6 +1,7 @@
 import map from 'lodash/map';
 import React, {Component} from 'react';
 import images from './images';
+import PropTypes from 'prop-types';
 
 /**
  * @class
@@ -38,8 +39,7 @@ export default class BaseSelect extends Component {
         super(props);
         let {
             optionLabelPath = 'nick_name',
-            placeholder = '',
-            customOptionDiv = false
+            placeholder = ''
         } = props;
 
         this.maxPage = 1;
@@ -173,4 +173,10 @@ export default class BaseSelect extends Component {
         return <li key={item.id} onClick={clickFun}>{item[this.state.optionLabelPath]}</li>;
     }
 
+    static propTypes = {
+        optionLabelPath: PropTypes.string,
+        placeholder: PropTypes.string,
+        showSearch: PropTypes.bool,
+        mode: PropTypes.string
+    };
 }

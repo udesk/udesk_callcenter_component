@@ -1,5 +1,4 @@
 import Alert from './Alert';
-import React from 'react';
 import merge from 'lodash/merge';
 import concat from 'lodash/concat';
 import { getAgents } from '../CallUtil';

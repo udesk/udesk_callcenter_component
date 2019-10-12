@@ -3,4 +3,4 @@ export default {
     name: '',
     group_id: [],
     permissions: {}
-}
+};

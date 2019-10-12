@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import images from './images';
+import PropTypes from 'prop-types';
 
 class Header extends Component {
     constructor(props) {
@@ -47,7 +48,7 @@ class Header extends Component {
                     onDrag(offsetX, offsetY);
                 }
             });
-            document.addEventListener('mouseup', this.onMouseUp = function(e) {
+            document.addEventListener('mouseup', this.onMouseUp = function() {
                 self.MouseDown = false;
                 onDrop();
             });
@@ -83,8 +84,16 @@ class Header extends Component {
         this.MouseDown = false;
     };
 
-    onMouseMove(e) {
+    onMouseMove() {
 
+    }
+
+    static propTypes = {
+        movable: PropTypes.bool,
+        onDrag: PropTypes.func,
+        onDrop: PropTypes.func,
+        onMinimize: PropTypes.func,
+        onMaximize: PropTypes.func,
     }
 }
 

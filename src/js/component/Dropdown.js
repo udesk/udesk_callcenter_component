@@ -1,13 +1,13 @@
-import images from './images';
-import React from 'react';
 import find from 'lodash/find';
 import map from 'lodash/map';
+import PropTypes from 'prop-types';
+import React from 'react';
+import images from './images';
 
 export default class DropdownComponent extends React.Component {
-    constructor({
-                    optionLabelPath = 'name'
-                }) {
-        super();
+    constructor(props) {
+        super(props);
+        let {optionLabelPath = 'name'} = props;
         this.state = {
             expand: false,
             optionLabelPath
@@ -25,7 +25,7 @@ export default class DropdownComponent extends React.Component {
             <div onClick={this.toggleExpand.bind(this)}>{selected ? selected.name : ''}</div>
             <ul className={dropdownClass}>
                 {map(this.props.content, (item) => {
-                    const onChangeCb = (e) => {
+                    const onChangeCb = () => {
                         this.toggleExpand();
                         if (this.props.onChange) {
                             this.props.onChange(item);
@@ -48,4 +48,14 @@ export default class DropdownComponent extends React.Component {
             expand: !this.state.expand
         });
     }
-};
+
+    static propTypes = {
+        optionLabelPath: PropTypes.string,
+        content: PropTypes.string,
+        value: PropTypes.string,
+        disabled: PropTypes.bool,
+        direction: PropTypes.string,
+        className: PropTypes.string,
+        onChange: PropTypes.func
+    };
+}
