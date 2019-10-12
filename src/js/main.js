@@ -23,10 +23,6 @@ import MainContent from './component/MainContent';
 import * as CONSTANT from './Const';
 import {VOIP_ONLINE} from './Const';
 import softPhone from './soft-phone';
-import {
-    decrypt,
-    encrypt
-} from './aes-256-cbc';
 import websocket from './websocket';
 
 require.context('../assets/images', true, /\.(png|jpg|gif)$/);

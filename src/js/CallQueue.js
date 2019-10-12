@@ -1,9 +1,8 @@
 //["notice",{"type":"call_log","state":"ringing","call_id":"161205154856651300010177000a1772","conversation_id":"3274167","agent_work_way":"phone_online","direction":"in","can_transfer":"true"}]
-import some from 'lodash/some';
-import find from 'lodash/find';
 import assign from 'lodash/assign';
+import find from 'lodash/find';
+import some from 'lodash/some';
 import AjaxUtils from './AjaxUtils';
-import CallConfig from './CallConfig';
 import * as Const from './Const';
 import Eventable from './Eventable';
 
@@ -25,9 +24,6 @@ class CallQueue extends Eventable {
         let existingCallLog = find(this.queue, ['conversation_id', callLog.conversation_id]);
         let self = this;
         fetchConversation(callLog.conversation_id, function(res) {
-            if (CallConfig.encrypt_cellphone_number) {
-                res.customer_phone = decrypt(res.customer_phone, res.key);
-            }
             if (existingCallLog) {
                 //忽略错过的通知
                 if (some([Const.RINGING], callLog.state) && existingCallLog.state === Const.TALKING) {
@@ -51,7 +47,6 @@ class CallQueue extends Eventable {
     get(conversationId) {
         return find(this.queue, (i) => i.conversation_id === conversationId);
     }
-
 }
 
 export default new CallQueue();

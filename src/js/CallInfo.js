@@ -1,17 +1,15 @@
-import {decrypt} from './aes-256-cbc';
-import CallConfig from './CallConfig';
-import Eventable from './Eventable';
-import CallQueue from './CallQueue';
 import find from 'lodash/find';
 import remove from 'lodash/remove';
-import * as Const from './Const';
-import Alert from './component/Alert';
 import AjaxUtils from './AjaxUtils';
-
+import CallQueue from './CallQueue';
+import Alert from './component/Alert';
+import * as Const from './Const';
+import Eventable from './Eventable';
 
 function fetchCurrentConversation(callback) {
     AjaxUtils.get('/agent_api/v1/callcenter/desktop/current_conversation', null, callback);
 }
+
 class CallInfo extends Eventable {
     constructor() {
         super();
@@ -138,16 +136,12 @@ class CallInfo extends Eventable {
     manualScreenPop() {
         fetchCurrentConversation((res) => {
             if (res.code === 1000) {
-                if (CallConfig.encrypt_cellphone_number) {
-                    res.customer_phone = decrypt(res.customer_phone, res.key);
-                }
                 this.trigger('screenPop', res);
             } else {
                 Alert.error(res.code_message || '手动弹屏失败');
             }
         });
     }
-
 
     //fetchConversation() {
     //    let self = this;
