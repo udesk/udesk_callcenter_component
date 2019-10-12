@@ -1,4 +1,4 @@
-import {map} from 'lodash/map';
+import map from 'lodash/map';
 import React, {Component} from 'react';
 import images from './images';
 
