@@ -1,8 +1,6 @@
-import _ from 'lodash';
-import {
-    encrypt,
-    randomKey
-} from './aes-256-cbc';
+import clone from 'lodash/clone';
+import forEach from 'lodash/forEach';
+import includes from 'lodash/includes';
 import AjaxUtils from './AjaxUtils';
 import CallConfig from './CallConfig';
 import CallInfo from './CallInfo';
@@ -147,9 +145,9 @@ export function hangup(successCallback = emptyFunction, failureCallback = emptyF
     //}
     AjaxUtils.post('/agent_api/v1/callcenter/desktop/drop_call', null, function(res) {
         if (res.code === 2049) {
-            _.forEach(CallQueue.queue, (i) => {
+            forEach(CallQueue.queue, (i) => {
                 if (i.state !== 'hangup') {
-                    let callLogCopy = _.clone(i);
+                    let callLogCopy = clone(i);
                     callLogCopy.state = 'hangup';
                     CallQueue.put(callLogCopy);
                 }
@@ -190,7 +188,7 @@ export function showPhoneNumber(customer, agent) {
         return true;
     }
 
-    if (permissions.customer_show_cellphone_group && _.includes(groups, customerGroupId)) {
+    if (permissions.customer_show_cellphone_group && includes(groups, customerGroupId)) {
         return true;
     }
 

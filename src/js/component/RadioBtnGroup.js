@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import map from 'lodash/map';
 import PropTypes from 'prop-types';
 
 export default class RadioBtnGroup extends React.Component {
@@ -11,7 +11,7 @@ export default class RadioBtnGroup extends React.Component {
     }
 
     render() {
-        let options = _.map(this.props.options, (item) => {
+        let options = map(this.props.options, (item) => {
             let isActive = item.value === this.state.value;
             return <button onClick={() => this.setValue(item.value)}
                            className={isActive ? 'active' : ''} key={item.value}>{item.name}</button>;

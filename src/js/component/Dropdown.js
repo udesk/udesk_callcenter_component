@@ -1,6 +1,7 @@
 import images from './images';
 import React from 'react';
-import _ from 'lodash';
+import find from 'lodash/find';
+import map from 'lodash/map';
 
 export default class DropdownComponent extends React.Component {
     constructor({
@@ -15,7 +16,7 @@ export default class DropdownComponent extends React.Component {
 
     render() {
         let {content, value} = this.props;
-        let selected = _.find(content, {id: value});
+        let selected = find(content, {id: value});
         let dropdownClass = (this.state.expand && !this.props.disabled) ? '' : 'hide';
         dropdownClass += ' ' + this.props.direction;
 
@@ -23,7 +24,7 @@ export default class DropdownComponent extends React.Component {
             <img src={images.caret_down} onClick={this.toggleExpand.bind(this)}/>
             <div onClick={this.toggleExpand.bind(this)}>{selected ? selected.name : ''}</div>
             <ul className={dropdownClass}>
-                {_.map(this.props.content, (item) => {
+                {map(this.props.content, (item) => {
                     const onChangeCb = (e) => {
                         this.toggleExpand();
                         if (this.props.onChange) {

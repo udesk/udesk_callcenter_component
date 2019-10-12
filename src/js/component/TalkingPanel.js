@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import map from 'lodash/map';
 import React from 'react';
 import CallInfo from '../CallInfo';
 import {
@@ -83,7 +83,7 @@ export default class TalkingPanelComponent extends React.Component {
                     return <div className={agentSelectWrapperClass}>
                         <select value={this.state.targetType}
                                 onChange={event => this.setState({targetType: event.target.value})}>
-                            {_.map(this.state.targetTypes, (i) => <option key={i.value}
+                            {map(this.state.targetTypes, (i) => <option key={i.value}
                                                                           value={i.value}>{i.name}</option>)}
                         </select>
                         {(() => {

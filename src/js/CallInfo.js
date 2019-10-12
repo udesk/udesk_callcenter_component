@@ -2,7 +2,8 @@ import {decrypt} from './aes-256-cbc';
 import CallConfig from './CallConfig';
 import Eventable from './Eventable';
 import CallQueue from './CallQueue';
-import _ from 'lodash';
+import find from 'lodash/find';
+import remove from 'lodash/remove';
 import * as Const from './Const';
 import Alert from './component/Alert';
 import AjaxUtils from './AjaxUtils';
@@ -98,10 +99,10 @@ class CallInfo extends Eventable {
      * @param callLog
      */
     updateCache(callLog) {
-        let conversation = _.find(this.cache, ['conversation_id', callLog.conversation_id]);
+        let conversation = find(this.cache, ['conversation_id', callLog.conversation_id]);
         if (conversation) {
             if (callLog.state === Const.HANGUP) {
-                _.remove(this.cache, (i) => i === conversation);
+                remove(this.cache, (i) => i === conversation);
             }
         } else {
             if (callLog.state === Const.HANGUP) {
