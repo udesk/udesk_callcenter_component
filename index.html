@@ -147,8 +147,8 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    var token = 'xxxxxxxx';
-    var subDomain = 'xxxxxxxx';
+    var token = 'xxxxx';
+    var subDomain = 'xxxxxx';
     var onTokenExpired = function(callback) {
         setTimeout(function() {
             callback('xxxx');
@@ -227,6 +227,12 @@
             },
             onRinging: function(conversation) {
                 console.log('ringing', conversation);
+            },
+            onSoftPhoneRegistered: function() {
+                console.log('软电话已注册');
+            },
+            onSoftPhoneUnregistered: function() {
+                console.log('软电话已注销');
             }
             //            onInitSuccess: function() {
             //                console.log('初始化成功');
