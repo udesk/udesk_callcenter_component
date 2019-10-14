@@ -402,7 +402,7 @@ class CallcenterComponent {
         CallInfo.on('ringing', this._onRinging);
         CallInfo.on('talking', this._onTalking);
         CallInfo.on('hangup', this._onHangup);
-        CallConfig.on('change', function(k, v) {
+        CallConfig.on('change', this._onCallConfigChange = function(k, v) {
             if (k === 'agent_work_state') {
                 onWorkStatusChange(v);
             } else if (k === 'agent_work_way') {
@@ -476,8 +476,11 @@ class CallcenterComponent {
         }
         this.wrapper.parentNode.removeChild(this.wrapper);
         Alert.destroy();
-        CallInfo.off();
-        CallConfig.off();
+        CallInfo.off('screenPop', this._onScreenPop);
+        CallInfo.off('ringing', this._onRinging);
+        CallInfo.off('talking', this._onTalking);
+        CallInfo.off('hangup', this._onHangup);
+        CallConfig.off('change', this._onCallConfigChange);
         CallConfig.reset();
         websocket.destroy();
         window.removeEventListener('beforeunload', this._onBeforeUnload);
