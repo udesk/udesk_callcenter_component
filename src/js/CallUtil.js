@@ -93,8 +93,14 @@ export function answer() {
 }
 
 export function setWorkStatus(workStatus, successCallback, failureCallback) {
-    AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_state', {agent_work_state: workStatus}, function() {
-        utils.isFunction(successCallback) && successCallback(...arguments);
+    AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_state', {agent_work_state: workStatus}, function(res) {
+        switch (res.code) {
+            case 1000:
+                utils.isFunction(successCallback) && successCallback(...arguments);
+                break;
+            default:
+                utils.isFunction(failureCallback) && failureCallback(...arguments);
+        }
     }, function() {
         Alert.error('切换在线状态失败');
         utils.isFunction(failureCallback) && failureCallback(...arguments);
@@ -104,8 +110,14 @@ export function setWorkStatus(workStatus, successCallback, failureCallback) {
 export function setCustomWorkStatus(originalWorkStatus, customStateId, successCallback, failureCallback) {
     AjaxUtils.post('/agent_api/v1/callcenter/agents/agent_work_state', {
         agent_work_state: originalWorkStatus, cc_custom_state_id: customStateId
-    }, function() {
-        utils.isFunction(successCallback) && successCallback(...arguments);
+    }, function(res) {
+        switch (res.code) {
+            case 1000:
+                utils.isFunction(successCallback) && successCallback(...arguments);
+                break;
+            default:
+                utils.isFunction(failureCallback) && failureCallback(...arguments);
+        }
     }, function() {
         Alert.error('切换在线状态失败');
         utils.isFunction(failureCallback) && failureCallback(...arguments);

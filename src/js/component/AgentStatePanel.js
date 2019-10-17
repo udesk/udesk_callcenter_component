@@ -91,15 +91,22 @@ export default class AgentStatePanelComponent extends React.Component {
             />
         </div>;
     }
-
     updateAgentWorkState(state) {
         if (state.originalStateId) {
-            callUtil.setCustomWorkStatus(state.originalStateId, state.customStateId);
+            callUtil.setCustomWorkStatus(state.originalStateId, state.customStateId, null, function(data){
+                if(data && data.code === 11008){
+                    Alert.error('员工没有呼叫中心权限');
+                }
+            });
         } else {
-            callUtil.setWorkStatus(state.id);
+            callUtil.setWorkStatus(state.id, null, function(data){
+                if(data && data.code === 11008){
+                    Alert.error('员工没有呼叫中心权限');
+                }
+            });
         }
     }
-
+    
     updateCalloutNumbers(number) {
         var id = number.id === null ? '' : number.id;
         if (this.state.callState !== Const.HANGUP) {
