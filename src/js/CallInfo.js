@@ -16,6 +16,7 @@ class CallInfo extends Eventable {
         this.queue_desc = '';
         this.customer_phone = '';
         this.phone_location = '';
+        this.startCallTime = 0;
         this.ringingTime = 0;
         this.talkingTime = 0;
         this.call_type = '呼入';

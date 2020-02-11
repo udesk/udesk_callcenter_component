@@ -8,6 +8,7 @@ import CustomerInfo from './CustomerInfo';
 import HangupButton from './HangupButton';
 import images from './images';
 import PropTypes from 'prop-types';
+import { answer } from '../CallUtil';
 
 export default class RingingPanelComponent extends React.Component {
     constructor() {
@@ -19,6 +20,9 @@ export default class RingingPanelComponent extends React.Component {
         CallInfo.on('change', this.onCallInfoChange = function() {
             if (CallInfo.state === 'ringing') {
                 self.setState(CallInfo);
+                if (CallInfo.can_accept === 'in' && CallConfig.agent_work_way === VOIP_ONLINE && CallInfo.startCallTime < 6) {
+                    answer();
+                }
             }
         });
     }

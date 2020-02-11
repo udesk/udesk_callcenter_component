@@ -109,7 +109,8 @@ class SoftPhone {
         }
         this._ua.stop();
     }
-
+    //网页电话因为要透传一些参数，所以后端强制回拨 
+    //此api废弃
     call(target) {
         let self = this;
         let options = {

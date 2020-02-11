@@ -1,1 +1,498 @@
-!function(e){var t={};function n(o){if(t[o])return t[o].exports;var a=t[o]={i:o,l:!1,exports:{}};return e[o].call(a.exports,a,a.exports,n),a.l=!0,a.exports}n.m=e,n.c=t,n.d=function(e,t,o){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:o})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var o=Object.create(null);if(n.r(o),Object.defineProperty(o,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var a in e)n.d(o,a,function(t){return e[t]}.bind(null,a));return o},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=485)}({2:function(module,__webpack_exports__,__webpack_require__){"use strict";function getXMLHttpRequest(){var e;if("undefined"!=typeof XMLHttpRequest)e=new XMLHttpRequest;else for(var t=["MSXML2.XmlHttp.5.0","MSXML2.XmlHttp.4.0","MSXML2.XmlHttp.3.0","MSXML2.XmlHttp.2.0","Microsoft.XmlHttp"],n=0,o=t.length;n<o;n++)try{e=new ActiveXObject(t[n]);break}catch(e){}return e}function load(options){var method=options.method,url=options.url,content=options.content,successCallback=options.successCallback,failureCallback=options.failureCallback,headers=options.headers,xhr=getXMLHttpRequest();function ensureReadiness(){if(!(xhr.readyState<4))if(xhr.status<200||xhr.status>=300){if(400===xhr.status){var _content=xhr.response,_contentType=xhr.getResponseHeader("Content-Type");if(_contentType.indexOf("application/json")>-1&&(_content=JSON.parse(_content),("invalid_password"===_content.code||"token_expired"===_content.code)&&obj.refreshToken&&!options.retry))return void obj.refreshToken(function(e){options.retry=!0,obj.token=e,load(options)})}failureCallback&&failureCallback(xhr)}else if(4===xhr.readyState){var contentType=xhr.getResponseHeader("Content-Type");"application/javascript"===contentType?successCallback&&successCallback(eval(xhr.response),xhr):contentType.indexOf("application/json")>-1?successCallback&&successCallback(JSON.parse(xhr.response),xhr):successCallback&&successCallback(xhr.response,xhr)}}if(xhr.onreadystatechange=ensureReadiness,xhr.open(method,obj.host+url,!0),headers)for(var i in headers)xhr.setRequestHeader(i,headers[i]);xhr.setRequestHeader("Authorization","Basic "+btoa("agent:"+obj.token)),xhr.send(content)}function get(e,t,n,o){var a=serializeParams(t);a&&(-1===e.indexOf("?")?e+="?"+a:e+="&"+a),load({method:"GET",url:e,successCallback:function(e,t){"string"==typeof e?n&&n(JSON.parse(e),t):n&&n(e,t)},failureCallback:o})}function post(e,t,n,o){load({method:"POST",url:e,headers:{"Content-type":"application/x-www-form-urlencoded"},content:serializeParams(t),successCallback:n,failureCallback:o})}function postJSON(e,t,n,o){load({method:"POST",url:e,content:JSON.stringify(t),successCallback:function(e,t){"string"==typeof e?n&&n(JSON.parse(e),t):n&&n(e,t)},headers:{"content-type":"application/json"},failureCallback:o})}function put(e,t,n,o){load({method:"PUT",url:e,content:JSON.stringify(t),successCallback:function(e,t){"string"==typeof e?n&&n(JSON.parse(e),t):n&&n(e,t)},headers:{"content-type":"application/json"},failureCallback:o})}function del(e,t,n,o){load({method:"DELETE",url:e,content:JSON.stringify(t),successCallback:function(e,t){"string"==typeof e?n&&n(JSON.parse(e),t):n&&n(e,t)},headers:{"content-type":"application/json"},failureCallback:o})}var obj={get:get,post:post,postJSON:postJSON,put:put,delete:del,token:"",host:"",refreshToken:null};function serializeParams(e){var t=[];for(var n in e)t.push(encodeURIComponent(n)+"="+encodeURIComponent(e[n]));return t=t.join("&")}__webpack_exports__.a=obj},485:function(e,t,n){"use strict";n.r(t);var o=n(2);function a(e,t){for(var n=0;n<t.length;n++){var o=t[n];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(e,o.key,o)}}var r=function(){},s=function(){function e(){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e)}var t,n,s;return t=e,(n=[{key:"tokenInit",value:function(e,t,n){o.a.token=e,o.a.host="https://"+t+".udesk.cn",o.a.refreshToken=n}},{key:"_updateAgentWorkState",value:function(e,t,n){var a=arguments.length>3&&void 0!==arguments[3]?arguments[3]:r,s=arguments.length>4&&void 0!==arguments[4]?arguments[4]:r,i={};void 0!==n&&(i.cc_custom_state_id=n),i.agent_work_state=t,i.agent_no=e,o.a.post("/agent_api/v1/callcenter/agents/update_agent_work_state",i,function(e){switch(e.code){case 1e3:a(e);break;default:s(e)}},function(e){s(e)})}},{key:"setMonitorWorkStatus",value:function(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:r,o=arguments.length>3&&void 0!==arguments[3]?arguments[3]:r;this._updateAgentWorkState(e,t,void 0,n,o)}},{key:"setMonitorWorkRestingStatus",value:function(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:r,o=arguments.length>3&&void 0!==arguments[3]?arguments[3]:r;this._updateAgentWorkState(e,"resting",t,n,o)}},{key:"setMonitorAgentWorkWay",value:function(e,t){var n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:r,a=arguments.length>3&&void 0!==arguments[3]?arguments[3]:r;o.a.post("/agent_api/v1/callcenter/agents/update_agent_work_way",{agent_no:e,agent_work_way:t},function(e){switch(e.code){case 1e3:n(e);break;default:a(e)}},function(e){a(e)})}},{key:"monitorAgentListening",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:r,n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:r;o.a.post("/agent_api/v1/callcenter/desktop/listeing",{agent_no:e},function(e){switch(e.code){case 1001:t(e);break;default:n(e)}},function(e){n(e)})}},{key:"monitorAgentInterpose",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:r,n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:r;o.a.post("/agent_api/v1/callcenter/desktop/interpose",{agent_no:e},function(e){switch(e.code){case 1001:t(e);break;default:n(e)}},function(e){n(e)})}},{key:"monitorAgentSubstitute",value:function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:r,n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:r;o.a.post("/agent_api/v1/callcenter/desktop/substitute",{agent_no:e},function(e){switch(e.code){case 1001:t(e);break;default:n(e)}},function(e){n(e)})}}])&&a(t.prototype,n),s&&a(t,s),e}();window.callAPI=new s}});
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/js/CallAPI.js");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./src/js/AjaxUtils.js":
+/*!*****************************!*\
+  !*** ./src/js/AjaxUtils.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function getXMLHttpRequest() {
+  var xhr;
+
+  if (typeof XMLHttpRequest !== 'undefined') {
+    xhr = new XMLHttpRequest();
+  } else {
+    var versions = ['MSXML2.XmlHttp.5.0', 'MSXML2.XmlHttp.4.0', 'MSXML2.XmlHttp.3.0', 'MSXML2.XmlHttp.2.0', 'Microsoft.XmlHttp'];
+
+    for (var i = 0, len = versions.length; i < len; i++) {
+      try {
+        xhr = new ActiveXObject(versions[i]);
+        break;
+      } catch (e) {}
+    } // end for
+
+  }
+
+  return xhr;
+}
+
+function load(options) {
+  var method = options.method;
+  var url = options.url;
+  var content = options.content;
+  var successCallback = options.successCallback;
+  var failureCallback = options.failureCallback;
+  var headers = options.headers;
+  var xhr = getXMLHttpRequest();
+  xhr.onreadystatechange = ensureReadiness;
+
+  function ensureReadiness() {
+    if (xhr.readyState < 4) {
+      return;
+    }
+
+    if (xhr.status < 200 || xhr.status >= 300) {
+      if (xhr.status === 400) {
+        var _content = xhr.response;
+
+        var _contentType = xhr.getResponseHeader('Content-Type');
+
+        if (_contentType.indexOf('application/json') > -1) {
+          _content = JSON.parse(_content);
+
+          if ((_content.code === 'invalid_password' || _content.code === 'token_expired') && obj.refreshToken && !options.retry) {
+            obj.refreshToken(function (newToken) {
+              options.retry = true;
+              obj.token = newToken;
+              load(options);
+            });
+            return;
+          }
+        }
+      }
+
+      failureCallback && failureCallback(xhr);
+      return;
+    } // all is well
+
+
+    if (xhr.readyState === 4) {
+      var contentType = xhr.getResponseHeader('Content-Type');
+
+      if (contentType === 'application/javascript') {
+        successCallback && successCallback(eval(xhr.response), xhr);
+      } else if (contentType.indexOf('application/json') > -1) {
+        successCallback && successCallback(JSON.parse(xhr.response), xhr);
+      } else {
+        successCallback && successCallback(xhr.response, xhr);
+      }
+    }
+  }
+
+  xhr.open(method, obj.host + url, true);
+
+  if (headers) {
+    for (var i in headers) {
+      xhr.setRequestHeader(i, headers[i]);
+    }
+  }
+
+  xhr.setRequestHeader('Authorization', 'Basic ' + btoa('agent:' + obj.token));
+  xhr.send(content);
+}
+
+function get(url, params, callback, failureCallback) {
+  var content = serializeParams(params);
+
+  if (content) {
+    if (url.indexOf('?') === -1) {
+      url += '?' + content;
+    } else {
+      url += '&' + content;
+    }
+  }
+
+  load({
+    method: 'GET',
+    url: url,
+    successCallback: function successCallback(content, xhr) {
+      if (typeof content === 'string') {
+        callback && callback(JSON.parse(content), xhr);
+      } else {
+        callback && callback(content, xhr);
+      }
+    },
+    failureCallback: failureCallback
+  });
+}
+
+function post(url, params, callback, failureCallback) {
+  load({
+    method: 'POST',
+    url: url,
+    headers: {
+      'Content-type': 'application/x-www-form-urlencoded'
+    },
+    content: serializeParams(params),
+    successCallback: callback,
+    failureCallback: failureCallback
+  });
+}
+
+function postJSON(url, params, callback, failureCallback) {
+  load({
+    method: 'POST',
+    url: url,
+    content: JSON.stringify(params),
+    successCallback: function successCallback(content, xhr) {
+      if (typeof content === 'string') {
+        callback && callback(JSON.parse(content), xhr);
+      } else {
+        callback && callback(content, xhr);
+      }
+    },
+    headers: {
+      'content-type': 'application/json'
+    },
+    failureCallback: failureCallback
+  });
+}
+
+function put(url, params, callback, failureCallback) {
+  load({
+    method: 'PUT',
+    url: url,
+    content: JSON.stringify(params),
+    successCallback: function successCallback(content, xhr) {
+      if (typeof content === 'string') {
+        callback && callback(JSON.parse(content), xhr);
+      } else {
+        callback && callback(content, xhr);
+      }
+    },
+    headers: {
+      'content-type': 'application/json'
+    },
+    failureCallback: failureCallback
+  });
+}
+
+function del(url, params, callback, failureCallback) {
+  load({
+    method: 'DELETE',
+    url: url,
+    content: JSON.stringify(params),
+    successCallback: function successCallback(content, xhr) {
+      if (typeof content === 'string') {
+        callback && callback(JSON.parse(content), xhr);
+      } else {
+        callback && callback(content, xhr);
+      }
+    },
+    headers: {
+      'content-type': 'application/json'
+    },
+    failureCallback: failureCallback
+  });
+}
+
+var obj = {
+  get: get,
+  post: post,
+  postJSON: postJSON,
+  put: put,
+  delete: del,
+  token: '',
+  host: '',
+  refreshToken: null
+};
+/* harmony default export */ __webpack_exports__["default"] = (obj);
+
+function serializeParams(params) {
+  var content = [];
+
+  for (var i in params) {
+    content.push(encodeURIComponent(i) + '=' + encodeURIComponent(params[i]));
+  }
+
+  content = content.join('&');
+  return content;
+} //Ajax测试代码
+//get("http://localhost:8080/testGet", function() {
+//    console.log('arg', arguments);
+//});
+//post("http://localhost:8080/testPost", { a: 'bbb', '如果': '那么' }, function() {
+//    console.log('arg', arguments);
+//});
+//
+//postJSON('http://localhost:8080/testPostJson', {
+//    '名称': '李思', '描述': '大帅哥', '邮箱': ['aaa@qq.com', 'bbb@gmail.com'
+//    ]
+//}, function() {
+//    console.log('args', arguments);
+//});
+//
+//put('http://localhost:8080/testPut', {
+//    '年龄': 20, '身高': 189, '其他属性': {
+//        '星座': '狮子座', '爱好': ['吃饭', '睡觉', '打豆豆'
+//        ]
+//    }
+//}, function() {
+//    console.log('args', arguments);
+//});
+//
+//delete('http://localhost:8080/testDelete', { a: 'b', c: 33, d: true, '888': [1, 2, 3, 4] }, function() {
+//    console.log('args', arguments);
+//});
+
+/***/ }),
+
+/***/ "./src/js/CallAPI.js":
+/*!***************************!*\
+  !*** ./src/js/CallAPI.js ***!
+  \***************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _AjaxUtils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AjaxUtils */ "./src/js/AjaxUtils.js");
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+ // import utils from './Tools';
+
+var emptyFunction = function emptyFunction() {};
+
+var CallAPI =
+/*#__PURE__*/
+function () {
+  function CallAPI() {
+    _classCallCheck(this, CallAPI);
+  }
+
+  _createClass(CallAPI, [{
+    key: "tokenInit",
+    value: function tokenInit(token, subDomain, onTokenExpired) {
+      _AjaxUtils__WEBPACK_IMPORTED_MODULE_0__["default"].token = token;
+      _AjaxUtils__WEBPACK_IMPORTED_MODULE_0__["default"].host = 'https' + '://' + subDomain + '.udeskt1.com';
+      _AjaxUtils__WEBPACK_IMPORTED_MODULE_0__["default"].refreshToken = onTokenExpired;
+    }
+  }, {
+    key: "_updateAgentWorkState",
+    value: function _updateAgentWorkState(agent_no, workStatus, cc_custom_state_id) {
+      var successCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : emptyFunction;
+      var failureCallback = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : emptyFunction;
+      var params = {};
+
+      if (cc_custom_state_id !== undefined) {
+        params.cc_custom_state_id = cc_custom_state_id;
+      }
+
+      params.agent_work_state = workStatus;
+      params.agent_no = agent_no;
+      _AjaxUtils__WEBPACK_IMPORTED_MODULE_0__["default"].post('/agent_api/v1/callcenter/agents/update_agent_work_state', params, function (res) {
+        switch (res.code) {
+          case 1000:
+            successCallback(res);
+            break;
+
+          default:
+            failureCallback(res);
+        }
+      }, function (res) {
+        failureCallback(res);
+      });
+    }
+  }, {
+    key: "setMonitorWorkStatus",
+    value: function setMonitorWorkStatus(agent_no, workStatus) {
+      var successCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : emptyFunction;
+      var failureCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : emptyFunction;
+
+      this._updateAgentWorkState(agent_no, workStatus, undefined, successCallback, failureCallback);
+    }
+  }, {
+    key: "setMonitorWorkRestingStatus",
+    value: function setMonitorWorkRestingStatus(agent_no, cc_custom_state_id) {
+      var successCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : emptyFunction;
+      var failureCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : emptyFunction;
+
+      this._updateAgentWorkState(agent_no, 'resting', cc_custom_state_id, successCallback, failureCallback);
+    }
+  }, {
+    key: "setMonitorAgentWorkWay",
+    value: function setMonitorAgentWorkWay(agent_no, agent_work_way) {
+      var successCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : emptyFunction;
+      var failureCallback = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : emptyFunction;
+      _AjaxUtils__WEBPACK_IMPORTED_MODULE_0__["default"].post('/agent_api/v1/callcenter/agents/update_agent_work_way', {
+        agent_no: agent_no,
+        agent_work_way: agent_work_way
+      }, function (res) {
+        switch (res.code) {
+          case 1000:
+            successCallback(res);
+            break;
+
+          default:
+            failureCallback(res);
+        }
+      }, function (res) {
+        failureCallback(res);
+      });
+    }
+  }, {
+    key: "monitorAgentListening",
+    value: function monitorAgentListening(agent_no) {
+      var successCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : emptyFunction;
+      var failureCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : emptyFunction;
+      _AjaxUtils__WEBPACK_IMPORTED_MODULE_0__["default"].post('/agent_api/v1/callcenter/desktop/listeing', {
+        agent_no: agent_no
+      }, function (res) {
+        switch (res.code) {
+          case 1001:
+            successCallback(res);
+            break;
+
+          default:
+            failureCallback(res);
+        }
+      }, function (res) {
+        failureCallback(res);
+      });
+    }
+  }, {
+    key: "monitorAgentInterpose",
+    value: function monitorAgentInterpose(agent_no) {
+      var successCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : emptyFunction;
+      var failureCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : emptyFunction;
+      _AjaxUtils__WEBPACK_IMPORTED_MODULE_0__["default"].post('/agent_api/v1/callcenter/desktop/interpose', {
+        agent_no: agent_no
+      }, function (res) {
+        switch (res.code) {
+          case 1001:
+            successCallback(res);
+            break;
+
+          default:
+            failureCallback(res);
+        }
+      }, function (res) {
+        failureCallback(res);
+      });
+    }
+  }, {
+    key: "monitorAgentSubstitute",
+    value: function monitorAgentSubstitute(agent_no) {
+      var successCallback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : emptyFunction;
+      var failureCallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : emptyFunction;
+      _AjaxUtils__WEBPACK_IMPORTED_MODULE_0__["default"].post('/agent_api/v1/callcenter/desktop/substitute', {
+        agent_no: agent_no
+      }, function (res) {
+        switch (res.code) {
+          case 1001:
+            successCallback(res);
+            break;
+
+          default:
+            failureCallback(res);
+        }
+      }, function (res) {
+        failureCallback(res);
+      });
+    }
+  }]);
+
+  return CallAPI;
+}();
+
+window.callAPI = new CallAPI();
+
+/***/ })
+
+/******/ });
+//# sourceMappingURL=call-api.js.map

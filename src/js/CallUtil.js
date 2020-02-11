@@ -25,7 +25,7 @@ export function makeCall(callNumber) {
         return;
     }
     calling = true;
-
+    CallInfo.set('startCallTime', 0);
     let options;
     let successCallback;
     let failureCallback;
@@ -41,6 +41,7 @@ export function makeCall(callNumber) {
     setTimeout(() => {
         calling = false;
     }, 3000);
+
 
     if (CallConfig.agent_work_state === Const.OFFLINE) {
         Alert.error('离线不可以拨打电话');
@@ -60,7 +61,16 @@ export function makeCall(callNumber) {
     //    softPhone.call(callNumber);
     //    return;
     //}
-
+    let startCallTimeId;
+    let clearStartTimeId;
+    clearInterval(startCallTimeId);
+    clearTimeout(clearStartTimeId);
+    startCallTimeId = setInterval(() => {
+        CallInfo.set('startCallTime', CallInfo.startCallTime + 1);
+    }, 1000);
+    clearStartTimeId = setTimeout(() => {
+        clearInterval(startCallTimeId);
+    }, 6000);
     let params = {number: callNumber};
     if (options && options.biz_id) {
         params.biz_id = options.biz_id;

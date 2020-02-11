@@ -11,8 +11,11 @@ const style = {
 };
 
 class AcceptButton extends React.Component {
+    handleClick = () => {
+        answer();
+    }
     render() {
-        return <button onClick={answer} style={style}>
+        return <button onClick={this.handleClick} style={style}>
             <img src={images.call_out}/>
         </button>;
     }
