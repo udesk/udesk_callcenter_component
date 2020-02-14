@@ -20,7 +20,7 @@ export default class RingingPanelComponent extends React.Component {
         CallInfo.on('change', this.onCallInfoChange = function() {
             if (CallInfo.state === 'ringing') {
                 self.setState(CallInfo);
-                if (CallInfo.can_accept === 'in' && CallConfig.agent_work_way === VOIP_ONLINE && CallInfo.startCallTime < 6) {
+                if (CallInfo.call_type === '呼出' && CallInfo.can_accept === 'in' && CallConfig.agent_work_way === VOIP_ONLINE && CallInfo.startCallTime < 6) {
                     answer();
                 }
             }
