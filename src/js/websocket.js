@@ -21,7 +21,7 @@ function updateCallInfo(msg) {
     //可否咨询后三方
     CallInfo.set('can_party_after_consult', msg.can_party_after_consult === 'true');
     //可否三方后转接
-    CallInfo.set('call_transfer_after_party', msg.call_transfer_after_party === 'true');
+    CallInfo.set('can_transfer_after_party', msg.can_transfer_after_party === 'true');
 }
 
 class WebsocketConnection extends Eventable {

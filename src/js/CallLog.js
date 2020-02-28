@@ -24,7 +24,7 @@ export default class CallLog {
         //可否咨询后三方
         this.can_party_after_consult = this.can_party_after_consult === 'true';
         //可否三方后转接
-        this.call_transfer_after_party = this.call_transfer_after_party === 'true';
+        this.can_transfer_after_party = this.can_transfer_after_party === 'true';
     }
 
     update(callLog) {

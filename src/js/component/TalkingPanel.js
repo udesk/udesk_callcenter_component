@@ -52,7 +52,7 @@ export default class TalkingPanelComponent extends React.Component {
         let {
             can_transfer_after_consult,
             can_party_after_consult,
-            call_transfer_after_party
+            can_transfer_after_party
         } = this.state;
         let {isShow = false} = this.props;
         if (!isShow) {
@@ -145,7 +145,7 @@ export default class TalkingPanelComponent extends React.Component {
                                       normalHandler={this._threeWayCallingAfterConsult}
                                       content="咨询后三方"
                                       state='normal'/>}
-                    {call_transfer_after_party &&
+                    {can_transfer_after_party &&
                      <ButtonWithImage image={images.transfer}
                                       normalHandler={this._transferAfterThreeWayCalling}
                                       content="三方后转接"
