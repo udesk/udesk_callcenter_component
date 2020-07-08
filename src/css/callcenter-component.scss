@@ -133,6 +133,8 @@
 
         ul {
             width: 150px;
+            max-height: 200px;
+            overflow: auto;
         }
     }
 

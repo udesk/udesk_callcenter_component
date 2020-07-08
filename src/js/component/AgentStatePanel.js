@@ -46,17 +46,17 @@ export default class AgentStatePanelComponent extends React.Component {
 
     render() {
         this.agentStateMap = [
-            {id: Const.IDLE, name: <div className={'work-state-' + Const.IDLE}><i></i>空闲</div>},
-            {id: Const.BUSY, name: <div className={'work-state-' + Const.BUSY}><i></i>忙碌</div>},
-            {id: Const.RESTING, name: <div className={'work-state-' + Const.RESTING}><i></i>小休</div>},
+            {id: Const.IDLE, name: <div className={'work-state-' + Const.IDLE}><i/>空闲</div>},
+            {id: Const.BUSY, name: <div className={'work-state-' + Const.BUSY}><i/>忙碌</div>},
+            {id: Const.RESTING, name: <div className={'work-state-' + Const.RESTING}><i/>小休</div>},
             ...map(this.props.customStates, (item) => {
                 if (typeof item.name === 'string') {
-                    item.name = <div className={'work-state-' + item.originalStateId}><i></i>{item.name}</div>;
+                    item.name = <div className={'work-state-' + item.originalStateId}><i/>{item.name}</div>;
                 }
                 return item;
             }),
-            {id: Const.OFFLINE, name: <div className={'work-state-' + Const.OFFLINE}><i></i>离线</div>},
-            {id: Const.NEATEN, name: <div className={'work-state-' + Const.BUSY}><i></i>整理中</div>, hide: true}
+            {id: Const.OFFLINE, name: <div className={'work-state-' + Const.OFFLINE}><i/>离线</div>},
+            {id: Const.NEATEN, name: <div className={'work-state-' + Const.BUSY}><i/>整理中</div>, hide: true}
         ];
         return <div className="agent-state-panel">
             {
@@ -68,11 +68,11 @@ export default class AgentStatePanelComponent extends React.Component {
                         />;
                     } else if (this.state.callState === Const.TALKING) {
                         return <div className="pull-right working">
-                            <div className={'work-state-' + Const.TALKING}><i></i>通话中</div>
+                            <div className={'work-state-' + Const.TALKING}><i/>通话中</div>
                         </div>;
                     } else if (this.state.callState === Const.RINGING) {
                         return <div className="pull-right working">
-                            <div className={'work-state-' + Const.RINGING}><i></i>振铃中</div>
+                            <div className={'work-state-' + Const.RINGING}><i/>振铃中</div>
                         </div>;
                     }
                 }).call(this)
@@ -106,7 +106,7 @@ export default class AgentStatePanelComponent extends React.Component {
             });
         }
     }
-    
+
     updateCalloutNumbers(number) {
         var id = number.id === null ? '' : number.id;
         if (this.state.callState !== Const.HANGUP) {
