@@ -10,7 +10,7 @@
     "debug": "^4.1.1",
     "font-awesome": "^4.7.0",
     "jssip": "^3.3.5",
-    "lodash": "^4.17.3",
+    "lodash": "^4.17.19",
     "prop-types": "^15.6.0",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
