@@ -370,7 +370,7 @@ class CallcenterComponent {
         onTokenExpired
     }) {
         AjaxUtils.token = token;
-        AjaxUtils.host = __protocol__ + '://' + subDomain + __server__;
+        AjaxUtils.host = __protocol__ + '://' + subDomain + ((!__PRODUCTION__ && window.UDESK_API_SERVER_SUFFIX) || __server__);
         AjaxUtils.refreshToken = onTokenExpired;
 
         this.onTalking = onTalking;

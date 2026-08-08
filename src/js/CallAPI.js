@@ -6,7 +6,7 @@ const emptyFunction = function() {
 class CallAPI {
     tokenInit(token,subDomain,onTokenExpired){
         AjaxUtils.token = token;
-        AjaxUtils.host = __protocol__ + '://' + subDomain + __server__;
+        AjaxUtils.host = __protocol__ + '://' + subDomain + ((!__PRODUCTION__ && window.UDESK_API_SERVER_SUFFIX) || __server__);
         AjaxUtils.refreshToken = onTokenExpired;
     }
     _updateAgentWorkState(agent_no,workStatus,cc_custom_state_id,successCallback = emptyFunction, failureCallback = emptyFunction) {

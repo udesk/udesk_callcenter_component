@@ -27,6 +27,37 @@
     </style>
 </head>
 <body>
+<h3>初始化配置</h3>
+<div id="init-config" style="margin-bottom: 10px; padding: 10px; border: 1px solid #ddd;">
+    <p style="color: #999; margin: 0 0 8px 0;">
+        填写以下参数后点击「获取 Token 并创建组件」，前端会自动调用 open_api 计算 agent_api_token 并初始化通话组件。参数保存到 localStorage，下次打开自动填充。
+    </p>
+    <div style="margin-bottom: 8px;">
+        <label>二级域名 (subDomain)：</label>
+        <input id="config_subDomain" placeholder="例如 sample（对应 sample.udesk.cn）" style="width: 300px;"/>
+    </div>
+    <div style="margin-bottom: 8px;">
+        <label>管理员邮箱 (email)：</label>
+        <input id="config_adminEmail" placeholder="admin@demo.com" style="width: 300px;"/>
+    </div>
+    <div style="margin-bottom: 8px;">
+        <label>客服邮箱 (agent_email)：</label>
+        <input id="config_agentEmail" placeholder="agent@demo.com" style="width: 300px;"/>
+    </div>
+    <div style="margin-bottom: 8px;">
+        <label>Open API Token：</label>
+        <input id="config_openApiToken" placeholder="管理员的 open_api_token" style="width: 420px;"/>
+    </div>
+    <div style="margin-bottom: 8px;">
+        <label>API 域名后缀：</label>
+        <input id="config_apiServerSuffix" placeholder=".udeskt1.com" style="width: 200px;"/>
+        <span style="color: #999; margin-left: 8px;">dev 环境填 .udeskt1.com，正式环境填 .udesk.cn</span>
+    </div>
+    <button onclick="saveConfig();">保存配置</button>
+    <button onclick="clearConfig();">清空配置</button>
+    <button onclick="fetchTokenAndCreate();">获取 Token 并创建组件</button>
+    <span id="config_status" style="margin-left: 10px; color: green;"></span>
+</div>
 <table>
     <caption>
         历史弹屏
@@ -147,27 +178,189 @@
 <script src="./js/callcenter-component.js"></script>
 <script src="./js/call-api.js"></script>
 <script>
-    var token = 'xxxxx';
-    var subDomain = 'xxxxxx';
+    var STORAGE_KEY = 'udesk_callcenter_config';
+    var token = '';
+    var subDomain = '';
+    var adminEmail = '';
+    var agentEmail = '';
+    var openApiToken = '';
+    var apiServerSuffix = '.udeskt1.com';
+
+    function setStatus(text) {
+        var status = document.getElementById('config_status');
+        if (status) {
+            status.innerText = text;
+        }
+    }
+
+    // 浏览器原生 SHA-1，返回 40 位十六进制字符串，与后端 sha1() 一致
+    async function sha1Hex(str) {
+        var buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(str));
+        return Array.from(new Uint8Array(buf)).map(function(b) {
+            return b.toString(16).padStart(2, '0');
+        }).join('');
+    }
+
+    // 前端自行调用 open_api_v1/get_agent_token 计算 agent_api_token
+    // 参考 doc/获取agent_api_token.md：sign = sha1(email + "&" + openApiToken + "&" + timestamp)
+    async function fetchAgentToken() {
+        var timestamp = String(Math.floor(Date.now() / 1000));
+        var sign = await sha1Hex(adminEmail + '&' + openApiToken + '&' + timestamp);
+        var fullHost = subDomain + apiServerSuffix;
+        var useProxy = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        var url, headers;
+        if (useProxy) {
+            // dev server 下走 /udesk-api 代理规避跨域，目标 host 通过 header 传给 proxy 的 router
+            url = '/udesk-api/open_api_v1/get_agent_token';
+            headers = {
+                'open_api_token': openApiToken,
+                'Content-Type': 'application/json',
+                'content_type': 'application/json',
+                'x-udesk-host': fullHost
+            };
+        } else {
+            url = 'https://' + fullHost + '/open_api_v1/get_agent_token';
+            headers = {
+                'open_api_token': openApiToken,
+                'Content-Type': 'application/json',
+                'content_type': 'application/json'
+            };
+        }
+        var res = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({
+                email: adminEmail,
+                agent_email: agentEmail,
+                timestamp: timestamp,
+                sign: sign
+            })
+        });
+        var data = await res.json();
+        if (data.code === 1000 && data.agent_api_token) {
+            return data.agent_api_token;
+        }
+        throw new Error('获取 agent_api_token 失败：' + JSON.stringify(data));
+    }
+
+    // token 过期时自动重新计算，无需手动输入
     var onTokenExpired = function(callback) {
-        setTimeout(function() {
-            callback('xxxx');
-        }, 1000);
+        setStatus('Token 过期，正在重新获取...');
+        fetchAgentToken().then(function(newToken) {
+            token = newToken;
+            callback(newToken);
+            setStatus('Token 已刷新');
+            setTimeout(function() { setStatus(''); }, 2000);
+        }).catch(function(err) {
+            console.error('重新获取 token 失败', err);
+            alert('Token 过期且重新获取失败：' + err.message);
+            setStatus('');
+        });
     };
-    window.callAPI.tokenInit(
-        token,
-        subDomain,
-        onTokenExpired
-    );
+
+    function getConfig() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function saveConfig(showStatus) {
+        subDomain = (document.getElementById('config_subDomain').value || '').trim();
+        adminEmail = (document.getElementById('config_adminEmail').value || '').trim();
+        agentEmail = (document.getElementById('config_agentEmail').value || '').trim();
+        openApiToken = (document.getElementById('config_openApiToken').value || '').trim();
+        apiServerSuffix = (document.getElementById('config_apiServerSuffix').value || '').trim() || '.udeskt1.com';
+        window.UDESK_API_SERVER_SUFFIX = apiServerSuffix;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            subDomain: subDomain,
+            adminEmail: adminEmail,
+            agentEmail: agentEmail,
+            openApiToken: openApiToken,
+            apiServerSuffix: apiServerSuffix
+        }));
+        // subDomain 先同步给 callAPI（监控接口依赖），token 待获取后由 createCallComponent 同步
+        window.callAPI.tokenInit(token, subDomain, onTokenExpired);
+        if (showStatus !== false) {
+            setStatus('已保存到 localStorage');
+            setTimeout(function() { setStatus(''); }, 2000);
+        }
+    }
+
+    function clearConfig() {
+        localStorage.removeItem(STORAGE_KEY);
+        document.getElementById('config_subDomain').value = '';
+        document.getElementById('config_adminEmail').value = '';
+        document.getElementById('config_agentEmail').value = '';
+        document.getElementById('config_openApiToken').value = '';
+        document.getElementById('config_apiServerSuffix').value = '';
+        token = '';
+        subDomain = '';
+        adminEmail = '';
+        agentEmail = '';
+        openApiToken = '';
+        apiServerSuffix = '.udeskt1.com';
+        window.UDESK_API_SERVER_SUFFIX = apiServerSuffix;
+        window.callAPI.tokenInit(token, subDomain, onTokenExpired);
+        setStatus('已清空');
+        setTimeout(function() { setStatus(''); }, 2000);
+    }
+
+    async function fetchTokenAndCreate() {
+        saveConfig(false);
+        if (!subDomain || !adminEmail || !agentEmail || !openApiToken) {
+            alert('请先填写 subDomain、管理员邮箱、客服邮箱、Open API Token 并保存配置');
+            return;
+        }
+        setStatus('正在获取 agent_api_token...');
+        try {
+            token = await fetchAgentToken();
+        } catch (err) {
+            setStatus('');
+            alert(err.message + '\n\n提示：dev server (localhost) 下已自动走 /udesk-api 代理规避跨域；若仍失败请检查代理配置、域名后缀或网络。');
+            return;
+        }
+        setStatus('Token 获取成功，正在创建通话组件...');
+        createCallComponent();
+    }
+
+    // 页面加载时从 localStorage 恢复配置并同步给 callAPI
+    (function restoreConfig() {
+        var config = getConfig();
+        subDomain = config.subDomain || '';
+        adminEmail = config.adminEmail || '';
+        agentEmail = config.agentEmail || '';
+        openApiToken = config.openApiToken || '';
+        apiServerSuffix = config.apiServerSuffix || '.udeskt1.com';
+        window.UDESK_API_SERVER_SUFFIX = apiServerSuffix;
+        document.getElementById('config_subDomain').value = subDomain;
+        document.getElementById('config_adminEmail').value = adminEmail;
+        document.getElementById('config_agentEmail').value = agentEmail;
+        document.getElementById('config_openApiToken').value = openApiToken;
+        document.getElementById('config_apiServerSuffix').value = apiServerSuffix;
+        window.callAPI.tokenInit(token, subDomain, onTokenExpired);
+    })();
+
     var tbody = document.getElementById('screen-pop-history');
 
     function createCallComponent() {
         if (window.callComp && !window.callComp.isDestroyed) {
             return;
         }
+        subDomain = (document.getElementById('config_subDomain').value || '').trim();
+        if (!subDomain) {
+            alert('请先填写「二级域名(subDomain)」');
+            return;
+        }
+        if (!token) {
+            alert('尚未获取 agent_api_token，请先点击「获取 Token 并创建组件」');
+            return;
+        }
+        window.callAPI.tokenInit(token, subDomain, onTokenExpired);
         window.callComp = new UdeskCallcenterComponent({
             container: document.body,
-            token: token, // 客服token
+            token: token, // 客服token（前端通过 open_api get_agent_token 计算）
             subDomain: subDomain, // 您在udesk注册的二级域名,例如您的udesk域名是sample.udesk.cn,则此处填写sample
             showManualScreenPop: true,
             movable: true,
